@@ -1,0 +1,1472 @@
+/* ==========================================================================
+   TALENTnext Concept V2 — Architectural Grid & Responsive Viewport Controller
+   Strict Box Model · 0px Border Radius · Modular Viewport Switching
+   Single Accent: #F95873 · Cinematic Dark Burgundy Stage Integration
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design Tokens & Root Variables
+   -------------------------------------------------------------------------- */
+:root {
+  /* Neutral Color Tokens */
+  --color-bg-canvas: #FFFFFF;
+  --color-bg-surface: #FAFAFA;
+  --color-bg-subtle: #F4F4F5;
+  --color-bg-inverse: #09090B;
+  --color-text-primary: #09090B;
+  --color-text-secondary: #52525B;
+  --color-text-tertiary: #71717A;
+  --color-text-inverse: #FFFFFF;
+  --color-border-subtle: #E4E4E7;
+  --color-border-strong: #09090B;
+
+  /* Single Accent System: #D13739 */
+  --color-accent: #D13739;
+  --color-accent-hover: #BA2F31;
+  --color-accent-tint: #FDF2F3;
+  --color-accent-border: #E88385;
+
+  /* Typography */
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Type Scale */
+  --type-display: clamp(2.6rem, 5vw, 4.25rem);
+  --type-h1: clamp(2rem, 3.2vw, 2.75rem);
+  --type-h2: clamp(1.4rem, 2.2vw, 1.85rem);
+  --type-h3: 1.25rem;
+  --type-body-lg: 1.125rem;
+  --type-body: 1rem;
+  --type-caption: 0.875rem;
+  --type-eyebrow: 0.75rem;
+
+  /* Spacing Scale */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+
+  /* Strict Zero-Pixel Border Radius */
+  --radius: 0px;
+
+  /* Default Fluid Frame Max Width */
+  --frame-max-width: 100%;
+}
+
+/* Reset & Strict Box Model */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0px !important;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: #0E0E11;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  background-color: #0E0E11;
+  overflow-x: hidden;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 150ms ease;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   2. Interactive Top Viewport Controller Bar
+   -------------------------------------------------------------------------- */
+.viewport-controller-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #17171C;
+  border-bottom: 1px solid #282832;
+  color: #E4E4E7;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  user-select: none;
+}
+
+.controller-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controller-brand-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.04em;
+}
+
+.controller-brand-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+}
+
+.controller-presets-cluster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.preset-btn {
+  background-color: #212128;
+  color: #A1A1AA;
+  border: 1px solid #2E2E38;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  font-family: var(--font-mono);
+}
+
+.preset-btn:hover {
+  background-color: #2C2C36;
+  color: #FFFFFF;
+}
+
+.preset-btn.active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.controller-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.viewport-readout {
+  color: #A1A1AA;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.viewport-readout strong {
+  color: #FFFFFF;
+}
+
+.page-toggle-link {
+  color: #A1A1AA;
+  border: 1px solid #2E2E38;
+  padding: 3px 8px;
+  font-size: 0.6875rem;
+}
+
+.page-toggle-link:hover {
+  color: #FFFFFF;
+  border-color: #555566;
+}
+
+/* --------------------------------------------------------------------------
+   3. Outer Simulation Wrapper & Responsive Frame
+   -------------------------------------------------------------------------- */
+.viewport-simulator-canvas {
+  width: 100%;
+  min-height: calc(100vh - 42px);
+  background-color: #121215;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 40px 0;
+  transition: padding 200ms ease;
+}
+
+.simulator-device-frame {
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--color-bg-canvas);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  transition: max-width 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  border-left: 1px solid var(--color-border-subtle);
+  border-right: 1px solid var(--color-border-subtle);
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   4. Sticky Site Navigation
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  width: 100%;
+}
+
+.nav-container {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-32);
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-32);
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: color 150ms ease;
+  padding: 6px 0;
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.nav-login {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  padding: 8px 12px;
+}
+
+.nav-login:hover {
+  color: var(--color-text-primary);
+}
+
+.btn-nav-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  line-height: 1.2;
+  transition: background-color 150ms ease;
+}
+
+.btn-nav-primary:hover {
+  background-color: #222222;
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--color-border-subtle);
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   5. Buttons (Zero-Pixel Radius)
+   -------------------------------------------------------------------------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  background-color: #000000;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 14px 28px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 180ms ease, transform 150ms ease;
+  line-height: 1;
+}
+
+.btn-primary:hover {
+  background-color: #222222;
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  background-color: #FFFFFF;
+  color: #000000;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 13px 26px;
+  border: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  transition: all 180ms ease;
+  line-height: 1;
+}
+
+.btn-secondary:hover {
+  background-color: #F5F5F5;
+  border-color: #000000;
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 14px 28px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 180ms ease;
+  line-height: 1;
+}
+
+.btn-accent:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  padding: 8px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   6. NEW HERO SECTION: ASYMMETRICAL DUAL-PANE COCKPIT LAYOUT
+   Linear + Stripe + BetterUp + MasterClass + Webflow synthesis
+   -------------------------------------------------------------------------- */
+.hero-v2-section {
+  position: relative;
+  background-color: var(--color-bg-canvas);
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow: hidden;
+}
+
+/* Subtle Centered Diffusion Grid Mask */
+.hero-v2-grid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000000 25%, rgba(0, 0, 0, 0.3) 65%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000000 25%, rgba(0, 0, 0, 0.3) 65%, transparent 90%);
+  z-index: 1;
+}
+
+/* 2-Column Asymmetric Architectural Split */
+.hero-v2-split-container {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  min-height: 640px;
+}
+
+/* Left Pane: Human, Reassuring, Punchy Editorial Cockpit */
+.hero-v2-left-pane {
+  padding: 64px 48px 56px 48px;
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--color-bg-canvas);
+}
+
+.hero-v2-top-cluster {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-v2-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: var(--space-20);
+}
+
+.hero-v2-pill {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background-color: var(--color-accent-tint);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-border);
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-v2-pill-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+}
+
+.hero-v2-meta-note {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.hero-v2-headline {
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-20);
+}
+
+.hero-v2-subhead {
+  font-size: var(--type-body-lg);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 54ch;
+  margin-bottom: var(--space-32);
+}
+
+.hero-v2-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  margin-bottom: var(--space-32);
+  flex-wrap: wrap;
+}
+
+/* Left Bottom: Zero-Anxiety Test Reassurance Pill */
+.hero-v2-bottom-trust {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-20);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trust-quote-micro {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trust-quote-bullet {
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.trust-features-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.trust-feat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trust-feat-check {
+  color: #22C55E;
+}
+
+/* Right Pane: Cinematic Discovery Stage with Abstract Dark Burgundy & Live Agent Cockpit */
+.hero-v2-right-pane {
+  background-color: #0C0C0F;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border-left: 1px solid var(--color-border-subtle);
+}
+
+/* Cinematic Abstract Texture Layer */
+.hero-v2-cinematic-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../img/dark-burgundy-abstract.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.75;
+  filter: saturate(1.1) brightness(0.9);
+  z-index: 1;
+}
+
+.hero-v2-cinematic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(180deg, rgba(12, 12, 15, 0.4) 0%, rgba(12, 12, 15, 0.85) 100%),
+    radial-gradient(circle at 80% 20%, rgba(249, 88, 115, 0.22) 0%, transparent 60%);
+  z-index: 2;
+}
+
+/* Foreground Discovery Terminal Interface */
+.hero-v2-terminal-deck {
+  position: relative;
+  z-index: 3;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.terminal-v2-header {
+  background-color: rgba(23, 23, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #A1A1AA;
+}
+
+.terminal-v2-live-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #EF4444;
+  font-weight: 700;
+}
+
+.terminal-v2-pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #EF4444;
+  animation: recPulse 1.8s infinite;
+}
+
+@keyframes recPulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* MasterClass / BetterUp Inspired Agent & Candidate Dual Video Cards */
+.hero-v2-video-cards-stack {
+  margin: auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 18px 0;
+}
+
+.v2-portrait-card {
+  position: relative;
+  height: 230px;
+  background-color: #17171C;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.v2-portrait-card.speaker-active {
+  border-color: var(--color-accent);
+}
+
+.v2-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.v2-portrait-top {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.v2-role-pill {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.v2-role-pill.agent-pill {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.v2-equalizer-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.v2-eq-bar {
+  width: 3px;
+  background-color: var(--color-accent);
+  animation: eqWave 1.2s ease-in-out infinite alternate;
+}
+
+.v2-eq-bar.b1 { height: 7px; animation-delay: 0.1s; }
+.v2-eq-bar.b2 { height: 14px; animation-delay: 0.3s; }
+.v2-eq-bar.b3 { height: 6px; animation-delay: 0.5s; }
+.v2-eq-bar.b4 { height: 11px; animation-delay: 0.2s; }
+
+@keyframes eqWave {
+  0% { height: 4px; }
+  50% { height: 14px; }
+  100% { height: 6px; }
+}
+
+.v2-portrait-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.v2-person-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.v2-mic-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #22C55E;
+}
+
+/* Floating AI Diagnostic Telemetry Banner */
+.hero-v2-telemetry-pill {
+  background-color: rgba(23, 23, 28, 0.9);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.v2-telemetry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.v2-telemetry-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.v2-telemetry-match {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: #22C55E;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.v2-pulse-indicator {
+  width: 5px;
+  height: 5px;
+  background-color: #22C55E;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.v2-telemetry-quote {
+  font-size: 0.8125rem;
+  color: #E4E4E7;
+  line-height: 1.4;
+  font-style: italic;
+  min-height: 24px;
+  transition: opacity 250ms ease;
+}
+
+/* Call Control Bar with Middle Accent Color Button */
+.hero-v2-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(18, 18, 22, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 12px;
+}
+
+.v2-ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.v2-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #23232A;
+  border: 1px solid #32323C;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.v2-ctrl-btn:hover {
+  background-color: #2F2F38;
+}
+
+.v2-ctrl-btn.mic-btn-active {
+  background-color: #15803D;
+  border-color: #22C55E;
+}
+
+.v2-ctrl-btn.accent-middle-btn {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.v2-ctrl-btn.accent-middle-btn:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.v2-ctrl-btn.end-call-btn {
+  background-color: #DC2626;
+  border-color: #EF4444;
+}
+
+.v2-right-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: #A1A1AA;
+}
+
+/* --------------------------------------------------------------------------
+   7. Ramp-Style Numeric Social Proof Strip (Edge-to-Edge)
+   -------------------------------------------------------------------------- */
+.trust-strip-v2 {
+  display: grid;
+  grid-template-columns: 1.35fr repeat(4, 1fr);
+  background-color: var(--color-bg-canvas);
+  border-bottom: 1px solid var(--color-border-subtle);
+  width: 100%;
+}
+
+.trust-v2-lead {
+  padding: 36px 44px;
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.45;
+}
+
+.trust-v2-cell {
+  padding: 32px 24px;
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.trust-v2-cell:last-child {
+  border-right: none;
+}
+
+.trust-v2-number {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.trust-v2-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+/* --------------------------------------------------------------------------
+   8. Full-Width Expansive How It Works (Carried over)
+   -------------------------------------------------------------------------- */
+.how-it-works-v2 {
+  background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.how-it-works-header-block {
+  padding: 64px 48px 44px 48px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+}
+
+.eyebrow-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.eyebrow-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+}
+
+.section-title {
+  font-size: var(--type-h1);
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-16);
+}
+
+.section-subhead {
+  font-size: var(--type-body-lg);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  max-width: 68ch;
+}
+
+.how-it-works-full-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  background-color: var(--color-bg-canvas);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.step-cell {
+  padding: 68px 52px 80px 52px;
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-canvas);
+  transition: background-color 200ms ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-cell:last-child {
+  border-right: none;
+}
+
+.step-cell:hover {
+  background-color: #FAFAFA;
+}
+
+.step-num-mono {
+  font-family: var(--font-mono);
+  font-size: clamp(4.75rem, 8vw, 6.75rem);
+  font-weight: 800;
+  line-height: 0.85;
+  color: var(--color-accent);
+  opacity: 0.22;
+  letter-spacing: -0.05em;
+  margin-bottom: var(--space-24);
+  transition: opacity 200ms ease, transform 200ms ease;
+  display: block;
+}
+
+.step-cell:hover .step-num-mono {
+  opacity: 0.48;
+  transform: translateY(-3px);
+}
+
+.step-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-12);
+}
+
+.step-body {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 44ch;
+}
+
+/* --------------------------------------------------------------------------
+   9. Trait Archetypes Grid
+   -------------------------------------------------------------------------- */
+.section-inner {
+  padding: var(--space-64) var(--space-48);
+}
+
+.trait-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.trait-card {
+  padding: var(--space-32);
+  border-right: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-canvas);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 190px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.trait-card:nth-child(3n) {
+  border-right: none;
+}
+
+.trait-card:nth-child(4),
+.trait-card:nth-child(5),
+.trait-card:nth-child(6) {
+  border-bottom: none;
+}
+
+.trait-card:hover,
+.trait-card.active-card {
+  background-color: var(--color-accent-tint);
+}
+
+.trait-letter-badge {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-bg-canvas);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: var(--space-16);
+  color: var(--color-text-primary);
+  transition: all 150ms ease;
+}
+
+.trait-card.active-card .trait-letter-badge,
+.trait-card:hover .trait-letter-badge {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.trait-card-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-8);
+}
+
+.trait-card-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+.not-sure-banner {
+  margin-top: var(--space-24);
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  padding: var(--space-24) var(--space-32);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.not-sure-text {
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.not-sure-text strong {
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   10. Objection Handling (Calm Anxiety Reducer)
+   -------------------------------------------------------------------------- */
+.objection-box {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-48);
+}
+
+.objection-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--space-48);
+  align-items: center;
+}
+
+.objection-title {
+  font-size: var(--type-h2);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-16);
+}
+
+.objection-body {
+  font-size: var(--type-body-lg);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-24);
+}
+
+.objection-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.objection-pillar-item {
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-canvas);
+  padding: var(--space-16) var(--space-20);
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.pillar-bullet {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.pillar-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   11. Deliverables Grid
+   -------------------------------------------------------------------------- */
+.deliverables-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.deliverable-box {
+  padding: var(--space-32);
+  border-right: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-canvas);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+}
+
+.deliverable-box:nth-child(3) {
+  border-right: none;
+}
+
+.deliverable-box:nth-child(4),
+.deliverable-box:nth-child(5) {
+  border-bottom: none;
+}
+
+.deliverable-box.span-two {
+  grid-column: span 2;
+  border-right: none;
+  background-color: var(--color-bg-surface);
+}
+
+.deliverable-tag {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: var(--space-8);
+}
+
+.deliverable-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-8);
+}
+
+.deliverable-copy {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.deliverable-meta-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-16);
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  align-self: flex-start;
+}
+
+.deliverable-box.span-two .deliverable-meta-tag {
+  background-color: var(--color-bg-canvas);
+}
+
+/* --------------------------------------------------------------------------
+   12. Final Booking Form
+   -------------------------------------------------------------------------- */
+.lead-form-box {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-canvas);
+}
+
+.form-info-cell {
+  padding: var(--space-48);
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--color-bg-surface);
+}
+
+.form-input-cell {
+  padding: var(--space-48);
+}
+
+.lead-booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.9375rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #000000;
+}
+
+.form-success-banner {
+  display: none;
+  border: 1px solid #000000;
+  background-color: var(--color-bg-surface);
+  padding: var(--space-24);
+}
+
+.form-success-banner.active {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   13. Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background-color: #000000;
+  color: #FFFFFF;
+}
+
+.footer-inner {
+  padding: var(--space-48) var(--space-48);
+}
+
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 1fr;
+  gap: var(--space-48);
+  padding-bottom: var(--space-48);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.footer-logo-img {
+  height: 40px;
+  width: auto;
+  margin-bottom: var(--space-16);
+  display: block;
+}
+
+.footer-tagline {
+  font-size: 0.9375rem;
+  color: #8E8E93;
+  line-height: 1.5;
+  max-width: 32ch;
+}
+
+.footer-nav-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+.footer-nav-link {
+  font-size: 0.875rem;
+  color: #A1A1AA;
+}
+
+.footer-nav-link:hover {
+  color: #FFFFFF;
+}
+
+.footer-portal-link {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.footer-bottom-bar {
+  padding-top: var(--space-24);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: #71717A;
+  font-family: var(--font-mono);
+}
+
+/* --------------------------------------------------------------------------
+   14. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .hero-v2-split-container {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-v2-left-pane {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding: 48px 32px;
+  }
+
+  .hero-v2-right-pane {
+    border-left: none;
+    min-height: 520px;
+  }
+
+  .trust-strip-v2 {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-v2-lead {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .lead-form-box {
+    grid-template-columns: 1fr;
+  }
+
+  .form-info-cell {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+}
+
+@media (max-width: 768px) {
+  .viewport-controller-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controller-presets-cluster {
+    flex-wrap: wrap;
+  }
+
+  .nav-links, .nav-actions {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: block;
+  }
+
+  .hero-v2-video-cards-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .how-it-works-full-grid,
+  .trait-grid-container,
+  .deliverables-container {
+    grid-template-columns: 1fr;
+  }
+
+  .step-cell, .trait-card, .deliverable-box {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .deliverable-box.span-two {
+    grid-column: span 1;
+  }
+
+  .form-row-2col,
+  .objection-content-grid,
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
