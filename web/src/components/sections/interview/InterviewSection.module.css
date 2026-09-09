@@ -1,0 +1,129 @@
+/* ==========================================================================
+   InterviewSection — "This isn't a Job Interview."
+   --------------------------------------------------------------------------
+   A centred banner heading (same headerRow shape as HowItWorksSection) over
+   a static three-up row. Each panel is identical: the same red-gradient.png
+   halftone plate carrying the same floating "Top Strength" card (verbatim
+   the SurfaceCard + MeterRow pattern from HowItWorksSection) and one line
+   of reassurance copy below. No scroll-driven motion here — three identical
+   treatments side by side reads better static than pinned.
+   ========================================================================== */
+
+.headerRow {
+  /* 3-value shorthand: top, then left/right, then bottom — the bottom
+     edge (the gap under the heading, before the divider) is 20px less
+     than the top so it doesn't read as unnecessarily deep. */
+  padding: var(--gl-space-block-xl) var(--gl-space-gutter-lg)
+    calc(var(--gl-space-block-xl) - 20px);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.heading {
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+/* --------------------------------------------------------------------------
+   The row — three equal panels, hairline-divided like every other card row
+   in this system (ArchetypeCard, HowItWorksSection).
+   -------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel:not(:last-child) {
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   The glow plate — the halftone asset itself, not a CSS approximation.
+   -------------------------------------------------------------------------- */
+.media {
+  position: relative;
+  height: 460px;
+  overflow: hidden;
+  background-color: var(--gl-color-surface-inverse);
+  background-image: url("/img/red-gradient.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   Strength card — identical block to HowItWorksSection's own
+   -------------------------------------------------------------------------- */
+.strengthCard {
+  position: relative;
+  z-index: var(--gl-z-content);
+  width: 100%;
+  max-width: 290px;
+  margin-bottom: var(--gl-space-16);
+}
+
+.strengthCardTitle {
+  margin-bottom: var(--gl-space-8);
+}
+
+.strengthRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-6);
+}
+
+/* --------------------------------------------------------------------------
+   Caption
+   -------------------------------------------------------------------------- */
+.caption {
+  padding: var(--gl-space-14) var(--gl-space-9);
+}
+
+/* --------------------------------------------------------------------------
+   Footer row — full-bleed width only, NOT full-screen height. `left: 50%`
+   + a negative margin re-centres a 100vw box on the viewport regardless of
+   how narrow the constrained GridCanvas column around it is (the same
+   breakout DeliverablesSection's own full-bleed `.pinWrapper` uses), but
+   the height is left to size from its own padding alone — a viewport-tall
+   height was tried here once and, on an otherwise-empty box, that just
+   reads as a wall of blank space. `--gl-space-17` is a fixed (not fluid)
+   48px, which is the deliberate point here: 48px read right at every
+   width tested, so this is pinned rather than left to scale with the
+   viewport like most block padding in this codebase. Left empty until
+   there's copy for it.
+   -------------------------------------------------------------------------- */
+.footerRow {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  padding: var(--gl-space-17);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — a single stacked column below the desktop breakpoint.
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel:not(:last-child) {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
+
+  .media {
+    height: 380px;
+  }
+}

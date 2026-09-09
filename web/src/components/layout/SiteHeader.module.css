@@ -1,0 +1,160 @@
+/* ==========================================================================
+   SiteHeader
+   Sticky, translucent, closed off by the same hairline every module uses.
+   ========================================================================== */
+
+/* Full-bleed: GridCanvas centres everything in a 1560px column, but a sticky
+   nav's background is conventionally expected to run to the actual edges of
+   the browser window — otherwise the page's own white shows through as a
+   pair of gutters beside it above that width. `.inner` below re-applies the
+   1560px measure so the logo/links/button still line up with the rest of
+   the page.
+
+   Margin-only breakout, not `left: 50%` + negative margin: `left` on a
+   `position: sticky` element doubles as its sticky-axis threshold rather
+   than a plain static-position offset the way it is on `position: relative`
+   (which is what DeliverablesSection's own full-bleed background uses) —
+   mixing it with `sticky` left the right edge short. `margin-left` alone
+   sidesteps that entirely. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--gl-z-header);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  transition:
+    background-color var(--gl-duration-moderate) var(--gl-ease-standard),
+    border-color var(--gl-duration-moderate) var(--gl-ease-standard);
+}
+
+/* Toggled by useDarkNavRegion (see @gridline/motion) while a dark-surface
+   section — currently the deliverables band — is the active pinned/visible
+   content, so the translucent white nav doesn't wash out against it. */
+:global(html[data-nav-theme="dark"]) .header {
+  background-color: rgba(17, 17, 17, 0.85);
+  border-bottom-color: var(--gl-color-border-inverse);
+}
+
+:global(html[data-nav-theme="dark"]) .navLink {
+  color: var(--gl-color-text-inverse-secondary);
+}
+
+:global(html[data-nav-theme="dark"]) .navLink:hover {
+  color: var(--gl-color-text-inverse);
+}
+
+/* The wordmark asset is solid black; inverting it is the simplest way to a
+   white mark without shipping a second logo file. */
+:global(html[data-nav-theme="dark"]) .brandMark {
+  filter: invert(1);
+}
+
+:global(html[data-nav-theme="dark"]) .menuButton {
+  color: var(--gl-color-text-inverse);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--gl-header-height);
+  max-width: var(--gl-frame-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gl-space-gutter-sm);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.brandMark {
+  height: 40px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.5vw, 36px);
+}
+
+.navLink {
+  font-size: var(--gl-size-body-md);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-secondary);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.navLink:hover {
+  color: var(--gl-color-text-primary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+}
+
+.menuButton {
+  display: none;
+  padding: var(--gl-space-2);
+  color: var(--gl-color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile drawer
+   -------------------------------------------------------------------------- */
+.drawer {
+  display: none;
+  border-top: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  background-color: var(--gl-color-surface-canvas);
+  padding: var(--gl-space-7) var(--gl-space-gutter-sm) var(--gl-space-11);
+}
+
+.drawerOpen {
+  display: block;
+}
+
+.drawerList {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerLink {
+  display: block;
+  padding: var(--gl-space-6) 0;
+  font-size: var(--gl-size-body-lg);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-primary);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-subtle);
+}
+
+.drawerCta {
+  margin-top: var(--gl-space-11);
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+
+  .menuButton {
+    display: block;
+  }
+}
+
+/* Above the breakpoint the drawer can never be shown, even if state says so. */
+@media (min-width: 769px) {
+  .drawer,
+  .drawerOpen {
+    display: none;
+  }
+}

@@ -1,0 +1,70 @@
+/* ==========================================================================
+   GRIDLINE — TextField / Field
+   ========================================================================== */
+
+.field {
+  display: block;
+}
+
+.label {
+  margin-bottom: var(--gl-space-4);
+}
+
+.input {
+  width: 100%;
+  padding: var(--gl-control-padding-field);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: var(--gl-radius-md);
+  font-size: var(--gl-size-body-md);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-primary);
+  background-color: var(--gl-color-surface-raised);
+  transition:
+    border-color var(--gl-duration-fast) var(--gl-ease-standard),
+    box-shadow var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.input::placeholder {
+  color: var(--gl-color-text-muted);
+}
+
+.input:hover {
+  border-color: var(--gl-color-border-interactive);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--gl-color-border-selected);
+  box-shadow: 0 0 0 3px var(--gl-color-surface-accent-soft);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--gl-color-accent);
+}
+
+.hint {
+  margin-top: var(--gl-space-2);
+}
+
+/* --------------------------------------------------------------------------
+   FieldRow — lays sibling fields out on one line
+   -------------------------------------------------------------------------- */
+.row {
+  display: grid;
+  gap: var(--gl-space-6);
+}
+
+.rowEven {
+  grid-template-columns: 1fr 1fr;
+}
+
+.rowWide {
+  grid-template-columns: 1.4fr 1fr;
+}
+
+@media (max-width: 560px) {
+  .rowEven,
+  .rowWide {
+    grid-template-columns: 1fr;
+  }
+}

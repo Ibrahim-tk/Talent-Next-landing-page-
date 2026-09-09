@@ -1,0 +1,113 @@
+/* ==========================================================================
+   GRIDLINE — Button
+   --------------------------------------------------------------------------
+   System rule: actions are SQUARE. Zero border radius, no border, uppercase
+   tracked-out label. Only two label sizes exist (actionLg / actionMd), which
+   is why Button has exactly two sizes.
+   ========================================================================== */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gl-space-3);
+  border: none;
+  border-radius: var(--gl-radius-none);
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: var(--gl-leading-flat);
+  transition:
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    color var(--gl-duration-fast) var(--gl-ease-standard),
+    transform var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.root:focus-visible {
+  outline: var(--gl-border-width-thick) solid var(--gl-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.root[aria-disabled="true"],
+.root:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Sizes
+   -------------------------------------------------------------------------- */
+.sizeLg {
+  padding: var(--gl-control-padding-lg);
+  font-size: var(--gl-type-action-lg-size);
+  font-weight: var(--gl-type-action-lg-weight);
+  letter-spacing: var(--gl-type-action-lg-tracking);
+}
+
+.sizeMd {
+  padding: var(--gl-control-padding-md);
+  font-size: var(--gl-type-action-md-size);
+  font-weight: var(--gl-type-action-md-weight);
+  letter-spacing: var(--gl-type-action-md-tracking);
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+.variantPrimary {
+  background-color: var(--gl-color-action-primary-bg);
+  color: var(--gl-color-action-primary-fg);
+}
+
+.variantPrimary:hover {
+  background-color: var(--gl-color-action-primary-bg-hover);
+  transform: translateY(-1px);
+}
+
+.variantSecondary {
+  background-color: var(--gl-color-action-secondary-bg);
+  color: var(--gl-color-action-secondary-fg);
+}
+
+.variantSecondary:hover {
+  background-color: var(--gl-color-action-secondary-bg-hover);
+}
+
+.variantGhost {
+  background-color: transparent;
+  color: var(--gl-color-action-ghost-fg);
+}
+
+.variantGhost:hover {
+  background-color: var(--gl-color-action-ghost-bg-hover);
+  color: var(--gl-color-action-ghost-fg-hover);
+}
+
+/* Accent is reserved. It exists for a single hero-level action and is
+   deliberately not used on the current landing page. */
+.variantAccent {
+  background-color: var(--gl-color-accent);
+  color: var(--gl-color-text-inverse);
+}
+
+.variantAccent:hover {
+  background-color: var(--gl-color-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Modifiers
+   -------------------------------------------------------------------------- */
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.affix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}

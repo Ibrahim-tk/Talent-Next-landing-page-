@@ -1,0 +1,358 @@
+/* ==========================================================================
+   DeliverablesSection — "Know Where You Stand and What to Do Next."
+   --------------------------------------------------------------------------
+   Three columns: tab list · ruler gauge · a zero-state-only heading above a
+   fixed image beside a caption column. `.stage` is a native `position:
+   sticky` panel, not a GSAP-pinned one — see DeliverablesSection.tsx's own
+   top comment for how that and the scroll-driven timeline work together.
+   ========================================================================== */
+
+/* Full-bleed breakout: GridCanvas constrains everything to a centred
+   1560px column with two vertical rules at its edges, but this section is a
+   deliberate exception — the dark background is meant to run to the actual
+   edges of the browser window, not stop at that column like every other
+   (light) section does. `left: 50%` + negative margins re-centres a 100vw
+   box on the viewport regardless of how narrow its constrained ancestor is;
+   `.stage` then re-applies that same 1560px measure so the CONTENT still
+   lines up with the rest of the page, only the black behind it is wider.
+
+   Unlike a pinned box, this track's height is deliberately *more* than one
+   viewport: one viewport's worth for `.stage` to occupy while stuck, plus
+   `--extra-scroll` (set inline from `EXTRA_SCROLL_PX`) of real, scrollable
+   height for the timeline to play out across while it's stuck there. Too
+   short and `.stage` would unstick before the timeline finishes; this is
+   what keeps the two in exact lockstep. */
+.scrollTrack {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  height: calc(100vh - var(--gl-header-height) + var(--extra-scroll));
+  background-color: var(--gl-color-surface-inverse);
+  z-index: var(--gl-z-base);
+}
+
+/* `.stage` shares GridCanvas's own max-width, centred the same way, so its
+   edges land exactly on the sitewide two vertical rules — but this
+   section's full-bleed dark background (see `.scrollTrack` above) paints
+   right over those rules for the height of the track. These borders just
+   reinstate them against the dark surface so they read as continuing
+   through, not stopping at the section.
+
+   `position: sticky` is what actually produces the "catches at the top,
+   holds, then releases" behaviour — no JS ever repositions this element.
+   `top` matches `.scrollTrack`'s own reference offset (`--gl-header-height`
+   — the sticky nav's height) so it comes to rest flush beneath the nav,
+   never under it; `height` is an explicit one-viewport value rather than
+   `100%`, since `.scrollTrack` is now much taller than one viewport and a
+   percentage height would just make `.stage` that tall too. */
+.stage {
+  display: grid;
+  grid-template-columns: 28% 6% 66%;
+  align-items: center;
+  width: 100%;
+  max-width: var(--gl-frame-max-width);
+  height: calc(100vh - var(--gl-header-height));
+  margin: 0 auto;
+  padding: 0 var(--gl-space-gutter-sm);
+  border-left: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+  position: sticky;
+  top: var(--gl-header-height);
+}
+
+/* --------------------------------------------------------------------------
+   Column 1 — the tab list
+   -------------------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  padding-right: clamp(10px, 1.5vw, 20px);
+}
+
+.tab {
+  padding: var(--gl-space-7) var(--gl-space-9);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+  color: var(--gl-color-text-inverse-secondary);
+  transition:
+    background-color var(--gl-duration-moderate) var(--gl-ease-standard),
+    color var(--gl-duration-moderate) var(--gl-ease-standard);
+}
+
+.tabActive {
+  background-color: var(--gl-color-accent);
+  color: var(--gl-color-text-inverse);
+  border-bottom-color: var(--gl-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Column 2 — the ruler gauge
+   -------------------------------------------------------------------------- */
+.gauge {
+  height: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Column 3 — the image + caption row
+   -------------------------------------------------------------------------- */
+/* `position: relative` makes this the containing block for `.headingBar`
+   below, which is deliberately taken out of flow so it can never push
+   `.row` off-centre. */
+.content {
+  padding-left: clamp(20px, 3vw, 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  /* `.headingBar` below is anchored purely by `bottom`, so its top edge
+     grows upward by however tall its own text renders — on shorter
+     viewports (or a longer wrap of `deliverablesCopy.description`) that
+     can exceed the headroom the anchor math assumes. Without this, that
+     overflow isn't clipped: it bleeds straight up out of the section and
+     overlaps whatever sits above it (HowItWorksSection) at rest, before
+     any scrolling/animation even starts. Clipping here guarantees the
+     zero state always reads as contained within this section, at worst
+     trimming the top of the heading on very short viewports rather than
+     spilling into the section above. */
+  overflow: hidden;
+}
+
+/* The zero-state-only heading: visible above the image/caption row until
+   the user starts scrolling, then it slides up and fades away for good
+   (see DeliverablesSection.tsx) and never comes back.
+
+   It's positioned absolutely, floating above `.row` rather than sitting in
+   flow above it, specifically so the image stays dead-centre in the
+   section at all times — heading visible or not. `.row`'s own vertical
+   centre sits at 50% of `.content`'s height (it's the only flex child
+   left once this is out of flow); `bottom` is measured from `.content`'s
+   own bottom edge, so anchoring it `.captionRowHeight / 2` above that
+   centreline, plus a gap, puts this heading's own bottom edge right where
+   `.row`'s top edge is, regardless of how tall the heading itself renders.
+   190px is half of `.imageFrame`/`.captionRow`'s shared 380px height
+   (`CAPTION_ROW_HEIGHT` in DeliverablesSection.tsx). The hairline below is
+   the same row-divider every other card row in this system uses
+   (ArchetypeCard, HowItWorksSection); it runs the full width of
+   `.content`, not just the text measure, which is why the max-width lives
+   on `.headline`/`.subtext` themselves rather than on this container. */
+.headingBar {
+  position: absolute;
+  /* Matches `.content`'s own padding-left: an absolutely positioned box is
+     contained by `.content`'s padding edge, not its content edge, so
+     `left: 0` here would ignore that padding and start too far left. */
+  left: clamp(20px, 3vw, 44px);
+  right: 0;
+  /* The gap between this block and `.row` below — kept as small as still
+     reads cleanly (`--gl-space-9`, not the larger `--gl-space-16` this
+     used before) specifically to leave more headroom above for the
+     heading + paragraph to render into before hitting `.content`'s clipped
+     top edge (see `.content`'s own `overflow: hidden` above). */
+  bottom: calc(50% + 190px + var(--gl-space-9));
+  padding-bottom: var(--gl-space-9);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+}
+
+.row {
+  display: flex;
+  /* Centred, not stretched: both `.imageFrame` and `.captionViewport` carry
+     the same explicit height, so this only matters if that ever drifts out
+     of sync. */
+  align-items: center;
+  gap: var(--gl-space-13);
+  padding-bottom: var(--gl-space-14);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+}
+
+/* --------------------------------------------------------------------------
+   The image stage — fixed in place; only one layer visible at a time. Each
+   later layer clip-path-wipes in from the bottom exactly when the caption
+   column finishes drifting onto that stage's row (see
+   DeliverablesSection.tsx), then stays until its own turn to wipe away.
+   -------------------------------------------------------------------------- */
+.imageFrame {
+  position: relative;
+  flex: 0 0 clamp(240px, 18vw, 280px);
+  height: 380px;
+  overflow: hidden;
+  background-color: var(--gl-color-surface-inverse);
+  box-shadow: var(--gl-shadow-md);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.layerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.layerStacked {
+  z-index: calc(var(--gl-z-base) + var(--layer-index));
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+}
+
+/* --------------------------------------------------------------------------
+   The caption column — a real (not absolutely-stacked) list, one row per
+   stage, each exactly `CAPTION_ROW_HEIGHT` (380px, matching `.imageFrame`)
+   tall — see DeliverablesSection.tsx for why that fixed height is what
+   lets the whole column drift by pure arithmetic. `.captionViewport` clips
+   it to that same one-row-tall window, with a gradient fading each end so
+   a row dissolves out the top and dissolves in from the bottom rather than
+   popping at a hard edge.
+   -------------------------------------------------------------------------- */
+.captionViewport {
+  position: relative;
+  flex: 1;
+  height: 380px;
+  overflow: hidden;
+}
+
+.captionStack {
+  will-change: transform;
+}
+
+.captionRow {
+  height: 380px;
+  display: flex;
+  align-items: center;
+}
+
+.headline {
+  margin-bottom: var(--gl-space-5);
+  max-width: 620px;
+}
+
+.subtext {
+  margin-bottom: 0;
+  max-width: 560px;
+}
+
+.captionText {
+  max-width: 460px;
+}
+
+.captionFadeTop,
+.captionFadeBottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(56px, 20%, 110px);
+  pointer-events: none;
+  z-index: var(--gl-z-decoration);
+}
+
+.captionFadeTop {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--gl-color-surface-inverse) 0%,
+    transparent 100%
+  );
+}
+
+.captionFadeBottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--gl-color-surface-inverse) 0%,
+    transparent 100%
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — below the breakpoint the sticky panel reverts to a plain
+   static block (`pinnedMediaQuery` skips the whole timeline down here, so
+   there's no scroll-driven scheduling left to hand off to), the image
+   disappears entirely, the heading simply stays put (its slide-away tween
+   never runs), and every stage's caption is listed below it, in order, as
+   plain vertically-stacked divs. No sticky, no drift, no wipe, no fades.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .scrollTrack {
+    height: auto;
+    padding: var(--gl-space-20) 0;
+  }
+
+  .stage {
+    grid-template-columns: 1fr;
+    gap: var(--gl-space-15);
+    padding: 0 var(--gl-space-9);
+    height: auto;
+    position: static;
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .gauge {
+    display: none;
+  }
+
+  .content {
+    padding-left: 0;
+  }
+
+  /* `.headingBar`'s desktop positioning anchors off `.content`'s height in
+     percentages (see above), which is meaningless once `.stage` collapses
+     to `height: auto` down here — back to a normal, in-flow block, with a
+     plain margin standing in for the gap the `bottom` calc used to give
+     it. */
+  .headingBar {
+    position: static;
+    margin-bottom: var(--gl-space-16);
+  }
+
+  .row {
+    display: block;
+  }
+
+  /* The image doesn't just skip its wipe here — it's not shown at all;
+     the whole timeline never runs below this breakpoint, so there's
+     nothing to reveal it. */
+  .imageFrame {
+    display: none;
+  }
+
+  .captionViewport {
+    height: auto;
+    overflow: visible;
+  }
+
+  .captionStack {
+    transform: none !important;
+  }
+
+  .captionRow {
+    height: auto;
+    padding-bottom: var(--gl-space-9);
+    margin-bottom: var(--gl-space-9);
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-inverse);
+  }
+
+  .captionRow:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  .captionFadeTop,
+  .captionFadeBottom {
+    display: none;
+  }
+}

@@ -1,0 +1,11 @@
+/* ==========================================================================
+   GRIDLINE — Highlight
+   The accent's most restrained use: one emphasised word or phrase inside a
+   heading. The system permits at most one per section.
+   ========================================================================== */
+
+.root {
+  color: var(--gl-color-text-accent);
+  font: inherit;
+  letter-spacing: inherit;
+}

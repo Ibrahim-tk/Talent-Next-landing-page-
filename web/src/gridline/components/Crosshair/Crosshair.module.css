@@ -1,0 +1,68 @@
+/* ==========================================================================
+   GRIDLINE — Crosshair
+   --------------------------------------------------------------------------
+   The `+` registration mark. Borrowed from technical drawing: it marks the
+   corner of a module or a framed element so the eye reads the layout as a
+   measured plan rather than a web page. Purely decorative.
+   ========================================================================== */
+
+.root {
+  position: absolute;
+  font-family: var(--gl-font-mono);
+  line-height: var(--gl-leading-flat);
+  color: var(--gl-color-text-decoration);
+  user-select: none;
+  pointer-events: none;
+  z-index: var(--gl-z-decoration);
+}
+
+/* --------------------------------------------------------------------------
+   Scale
+   -------------------------------------------------------------------------- */
+.scaleModule {
+  font-size: var(--gl-size-body-sm); /* 14px — module corners */
+}
+
+.scaleFrame {
+  font-size: var(--gl-size-nano); /* 11px — framed element corners */
+}
+
+/* --------------------------------------------------------------------------
+   Inset: sits inside the corner it marks (module boxes)
+   -------------------------------------------------------------------------- */
+.insetTopLeft {
+  top: var(--gl-space-5);
+  left: var(--gl-space-6);
+}
+.insetTopRight {
+  top: var(--gl-space-5);
+  right: var(--gl-space-6);
+}
+.insetBottomLeft {
+  bottom: var(--gl-space-5);
+  left: var(--gl-space-6);
+}
+.insetBottomRight {
+  bottom: var(--gl-space-5);
+  right: var(--gl-space-6);
+}
+
+/* --------------------------------------------------------------------------
+   Outset: straddles the corner it marks (dashed frames)
+   -------------------------------------------------------------------------- */
+.outsetTopLeft {
+  top: -6px;
+  left: -5px;
+}
+.outsetTopRight {
+  top: -6px;
+  right: -5px;
+}
+.outsetBottomLeft {
+  bottom: -6px;
+  left: -5px;
+}
+.outsetBottomRight {
+  bottom: -6px;
+  right: -5px;
+}

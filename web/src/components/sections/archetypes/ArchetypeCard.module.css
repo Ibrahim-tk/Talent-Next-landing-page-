@@ -1,0 +1,79 @@
+/* ==========================================================================
+   ArchetypeCard
+   A fixed-width column: tinted portrait with the archetype letter stamped
+   over it, then the name and description below.
+   ========================================================================== */
+
+.card {
+  /* 1.4x the original clamp(270px, 19vw, 305px). */
+  flex: 0 0 clamp(378px, 26.6vw, 427px);
+  /* Taller than the design's original 385px: the extra 134px is the image
+     height increase below, carried straight through to the card. In
+     ArchetypesSection's pinned layout the card row is a fixed-height flex
+     sibling of the heading block, so growing it here is what shrinks the
+     heading's own (flex-centered) padding — see ArchetypesSection.module.css
+     for why that's the intended lever rather than editing `.header`
+     directly. */
+  height: 519px;
+  display: flex;
+  flex-direction: column;
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  background-color: var(--gl-color-surface-raised);
+  position: relative;
+  transition: background-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.card:hover {
+  background-color: var(--gl-color-surface-hover);
+}
+
+.media {
+  position: relative;
+  width: 100%;
+  /* +134px over the original 215px — see the note on `.card` above. */
+  height: 349px;
+  min-height: 349px;
+}
+
+.letter {
+  position: absolute;
+  top: var(--gl-space-7);
+  left: var(--gl-space-8);
+  font-size: 3.5rem;
+  font-weight: var(--gl-weight-bold);
+  color: var(--gl-color-text-inverse);
+  line-height: var(--gl-leading-flat);
+  z-index: var(--gl-z-stage);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.content {
+  padding: var(--gl-space-11) var(--gl-space-9);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.title {
+  margin-bottom: var(--gl-space-3);
+}
+
+@media (max-width: 768px) {
+  /* Below the pin breakpoint the heading's flex-centered padding doesn't
+     exist (ArchetypesSection resets `.header` to `flex: none`), so there's
+     nothing for the taller desktop image to compensate for here — keep
+     mobile at its original, unrelated proportions. */
+  .card {
+    flex: 0 0 260px;
+    height: 420px;
+  }
+
+  .media {
+    height: 215px;
+    min-height: 215px;
+  }
+}

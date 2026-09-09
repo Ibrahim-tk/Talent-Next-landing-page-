@@ -1,0 +1,152 @@
+/* ==========================================================================
+   IntakeForm — the two-panel intake questionnaire
+   --------------------------------------------------------------------------
+   A dark "intro" column (heading + step progress, over a blurred crop of the
+   same textured image the section sits on) beside a light "step" column
+   (the active question). The two panels are grid siblings inside one
+   SurfaceCard, so they always share a row height — whichever panel has more
+   content sets it, and the other stretches to match.
+   ========================================================================== */
+
+.shell {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+}
+
+/* --------------------------------------------------------------------------
+   Intro panel — dark, image-backed, holds the heading and step progress.
+   -------------------------------------------------------------------------- */
+.introPanel {
+  position: relative;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--gl-space-15);
+  padding: var(--gl-space-15);
+}
+
+/* The image itself, blurred and overscanned so the blur never reveals a
+   hard edge. `.shell`'s own `clip` (set via SurfaceCard) keeps this from
+   spilling past the card's rounded corners. */
+.introBg {
+  position: absolute;
+  inset: -15%;
+  background-image: url("/assets/form_gradient.png");
+  background-size: cover;
+  background-position: 30% 25%;
+  filter: blur(36px) saturate(1.15);
+  transform: scale(1.1);
+}
+
+/* A near-black scrim over the blurred image so white text stays legible
+   regardless of where the crop's brighter reds land. */
+.introScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    rgba(8, 4, 5, 0.8) 0%,
+    rgba(4, 2, 3, 0.9) 55%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
+}
+
+.introHeading {
+  position: relative;
+  z-index: var(--gl-z-content);
+  max-width: 22ch;
+}
+
+.introProgress {
+  position: relative;
+  z-index: var(--gl-z-content);
+}
+
+/* --------------------------------------------------------------------------
+   Step panel — the active question, light surface.
+   -------------------------------------------------------------------------- */
+.stepPanel {
+  padding: var(--gl-space-15);
+  background-color: var(--gl-color-surface-raised);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.fieldGroup + .fieldGroup {
+  margin-top: var(--gl-space-11);
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-7);
+}
+
+/* --------------------------------------------------------------------------
+   Step footer: back link · forward button. Pushed to the bottom of the
+   panel via the form's own height + margin-top: auto, so it lines up with
+   the intro panel's progress bar regardless of how tall the question is.
+   -------------------------------------------------------------------------- */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gl-space-7);
+  margin-top: auto;
+  padding-top: var(--gl-space-13);
+}
+
+/* --------------------------------------------------------------------------
+   Success state
+   -------------------------------------------------------------------------- */
+.success {
+  text-align: center;
+  padding: var(--gl-space-13) var(--gl-space-7);
+}
+
+.successBadge {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--gl-radius-full);
+  background: var(--gl-color-surface-success);
+  color: var(--gl-color-text-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--gl-space-7);
+}
+
+.successTitle {
+  margin-bottom: var(--gl-space-3);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — the intro panel collapses to a short banner above the step.
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .introPanel {
+    min-height: 220px;
+    gap: var(--gl-space-13);
+  }
+}
+
+@media (max-width: 560px) {
+  .introPanel,
+  .stepPanel {
+    padding: var(--gl-space-11);
+  }
+
+  .footer {
+    flex-wrap: wrap;
+    gap: var(--gl-space-5);
+  }
+}

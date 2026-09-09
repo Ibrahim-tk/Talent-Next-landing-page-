@@ -1,0 +1,59 @@
+/* ==========================================================================
+   GRIDLINE — ProgressTrack
+   A continuous (non-quantised) progress bar. Used for wizard progress and
+   for scroll-scrubbed section indicators.
+   ========================================================================== */
+
+/* Deliberately no `flex` here. A track that set `flex: 1` would fight the
+   siblings of whatever flex container it lands in (and CSS Module ordering
+   makes that fight unwinnable from the consumer's stylesheet). Consumers that
+   want it to expand say so in their own class. */
+.root {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.sizeHairline {
+  height: 2px;
+  border-radius: var(--gl-radius-none);
+}
+
+.sizeSm {
+  height: 4px;
+  border-radius: var(--gl-radius-sm);
+}
+
+.trackFilled {
+  background-color: var(--gl-color-data-track-alt);
+}
+
+.trackBare {
+  background-color: transparent;
+}
+
+.fill {
+  height: 100%;
+  display: block;
+}
+
+.tonePrimary {
+  background-color: var(--gl-color-action-primary-bg);
+}
+
+.toneAccent {
+  background-color: var(--gl-color-accent);
+}
+
+/* `width` mode animates layout — fine for a wizard step change. */
+.modeWidth {
+  transition: width var(--gl-duration-moderate) var(--gl-ease-standard);
+}
+
+/* `scale` mode is driven on the compositor by GSAP; the element starts at
+   full width and is squashed with transform, so scrubbing stays at 60fps. */
+.modeScale {
+  width: 100%;
+  transform-origin: left center;
+  will-change: transform;
+}

@@ -1,0 +1,85 @@
+/* ==========================================================================
+   GRIDLINE — StepperTimeline
+   --------------------------------------------------------------------------
+   A vertical sequence of labelled steps joined by a dashed spine. Square
+   markers (not dots) and a dashed connector keep it in the drafting-plan
+   idiom rather than the usual product-tour dot-and-line.
+   ========================================================================== */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 290px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: var(--gl-space-5);
+}
+
+.item:last-child {
+  margin-bottom: 0;
+}
+
+.spine {
+  width: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-right: var(--gl-space-6);
+  flex-shrink: 0;
+}
+
+.marker {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--gl-radius-sm);
+  flex-shrink: 0;
+  z-index: var(--gl-z-raised);
+}
+
+.markerComplete {
+  background-color: var(--gl-color-data-fill);
+}
+
+.markerPending {
+  background-color: var(--gl-color-data-inert);
+}
+
+.connector {
+  position: absolute;
+  top: 14px;
+  bottom: -24px;
+  width: var(--gl-border-width-rule);
+  border-left: var(--gl-border-width-rule) dashed;
+  z-index: var(--gl-z-base);
+}
+
+.connectorComplete {
+  border-color: var(--gl-color-data-fill);
+}
+
+.connectorPending {
+  border-color: var(--gl-color-data-inert);
+}
+
+.pill {
+  flex: 1;
+  background-color: var(--gl-color-surface-raised);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-elevated);
+  border-radius: var(--gl-radius-md);
+  padding: var(--gl-space-4) var(--gl-space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-4);
+  box-shadow: var(--gl-shadow-xs);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--gl-color-text-body);
+}

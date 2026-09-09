@@ -1,0 +1,144 @@
+/* ==========================================================================
+   HowItWorksSection — "It Starts with 30 Minutes."
+   --------------------------------------------------------------------------
+   A centred banner heading (same shape as InterviewSection's own) over a
+   two-column matrix: a tall session panel on the left, and two stacked
+   outcome rows on the right sitting on the sunken surface. Three cells of
+   comparable weight, not one oversized hero image plus two smaller ones —
+   the left column's image is bound to its cell (object-fit: cover, same
+   technique as InterviewSection's own media panel) so it scales with the
+   grid instead of dominating it.
+
+   Type is a plain three-step stack, Apple-style — one clear jump per level
+   rather than a pile of near-identical sizes: `display` for the section
+   statement, `headingMd` (semibold, not the heavier bold `headingSm`) for
+   the three panel titles, `bodyLg` for every line of copy underneath.
+   ========================================================================== */
+
+.headerRow {
+  padding: var(--gl-space-block-md) var(--gl-space-gutter-lg);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.heading {
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  align-items: stretch;
+}
+
+/* --------------------------------------------------------------------------
+   Left panel — the conversation
+   -------------------------------------------------------------------------- */
+.sessionPanel {
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(2rem, 4vw, 3rem) clamp(2.25rem, 4.5vw, 3.75rem);
+}
+
+.sessionMedia {
+  position: relative;
+  flex: 1;
+  min-height: 320px;
+  overflow: hidden;
+  border-radius: var(--gl-radius-lg);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-media);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+}
+
+.sessionImage {
+  object-fit: cover;
+}
+
+.sessionText {
+  max-width: 420px;
+}
+
+/* --------------------------------------------------------------------------
+   Right panels — outcomes, stacked, same sunken surface as before
+   -------------------------------------------------------------------------- */
+.outcomes {
+  display: flex;
+  flex-direction: column;
+}
+
+.outcomeRow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--gl-color-surface-sunken);
+  padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
+}
+
+.outcomeRow:not(:last-child) {
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.outcomeVisual {
+  display: flex;
+  align-items: center;
+  padding-bottom: clamp(1.5rem, 3vw, 2rem);
+}
+
+.outcomeText {
+  max-width: 420px;
+}
+
+.panelHeading {
+  margin-bottom: var(--gl-space-4);
+}
+
+/* --------------------------------------------------------------------------
+   Strength card
+   -------------------------------------------------------------------------- */
+.strengthCard {
+  width: 100%;
+  max-width: 290px;
+}
+
+.strengthCardTitle {
+  margin-bottom: var(--gl-space-8);
+}
+
+.strengthRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-6);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sessionPanel {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
+
+  .sessionMedia {
+    min-height: 260px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer row — full-bleed width only, NOT full-screen height, same pattern
+   as InterviewSection's own closing bar. Left empty until there's copy.
+   -------------------------------------------------------------------------- */
+.footerRow {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  padding: var(--gl-space-17);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}

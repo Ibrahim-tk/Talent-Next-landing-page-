@@ -1,0 +1,256 @@
+/* ==========================================================================
+   GRIDLINE — Layer 1: Primitives
+   --------------------------------------------------------------------------
+   Raw, context-free values. Nothing in the application may reference these
+   directly; components consume the semantic aliases in `semantic.css`.
+
+   Prefix convention: `--gl-` (Gridline), matching the short-prefix pattern
+   used by Carbon (`--cds-`) and Polaris (`--p-`).
+
+   Palette provenance: extracted verbatim from the production `css/v4.css`
+   stylesheet so the React build is pixel-identical to the deployed static
+   site. See ../README.md for the audit of near-duplicate values inherited
+   from that source.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     Color — Rose (the single accent family)
+     The source palette lines up exactly with the Tailwind `rose` ramp, so the
+     scale is completed here to give future states somewhere to land.
+     ---------------------------------------------------------------------- */
+  --gl-rose-50: #fff1f2;
+  --gl-rose-100: #ffe4e6;
+  --gl-rose-200: #fecdd3;
+  --gl-rose-300: #fda4af;
+  --gl-rose-400: #fb7185; /* hero glow, outer stop */
+  --gl-rose-500: #f43f5e; /* hero glow, mid stop */
+  --gl-rose-600: #e11d48; /* THE accent */
+  --gl-rose-700: #be123c; /* accent, pressed/hover */
+  --gl-rose-800: #9f1239;
+  --gl-rose-900: #881337;
+
+  /* Crimson used by the archetype media tint (rgba(190, 24, 93)) — a pink-
+     leaning red that is deliberately distinct from --gl-rose-700. */
+  --gl-crimson-700: #be185d;
+
+  /* Signal red. The v4 source uses this slightly warmer red for quantitative
+     marks (meter fills, timeline markers) rather than the rose accent. */
+  --gl-signal-600: #e11d2e;
+
+  /* ------------------------------------------------------------------------
+     Color — Neutral ramp
+     Half-steps exist where the v4 source used two near-identical greys for
+     genuinely different roles. Each is annotated with its origin.
+     ---------------------------------------------------------------------- */
+  --gl-neutral-0: #ffffff;
+  --gl-neutral-25: #fafafb; /* card hover wash */
+  --gl-neutral-50: #f8f9fa; /* inset panel / alternating module */
+  --gl-neutral-100: #f4f4f6; /* secondary button rest */
+  --gl-neutral-150: #f0f0f3; /* hairline, subtle */
+  --gl-neutral-200: #ececef; /* THE grid rule */
+  --gl-neutral-225: #efefef; /* elevated-card hairline */
+  --gl-neutral-250: #e5e7eb; /* meter track, ruler tick */
+  --gl-neutral-300: #e2e8f0; /* progress track */
+  --gl-neutral-400: #d1d5db; /* ruler tick (major), inert marker */
+  --gl-neutral-450: #a1a1aa; /* interactive border, hover */
+  --gl-neutral-500: #9ca3af; /* crosshair glyph */
+  --gl-neutral-600: #71717a; /* text, muted */
+  --gl-neutral-650: #6b7280; /* metric value, de-emphasised */
+  --gl-neutral-700: #52525b; /* text, secondary */
+  --gl-neutral-750: #4b5563; /* body copy on inset panels, icon */
+  --gl-neutral-800: #18181b;
+  --gl-neutral-850: #111827; /* heading, cool black */
+  --gl-neutral-900: #111111; /* text, primary */
+  --gl-neutral-950: #0e1013; /* video letterbox */
+  --gl-neutral-1000: #000000; /* primary action */
+  --gl-neutral-1000-hover: #262626;
+
+  /* ------------------------------------------------------------------------
+     Color — Support (confirmation only; the system has no other hues)
+     ---------------------------------------------------------------------- */
+  --gl-green-50: #f0fdf4;
+  --gl-green-600: #16a34a;
+
+  /* ------------------------------------------------------------------------
+     Typeface
+     ---------------------------------------------------------------------- */
+  --gl-font-sans-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --gl-font-mono-stack: ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, monospace;
+
+  /* `--gl-font-sans` / `--gl-font-mono` are injected by next/font in
+     app/layout.tsx (Plus Jakarta Sans and Geist Mono) and fall back to the
+     stacks above. `--gl-font-accent-mono` (Space Mono) is a one-off, used
+     only by the hero headline's accent word — not a general mono swap. */
+  --gl-font-sans: var(--gl-font-plus-jakarta, var(--gl-font-sans-stack));
+  --gl-font-mono: var(--gl-font-geist-mono, var(--gl-font-mono-stack));
+  --gl-font-accent-mono: var(--gl-font-space-mono, var(--gl-font-mono-stack));
+
+  /* ------------------------------------------------------------------------
+     Type — weight
+     ---------------------------------------------------------------------- */
+  --gl-weight-light: 300;
+  --gl-weight-regular: 400;
+  --gl-weight-medium: 500;
+  --gl-weight-semibold: 600;
+  --gl-weight-bold: 700;
+  --gl-weight-extrabold: 800;
+  --gl-weight-black: 900;
+
+  /* ------------------------------------------------------------------------
+     Type — size
+     Fluid steps clamp between a mobile and a desktop bound; fixed steps are
+     rem values that never scale.
+     ---------------------------------------------------------------------- */
+  --gl-size-display: clamp(2.25rem, 4.15vw, 3.85rem); /* 36 → 62px */
+  --gl-size-editorial: clamp(2.6rem, 3.8vw, 3.6rem); /* 42 → 58px */
+  --gl-size-editorial-tight: clamp(2.4rem, 3.5vw, 3.5rem); /* 38 → 56px */
+  --gl-size-mono-display: clamp(2.2rem, 3.4vw, 3.4rem); /* 35 → 54px */
+  --gl-size-heading-lg: clamp(1.875rem, 3.2vw, 2.5rem); /* 30 → 40px */
+  --gl-size-heading-sm: clamp(1.35rem, 1.85vw, 1.85rem); /* 22 → 30px */
+  --gl-size-mono-heading: clamp(1.2rem, 1.5vw, 1.45rem); /* 19 → 23px */
+  --gl-size-heading-md: clamp(1.125rem, 1.8vw, 1.375rem); /* 18 → 22px */
+  --gl-size-title: 1.1rem; /* 17.6px */
+  --gl-size-body-lg: 1.0625rem; /* 17px */
+  --gl-size-body-base: 1rem; /* 16px */
+  --gl-size-body-md: 0.9375rem; /* 15px */
+  --gl-size-body-sm: 0.875rem; /* 14px */
+  --gl-size-caption: 0.8125rem; /* 13px */
+  --gl-size-micro: 0.75rem; /* 12px */
+  --gl-size-nano: 0.6875rem; /* 11px */
+
+  /* ------------------------------------------------------------------------
+     Type — line height
+     ---------------------------------------------------------------------- */
+  --gl-leading-flat: 1;
+  --gl-leading-display: 1.08;
+  --gl-leading-tight: 1.1;
+  --gl-leading-snug: 1.16;
+  --gl-leading-title: 1.25;
+  --gl-leading-heading: 1.35;
+  --gl-leading-normal: 1.5;
+  --gl-leading-relaxed: 1.55;
+  --gl-leading-body: 1.6;
+
+  /* ------------------------------------------------------------------------
+     Type — letter spacing
+     ---------------------------------------------------------------------- */
+  --gl-tracking-tightest: -0.035em;
+  --gl-tracking-tighter: -0.03em;
+  --gl-tracking-tight: -0.025em;
+  --gl-tracking-snug: -0.02em;
+  --gl-tracking-slight: -0.015em;
+  --gl-tracking-minimal: -0.01em;
+  --gl-tracking-normal: 0;
+  --gl-tracking-wide: 0.05em;
+  --gl-tracking-wider: 0.06em;
+  --gl-tracking-widest: 0.08em;
+
+  /* ------------------------------------------------------------------------
+     Space — 2px base, 4px rhythm
+     ---------------------------------------------------------------------- */
+  --gl-space-0: 0;
+  --gl-space-1: 0.25rem; /* 4 */
+  --gl-space-2: 0.375rem; /* 6 */
+  --gl-space-3: 0.5rem; /* 8 */
+  --gl-space-4: 0.625rem; /* 10 */
+  --gl-space-5: 0.75rem; /* 12 */
+  --gl-space-6: 0.875rem; /* 14 */
+  --gl-space-7: 1rem; /* 16 */
+  --gl-space-8: 1.125rem; /* 18 */
+  --gl-space-9: 1.25rem; /* 20 */
+  --gl-space-10: 1.375rem; /* 22 */
+  --gl-space-11: 1.5rem; /* 24 */
+  --gl-space-12: 1.75rem; /* 28 */
+  --gl-space-13: 2rem; /* 32 */
+  --gl-space-14: 2.25rem; /* 36 */
+  --gl-space-15: 2.5rem; /* 40 */
+  --gl-space-16: 2.75rem; /* 44 */
+  --gl-space-17: 3rem; /* 48 */
+  --gl-space-18: 3.25rem; /* 52 */
+  --gl-space-19: 3.5rem; /* 56 */
+  --gl-space-20: 4rem; /* 64 */
+  --gl-space-21: 4.5rem; /* 72 */
+  --gl-space-22: 5.5rem; /* 88 */
+  --gl-space-23: 6rem; /* 96 */
+
+  /* Fluid space — the module gutters that hold the architectural frame */
+  --gl-space-gutter-sm: clamp(1.25rem, 3.5vw, 3rem); /* 20 → 48 */
+  --gl-space-gutter-md: clamp(1.5rem, 4vw, 3rem); /* 24 → 48 */
+  --gl-space-gutter-lg: clamp(2rem, 4vw, 4rem); /* 32 → 64 */
+  --gl-space-gutter-xl: clamp(2rem, 5vw, 6rem); /* 32 → 96 */
+  --gl-space-block-sm: clamp(2.25rem, 4vh, 3.25rem); /* 36 → 52 */
+  --gl-space-block-md: clamp(2.5rem, 4.5vw, 4rem); /* 40 → 64 */
+  --gl-space-block-lg: clamp(3.5rem, 7vh, 5.5rem); /* 56 → 88 */
+  --gl-space-block-xl: clamp(4rem, 8vh, 6rem); /* 64 → 96 */
+
+  /* ------------------------------------------------------------------------
+     Border — width & radius
+     Gridline is a square system: actions carry zero radius by rule, and
+     radius is reserved for content surfaces (cards, media, inputs).
+     ---------------------------------------------------------------------- */
+  --gl-border-width-hairline: 1px;
+  --gl-border-width-rule: 1.5px;
+  --gl-border-width-thick: 2px;
+
+  --gl-radius-none: 0;
+  --gl-radius-xs: 1px;
+  --gl-radius-sm: 2px;
+  --gl-radius-md: 6px;
+  --gl-radius-lg: 8px;
+  --gl-radius-xl: 12px;
+  --gl-radius-full: 9999px;
+
+  /* ------------------------------------------------------------------------
+     Elevation
+     ---------------------------------------------------------------------- */
+  --gl-shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --gl-shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.05);
+  --gl-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.06);
+  --gl-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --gl-shadow-phone: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.12));
+  --gl-shadow-wiper: 0 0 6px rgba(255, 255, 255, 0.9),
+    0 1px 3px rgba(0, 0, 0, 0.35);
+
+  /* ------------------------------------------------------------------------
+     Motion
+     ---------------------------------------------------------------------- */
+  --gl-duration-instant: 0ms;
+  --gl-duration-fast: 150ms;
+  --gl-duration-moderate: 300ms;
+  --gl-duration-slow: 500ms;
+  --gl-ease-standard: ease-out;
+  --gl-ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+  --gl-transition-fast: 150ms ease-out;
+
+  /* Ambient float loops used by the hero cards */
+  --gl-float-duration-a: 6s;
+  --gl-float-duration-b: 6.5s;
+  --gl-float-duration-c: 5.5s;
+
+  /* ------------------------------------------------------------------------
+     Layout — the architectural frame
+     ---------------------------------------------------------------------- */
+  --gl-frame-max-width: min(1560px, 95vw);
+  --gl-header-height: 78px;
+  --gl-measure-prose: 680px;
+  --gl-measure-header: 960px;
+  --gl-measure-hero: 1240px;
+  --gl-measure-form: 680px;
+  --gl-measure-stage: 1160px;
+
+  /* ------------------------------------------------------------------------
+     Z-index — one ordered scale, no magic numbers in components
+     ---------------------------------------------------------------------- */
+  --gl-z-below: -1;
+  --gl-z-base: 1;
+  --gl-z-raised: 2;
+  --gl-z-stage: 3;
+  --gl-z-floating: 4;
+  --gl-z-content: 5;
+  --gl-z-decoration: 10;
+  --gl-z-header: 100;
+  --gl-z-overlay: 200;
+}

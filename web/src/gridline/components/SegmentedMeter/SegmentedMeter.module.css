@@ -1,0 +1,63 @@
+/* ==========================================================================
+   GRIDLINE — SegmentedMeter
+   --------------------------------------------------------------------------
+   The system's only quantitative mark. A continuous value is quantised into
+   discrete ticks, which keeps the visual language consistent with the ruler
+   gauges and the architectural grid — no smooth gradient bars anywhere.
+
+   Two sizes exist because the source design used two:
+     - `sm`  4px tall, 20 segments — skill strength inside a card
+     - `md`  8px tall, 15 segments — the TALENT level track
+   ========================================================================== */
+
+.root {
+  display: flex;
+  width: 100%;
+}
+
+.sizeSm {
+  gap: 3px;
+  height: 4px;
+}
+
+.sizeMd {
+  gap: var(--gl-space-1);
+  height: 8px;
+}
+
+.segment {
+  flex: 1;
+  height: 100%;
+  background-color: var(--gl-color-data-track);
+}
+
+.sizeSm .segment {
+  border-radius: var(--gl-radius-xs);
+}
+
+.sizeMd .segment {
+  background-color: var(--gl-color-data-track-alt);
+  border-radius: var(--gl-radius-sm);
+}
+
+.filled {
+  background-color: var(--gl-color-data-fill);
+}
+
+.sizeMd .filled {
+  background-color: var(--gl-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Row layout — name/value pair above the meter
+   -------------------------------------------------------------------------- */
+.row {
+  width: 100%;
+}
+
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gl-space-2);
+}

@@ -1,0 +1,65 @@
+/* ==========================================================================
+   SeeItInActionSection
+   --------------------------------------------------------------------------
+   The header sits in the normal constrained column (via SectionHeader);
+   `.headerPad` adds extra breathing room above it on top of SectionHeader's
+   own padding — a deliberately generous gap so this section reads as
+   clearly separate from whatever dark, dense band (Deliverables) precedes
+   it, rather than the two running into each other. The media card is
+   bounded by the GridCanvas's own vertical rules like every other section —
+   it grows up to the full width of that column (`.body` carries no side
+   padding, so the card's edges land flush on the canvas borders at its
+   resting size) but never past them; there is no viewport-breakout here.
+   ========================================================================== */
+
+/* The grid-texture box that opens the section — a plain tiled repeat of the
+   same blueprint pattern the hero masks radially behind its headline;
+   here it's left unmasked and simply capped with a hairline, so it reads
+   as its own small "graph paper" panel rather than an atmospheric fade. */
+.gridBox {
+  height: clamp(120px, 18vh, 200px);
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-position: center top;
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.headerPad {
+  padding-top: var(--gl-space-block-md);
+}
+
+.body {
+  padding: var(--gl-space-block-md) 0 0;
+}
+
+.frameWrap {
+  transform-origin: top center;
+}
+
+/* A plain 16:9 stage, no rounded corners or border once it's flush with the
+   canvas rules — matches VideoFrame's shape (see gridline/Media) without
+   depending on that component while the placeholder image stands in. */
+.mediaFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--gl-color-surface-letterbox);
+}
+
+.mediaImage {
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Footer row — same padding/height as InterviewSection's own `.footerRow`
+   (`--gl-space-17`, a fixed 48px rather than a fluid block space — see that
+   file's comment for why). Unlike that one, this row does NOT break out to
+   the viewport: this section's own rule is that nothing here bleeds past
+   the GridCanvas's vertical rules, so it stays a plain full-width block
+   inside the module instead of the `left: 50%` / negative-margin trick.
+   -------------------------------------------------------------------------- */
+.footerRow {
+  padding: var(--gl-space-17);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}

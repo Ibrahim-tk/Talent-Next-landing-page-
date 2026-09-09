@@ -1,0 +1,21 @@
+/* ==========================================================================
+   GRIDLINE — GridCanvas
+   --------------------------------------------------------------------------
+   The namesake of the design system. Two constant 1px vertical rules run
+   uninterrupted from the top of the sticky header to the bottom of the
+   footer. No section may bleed past them.
+
+   Everything on the page lives inside exactly one GridCanvas.
+   ========================================================================== */
+
+.root {
+  width: 100%;
+  max-width: var(--gl-frame-max-width);
+  margin: 0 auto;
+  background-color: var(--gl-color-surface-canvas);
+  border-left: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  position: relative;
+}

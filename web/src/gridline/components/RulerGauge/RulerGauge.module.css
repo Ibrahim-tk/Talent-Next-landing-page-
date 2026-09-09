@@ -1,0 +1,65 @@
+/* ==========================================================================
+   GRIDLINE — RulerGauge
+   --------------------------------------------------------------------------
+   A vertical measuring rule. Two identical tick tracks are stacked: the base
+   track in grey, and an accent-coloured copy on top whose `clip-path` an
+   animation driver reveals from the bottom up. The result reads as a scale
+   filling with elapsed progress.
+   ========================================================================== */
+
+.root {
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--gl-space-5) 0;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.tick {
+  display: block;
+  /* Every tick — minor and major alike — is the same width: the midpoint
+     between what used to be a 12px minor tick and a 24px major one. Major
+     ticks still read as distinct via height and colour alone (see
+     `.tickMajor` below), not by sticking out further than the rest. */
+  width: 18px;
+  height: var(--gl-border-width-rule);
+  background-color: var(--gl-color-tick);
+  border-radius: 0 var(--gl-radius-xs) var(--gl-radius-xs) 0;
+  align-self: flex-start;
+}
+
+.tickMajor {
+  height: var(--gl-border-width-thick);
+  background-color: var(--gl-color-tick-major);
+}
+
+/* The accent overlay. Starts fully clipped; the driver animates
+   `clip-path: inset(0 0 <n>% 0)` toward 0. */
+.progressTrack {
+  clip-path: inset(0 0 100% 0);
+  -webkit-clip-path: inset(0 0 100% 0);
+  will-change: clip-path;
+  z-index: var(--gl-z-raised);
+}
+
+.progressTrack .tick,
+.progressTrack .tickMajor {
+  background-color: var(--gl-color-tick-progress);
+}

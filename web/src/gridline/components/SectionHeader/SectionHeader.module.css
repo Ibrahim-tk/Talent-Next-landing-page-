@@ -1,0 +1,28 @@
+/* ==========================================================================
+   GRIDLINE — SectionHeader
+   The standard centred module header: heading, optional supporting line, and
+   a hairline that closes the header off from the module's content.
+   ========================================================================== */
+
+.root {
+  padding: var(--gl-space-block-lg) var(--gl-space-gutter-md)
+    var(--gl-space-block-sm) var(--gl-space-gutter-md);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  text-align: center;
+  max-width: var(--gl-measure-header);
+  margin: 0 auto;
+}
+
+.heading {
+  margin-bottom: var(--gl-space-5);
+}
+
+.description {
+  max-width: var(--gl-measure-prose);
+  margin: 0 auto;
+}
+
+.noRule {
+  border-bottom: none;
+}

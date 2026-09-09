@@ -1,0 +1,260 @@
+/* ==========================================================================
+   GRIDLINE — Text
+   Every type role in the system, one class each. Components never set
+   font-size directly; they pick a role.
+   ========================================================================== */
+
+.root {
+  font-family: var(--gl-font-sans);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------------------
+   Roles
+   -------------------------------------------------------------------------- */
+.display {
+  font-size: var(--gl-type-display-size);
+  line-height: var(--gl-type-display-leading);
+  font-weight: var(--gl-type-display-weight);
+  letter-spacing: var(--gl-type-display-tracking);
+  color: var(--gl-color-text-primary);
+  text-wrap: balance;
+}
+
+.editorial {
+  font-size: var(--gl-type-editorial-size);
+  line-height: var(--gl-type-editorial-leading);
+  font-weight: var(--gl-type-editorial-weight);
+  letter-spacing: var(--gl-type-editorial-tracking);
+  color: var(--gl-color-text-primary);
+  text-wrap: balance;
+}
+
+.editorialTight {
+  font-size: var(--gl-size-editorial-tight);
+  line-height: var(--gl-leading-display);
+  font-weight: var(--gl-weight-extrabold);
+  letter-spacing: var(--gl-tracking-tightest);
+  color: var(--gl-color-text-primary);
+  text-wrap: balance;
+}
+
+.monoDisplay {
+  font-family: var(--gl-font-mono);
+  font-size: var(--gl-type-mono-display-size);
+  line-height: var(--gl-type-mono-display-leading);
+  font-weight: var(--gl-type-mono-display-weight);
+  letter-spacing: var(--gl-type-mono-display-tracking);
+  color: var(--gl-color-text-heading);
+}
+
+.headingLg {
+  font-size: var(--gl-type-heading-lg-size);
+  line-height: var(--gl-type-heading-lg-leading);
+  font-weight: var(--gl-type-heading-lg-weight);
+  letter-spacing: var(--gl-type-heading-lg-tracking);
+  color: var(--gl-color-text-primary);
+  text-wrap: balance;
+}
+
+.headingSm {
+  font-size: var(--gl-type-heading-sm-size);
+  line-height: var(--gl-type-heading-sm-leading);
+  font-weight: var(--gl-type-heading-sm-weight);
+  letter-spacing: var(--gl-type-heading-sm-tracking);
+  color: var(--gl-color-text-heading);
+}
+
+.monoHeading {
+  font-family: var(--gl-font-mono);
+  font-size: var(--gl-type-mono-heading-size);
+  line-height: var(--gl-type-mono-heading-leading);
+  font-weight: var(--gl-type-mono-heading-weight);
+  letter-spacing: var(--gl-type-mono-heading-tracking);
+  color: var(--gl-color-text-heading);
+}
+
+.headingMd {
+  font-size: var(--gl-type-heading-md-size);
+  line-height: var(--gl-type-heading-md-leading);
+  font-weight: var(--gl-type-heading-md-weight);
+  letter-spacing: var(--gl-type-heading-md-tracking);
+  color: var(--gl-color-text-primary);
+}
+
+.title {
+  font-size: var(--gl-type-title-size);
+  line-height: var(--gl-type-title-leading);
+  font-weight: var(--gl-type-title-weight);
+  color: var(--gl-color-text-primary);
+}
+
+.bodyLg {
+  font-size: var(--gl-type-body-lg-size);
+  line-height: var(--gl-type-body-lg-leading);
+  font-weight: var(--gl-type-body-lg-weight);
+  color: var(--gl-color-text-secondary);
+}
+
+.bodyMd {
+  font-size: var(--gl-type-body-md-size);
+  line-height: var(--gl-type-body-md-leading);
+  font-weight: var(--gl-type-body-md-weight);
+  color: var(--gl-color-text-secondary);
+}
+
+.bodySm {
+  font-size: var(--gl-type-body-sm-size);
+  line-height: var(--gl-type-body-sm-leading);
+  font-weight: var(--gl-type-body-sm-weight);
+  color: var(--gl-color-text-secondary);
+}
+
+.caption {
+  font-size: var(--gl-type-caption-size);
+  line-height: var(--gl-type-caption-leading);
+  font-weight: var(--gl-type-caption-weight);
+  color: var(--gl-color-text-muted);
+}
+
+.label {
+  display: block;
+  font-size: var(--gl-type-label-size);
+  font-weight: var(--gl-type-label-weight);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-primary);
+}
+
+.kicker {
+  display: block;
+  font-family: var(--gl-font-mono);
+  font-size: var(--gl-type-kicker-size);
+  font-weight: var(--gl-type-kicker-weight);
+  letter-spacing: var(--gl-type-kicker-tracking);
+  line-height: var(--gl-leading-normal);
+  text-transform: uppercase;
+  color: var(--gl-color-text-accent);
+}
+
+.metric {
+  font-size: var(--gl-size-micro);
+  font-weight: var(--gl-weight-semibold);
+  line-height: var(--gl-leading-flat);
+  letter-spacing: var(--gl-tracking-minimal);
+  color: var(--gl-color-text-metric);
+}
+
+.metricLabel {
+  font-size: var(--gl-size-micro);
+  font-weight: var(--gl-weight-semibold);
+  line-height: var(--gl-leading-flat);
+  letter-spacing: var(--gl-tracking-minimal);
+  color: var(--gl-color-text-heading);
+}
+
+.actionLg {
+  font-size: var(--gl-type-action-lg-size);
+  font-weight: var(--gl-type-action-lg-weight);
+  letter-spacing: var(--gl-type-action-lg-tracking);
+  line-height: var(--gl-leading-flat);
+  text-transform: uppercase;
+}
+
+.actionMd {
+  font-size: var(--gl-type-action-md-size);
+  font-weight: var(--gl-type-action-md-weight);
+  letter-spacing: var(--gl-type-action-md-tracking);
+  line-height: var(--gl-leading-flat);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  display: block;
+  font-size: var(--gl-type-action-md-size);
+  font-weight: var(--gl-type-action-md-weight);
+  letter-spacing: var(--gl-type-action-md-tracking);
+  line-height: var(--gl-leading-flat);
+  text-transform: uppercase;
+  color: var(--gl-color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Tone overrides — applied after the role so colour wins
+   -------------------------------------------------------------------------- */
+.tonePrimary {
+  color: var(--gl-color-text-primary);
+}
+.toneHeading {
+  color: var(--gl-color-text-heading);
+}
+.toneSecondary {
+  color: var(--gl-color-text-secondary);
+}
+.toneBody {
+  color: var(--gl-color-text-body);
+}
+.toneMuted {
+  color: var(--gl-color-text-muted);
+}
+.toneAccent {
+  color: var(--gl-color-text-accent);
+}
+.toneInverse {
+  color: var(--gl-color-text-inverse);
+}
+.toneInverseSecondary {
+  color: var(--gl-color-text-inverse-secondary);
+}
+.toneSuccess {
+  color: var(--gl-color-text-success);
+}
+.toneInherit {
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Alignment
+   -------------------------------------------------------------------------- */
+.alignStart {
+  text-align: left;
+}
+.alignCenter {
+  text-align: center;
+}
+.alignEnd {
+  text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   Weight overrides — the system allows promoting body copy to bold without
+   changing its role.
+   -------------------------------------------------------------------------- */
+.weightRegular {
+  font-weight: var(--gl-weight-regular);
+}
+.weightMedium {
+  font-weight: var(--gl-weight-medium);
+}
+.weightSemibold {
+  font-weight: var(--gl-weight-semibold);
+}
+.weightBold {
+  font-weight: var(--gl-weight-bold);
+}
+
+/* --------------------------------------------------------------------------
+   Measure — caps line length for readability
+   -------------------------------------------------------------------------- */
+.measureNarrow {
+  max-width: 350px;
+}
+.measureMedium {
+  max-width: 440px;
+}
+.measureWide {
+  max-width: var(--gl-measure-prose);
+}
+.measureProse {
+  max-width: 720px;
+}

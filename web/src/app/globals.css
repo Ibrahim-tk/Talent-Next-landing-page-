@@ -1,0 +1,26 @@
+/* ==========================================================================
+   Application-level globals.
+   Gridline owns the reset and the tokens; this file holds only things that
+   are genuinely page-scoped.
+   ========================================================================== */
+
+/* Skip link — visible only once focused. */
+.skip-link {
+  position: absolute;
+  top: var(--gl-space-3);
+  left: var(--gl-space-3);
+  z-index: var(--gl-z-overlay);
+  padding: var(--gl-space-5) var(--gl-space-7);
+  background-color: var(--gl-color-action-primary-bg);
+  color: var(--gl-color-action-primary-fg);
+  font-size: var(--gl-size-micro);
+  font-weight: var(--gl-weight-bold);
+  letter-spacing: var(--gl-tracking-wide);
+  text-transform: uppercase;
+  transform: translateY(-200%);
+  transition: transform var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}

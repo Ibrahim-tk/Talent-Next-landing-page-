@@ -1,0 +1,128 @@
+/* ==========================================================================
+   ArchetypesSection — "TALENT Looks Different for Everyone."
+   --------------------------------------------------------------------------
+   Full-width heading, a horizontally scrubbed card row, then a footer note —
+   all three pinned together as one unit (.pinWrapper) sized to exactly one
+   screen (100vh, minus the sticky nav). That fixed sizing is what keeps the
+   footer's CTA on screen alongside the heading and the cards for the whole
+   time the row is scrubbing, instead of it sitting below the fold until the
+   scrub finishes.
+
+   `.header` is the one flexible piece: it's a flex child with no fixed
+   height, so it simply absorbs whatever room is left over after the
+   fixed-height card row and footer are accounted for, and centers its text
+   within that space. That is the section's only "breathing room" — on a
+   short viewport it shrinks toward `.header`'s own padding; on a tall one
+   the heading gets extra vertical padding for free, all in service of never
+   creating dead space between the pinned block and the module's own edges.
+   ========================================================================== */
+
+.wrapper {
+  /* No desktop padding here on purpose — `.pinWrapper` below owns the
+     section's full height (viewport minus the sticky nav) directly, so this
+     wrapper is a plain pass-through until the mobile override further down
+     brings back ordinary block padding once the pin (and this sizing) is
+     skipped. */
+}
+
+/* --------------------------------------------------------------------------
+   The pinned unit — heading + scrubbed track + footer CTA, one screen tall
+   -------------------------------------------------------------------------- */
+.pinWrapper {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - var(--gl-header-height));
+  height: calc(100vh - var(--gl-header-height));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Explicit, and below the sticky nav's z-index — GSAP switches this to
+     position: fixed while pinned, and a fixed element with no z-index of its
+     own would otherwise stack ambiguously against z-index:auto siblings. */
+  z-index: var(--gl-z-base);
+}
+
+.header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--gl-space-15) var(--gl-space-gutter-lg);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.heading {
+  margin-bottom: var(--gl-space-5);
+  max-width: 700px;
+}
+
+.viewport {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  /* Fixed-height cards — never let the column flex-shrink this below its
+     content height to make room for `.header`. */
+  flex-shrink: 0;
+}
+
+.track {
+  display: flex;
+  will-change: transform;
+}
+
+/* The accent hairline under the track, scrubbed in step with it. Pulled up
+   1px so it sits on the card's own bottom rule rather than beside it. */
+.progress {
+  margin-top: -1px;
+  z-index: var(--gl-z-floating);
+}
+
+/* --------------------------------------------------------------------------
+   Footer note
+   -------------------------------------------------------------------------- */
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: var(--gl-space-7);
+  padding: var(--gl-space-11) var(--gl-space-gutter-lg);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — below the pin breakpoint the track becomes a plain
+   touch-scrollable row.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .wrapper {
+    padding-top: var(--gl-space-14);
+    padding-bottom: var(--gl-space-14);
+  }
+
+  /* The pin (and with it, the 100vh sizing that makes `.header` flexible)
+     is skipped below this breakpoint — fall back to auto height so the
+     heading, track, and footer just stack in normal flow. */
+  .pinWrapper {
+    height: auto;
+    min-height: auto;
+  }
+
+  .header {
+    flex: none;
+    padding: var(--gl-space-9);
+  }
+
+  .viewport {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .footerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--gl-space-9);
+  }
+}

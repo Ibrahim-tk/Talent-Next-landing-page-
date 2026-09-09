@@ -1,0 +1,38 @@
+/* ==========================================================================
+   GRIDLINE — GridModule
+   --------------------------------------------------------------------------
+   A ruled "box" on the canvas. Modules stack vertically and are separated by
+   a single hairline; `rule` controls which edges draw one so consecutive
+   modules never double up on a 2px seam.
+   ========================================================================== */
+
+.root {
+  width: 100%;
+  position: relative;
+  background-color: var(--gl-color-surface-canvas);
+}
+
+.ruleBottom {
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.ruleTop {
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.ruleBlock {
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+/* Modules that host a full-bleed treatment (hero glow, pinned stages) clip
+   their own overflow so nothing escapes the frame. */
+.clip {
+  overflow: hidden;
+}
+
+.sunken {
+  background-color: var(--gl-color-surface-sunken);
+}

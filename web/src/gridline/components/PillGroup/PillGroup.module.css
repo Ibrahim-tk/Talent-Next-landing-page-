@@ -1,0 +1,68 @@
+/* ==========================================================================
+   GRIDLINE — PillGroup / PillOption
+   --------------------------------------------------------------------------
+   A single-select choice group rendered as a grid of rounded options. Unlike
+   Button (square, uppercase, an action), a pill is *data entry*: sentence
+   case, left-aligned, softly rounded — it reads as a field, not a CTA.
+   ========================================================================== */
+
+.group {
+  display: grid;
+  gap: var(--gl-space-4);
+}
+
+.columns1 {
+  grid-template-columns: 1fr;
+}
+
+.columns2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.columns3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.option {
+  padding: var(--gl-space-9) var(--gl-space-11);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: var(--gl-radius-md);
+  font-size: var(--gl-size-body-md);
+  font-weight: var(--gl-weight-medium);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-primary);
+  background-color: var(--gl-color-surface-raised);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.option:hover {
+  border-color: var(--gl-color-border-interactive);
+  background-color: var(--gl-color-surface-sunken);
+}
+
+.option:focus-visible {
+  outline: var(--gl-border-width-thick) solid var(--gl-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Selection reads as an accent-tinted field, not a filled action — a pill
+   is data entry, and red-on-white keeps that legible next to the black
+   Button primitives that sit in the same form. */
+.selected,
+.selected:hover {
+  border-color: var(--gl-color-accent);
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .columns2,
+  .columns3 {
+    grid-template-columns: 1fr;
+  }
+}

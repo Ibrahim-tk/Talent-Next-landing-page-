@@ -1,0 +1,15 @@
+/* ==========================================================================
+   GRIDLINE — DashedFrame
+   --------------------------------------------------------------------------
+   A dashed enclosure with crosshairs at all four corners, used to stage the
+   single most important action on a page. It reads as a callout box on a
+   technical drawing.
+   ========================================================================== */
+
+.root {
+  position: relative;
+  display: inline-flex;
+  padding: var(--gl-space-4) var(--gl-space-5);
+  border: var(--gl-border-width-hairline) dashed var(--gl-color-border-dashed);
+  background-color: rgba(255, 255, 255, 0.7);
+}

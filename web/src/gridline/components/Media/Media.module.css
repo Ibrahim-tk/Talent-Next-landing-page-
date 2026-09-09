@@ -1,0 +1,79 @@
+/* ==========================================================================
+   GRIDLINE — Media primitives
+   TintedMedia · Thumbnail · VideoFrame
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TintedMedia
+   The house photographic treatment: an image on a black plate under a flat
+   accent-colour overlay at 30% opacity. It unifies stock photography from
+   mixed sources into one palette, which is why photography never appears
+   untinted.
+   -------------------------------------------------------------------------- */
+.tinted {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--gl-color-surface-inverse);
+}
+
+.tintedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Faces sit high in the frame in this library, so bias the crop upward. */
+  object-position: center 20%;
+}
+
+.tintedOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--gl-color-media-tint);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Thumbnail — a small captioned media card
+   -------------------------------------------------------------------------- */
+.thumbnail {
+  border-radius: var(--gl-radius-md);
+  overflow: hidden;
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.thumbnailMedia {
+  aspect-ratio: 16 / 10;
+  position: relative;
+  background: var(--gl-neutral-1000);
+}
+
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+}
+
+.thumbnailCaption {
+  padding: var(--gl-space-3) var(--gl-space-4);
+  background: var(--gl-color-surface-raised);
+}
+
+/* --------------------------------------------------------------------------
+   VideoFrame — a letterboxed 16:9 stage
+   -------------------------------------------------------------------------- */
+.videoFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background-color: var(--gl-color-surface-letterbox);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: var(--gl-radius-lg);
+  overflow: hidden;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

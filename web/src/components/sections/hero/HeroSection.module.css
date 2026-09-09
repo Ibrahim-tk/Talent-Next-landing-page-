@@ -1,0 +1,91 @@
+/* ==========================================================================
+   HeroSection
+   ========================================================================== */
+
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: var(--gl-space-block-xl) var(--gl-space-11) 0 var(--gl-space-11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The blueprint grid, faded out radially so it reads only behind the copy and
+   never competes with the phone. */
+.blueprint {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-position: center top;
+  pointer-events: none;
+  z-index: var(--gl-z-base);
+  mask-image: var(--gl-mask-blueprint);
+  -webkit-mask-image: var(--gl-mask-blueprint);
+}
+
+.content {
+  position: relative;
+  z-index: var(--gl-z-content);
+  max-width: var(--gl-measure-hero);
+  text-align: center;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* A flex column, rather than relying on natural inline wrapping, is what
+   guarantees each of the three segments sits on its own line and is
+   centered as a unit — `text-wrap: balance` alone can't promise that once
+   the accent word's size is this different from its neighbours. */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--gl-space-9);
+  max-width: 1180px;
+}
+
+/* "Uncover the" / "You Already Have." — the system typeface, sized as the
+   frame around the accent word rather than the focal point. */
+.headlineLead {
+  font-family: var(--gl-font-sans);
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  font-weight: var(--gl-weight-bold);
+  letter-spacing: var(--gl-tracking-tightest);
+}
+
+/* "TALENT" — the one word the heading exists to deliver: a distinct mono
+   face, sized well past the lead lines so the hierarchy reads instantly.
+   The descendant selector (rather than relying on source order against
+   Highlight's own `.root`) is what guarantees this wins over `font: inherit`. */
+.headline .headlineAccent {
+  display: inline-block;
+  font-family: var(--gl-font-accent-mono);
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-weight: var(--gl-weight-bold);
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+
+.body {
+  max-width: 720px;
+  margin-bottom: var(--gl-space-14);
+}
+
+.ctaDock {
+  margin-bottom: var(--gl-space-4);
+}
+
+.microcopy {
+  display: block;
+  margin-bottom: clamp(2rem, 4vh, 3rem);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: var(--gl-space-17);
+  }
+}

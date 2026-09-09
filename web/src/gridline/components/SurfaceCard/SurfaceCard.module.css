@@ -1,0 +1,108 @@
+/* ==========================================================================
+   GRIDLINE — SurfaceCard
+   --------------------------------------------------------------------------
+   The generic content surface. Radius and elevation are opt-in: modules on
+   the grid stay square and flat, while *artefacts* shown inside a module
+   (a metric card, a thumbnail, a form panel) round and lift so they read as
+   objects placed on the plan.
+   ========================================================================== */
+
+.root {
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Tone
+   -------------------------------------------------------------------------- */
+.toneRaised {
+  background-color: var(--gl-color-surface-raised);
+}
+.toneSunken {
+  background-color: var(--gl-color-surface-sunken);
+}
+.toneCanvas {
+  background-color: var(--gl-color-surface-canvas);
+}
+.toneNone {
+  background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Border
+   -------------------------------------------------------------------------- */
+.borderRule {
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+.borderElevated {
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-elevated);
+}
+.borderNone {
+  border: none;
+}
+
+/* --------------------------------------------------------------------------
+   Radius
+   -------------------------------------------------------------------------- */
+.radiusNone {
+  border-radius: var(--gl-radius-none);
+}
+.radiusMd {
+  border-radius: var(--gl-radius-md);
+}
+.radiusLg {
+  border-radius: var(--gl-radius-lg);
+}
+.radiusXl {
+  border-radius: var(--gl-radius-xl);
+}
+
+/* --------------------------------------------------------------------------
+   Elevation
+   -------------------------------------------------------------------------- */
+.elevationNone {
+  box-shadow: none;
+}
+.elevationXs {
+  box-shadow: var(--gl-shadow-xs);
+}
+.elevationSm {
+  box-shadow: var(--gl-shadow-sm);
+}
+.elevationLg {
+  box-shadow: var(--gl-shadow-lg);
+}
+
+/* --------------------------------------------------------------------------
+   Padding
+   -------------------------------------------------------------------------- */
+.paddingNone {
+  padding: 0;
+}
+.paddingSm {
+  padding: var(--gl-space-4) var(--gl-space-6);
+}
+.paddingMd {
+  padding: var(--gl-space-6);
+}
+.paddingLg {
+  padding: var(--gl-space-10) var(--gl-space-11);
+}
+.paddingXl {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+/* --------------------------------------------------------------------------
+   Modifiers
+   -------------------------------------------------------------------------- */
+.clip {
+  overflow: hidden;
+}
+
+.interactive {
+  transition: background-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.interactive:hover {
+  background-color: var(--gl-color-surface-hover);
+}
