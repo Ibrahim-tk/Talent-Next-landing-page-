@@ -16,19 +16,20 @@
 :root {
   /* ------------------------------------------------------------------------
      Color — Rose (the single accent family)
-     The source palette lines up exactly with the Tailwind `rose` ramp, so the
-     scale is completed here to give future states somewhere to land.
+     Rebased on the brand accent #BD2A2A (rose-600); the rest of the ramp is
+     that same hue/saturation carried across the original scale's lightness
+     steps, so every tint and shade stays in the new red family.
      ---------------------------------------------------------------------- */
-  --gl-rose-50: #fff1f2;
-  --gl-rose-100: #ffe4e6;
-  --gl-rose-200: #fecdd3;
-  --gl-rose-300: #fda4af;
-  --gl-rose-400: #fb7185; /* hero glow, outer stop */
-  --gl-rose-500: #f43f5e; /* hero glow, mid stop */
-  --gl-rose-600: #e11d48; /* THE accent */
-  --gl-rose-700: #be123c; /* accent, pressed/hover */
-  --gl-rose-800: #9f1239;
-  --gl-rose-900: #881337;
+  --gl-rose-50: #fdf5f5;
+  --gl-rose-100: #faebeb;
+  --gl-rose-200: #f6d7d7;
+  --gl-rose-300: #f0b9b9;
+  --gl-rose-400: #e58989; /* hero glow, outer stop */
+  --gl-rose-500: #da5959; /* hero glow, mid stop */
+  --gl-rose-600: #bd2a2a; /* THE accent */
+  --gl-rose-700: #972222; /* accent, pressed/hover */
+  --gl-rose-800: #8e2020;
+  --gl-rose-900: #7c1c1c;
 
   /* Crimson used by the archetype media tint (rgba(190, 24, 93)) — a pink-
      leaning red that is deliberately distinct from --gl-rose-700. */
@@ -103,16 +104,22 @@
      Type — size
      Fluid steps clamp between a mobile and a desktop bound; fixed steps are
      rem values that never scale.
+
+     The display/editorial/heading steps below were trimmed down from a
+     louder, much larger scale to sit closer to body size — an Apple-style
+     restraint where hierarchy comes mostly from weight and color, not sheer
+     scale, so the heading-to-body ratio stays subtle. (The hero headline is
+     exempt: it sets its own sizes directly in HeroSection.module.css.)
      ---------------------------------------------------------------------- */
-  --gl-size-display: clamp(2.25rem, 4.15vw, 3.85rem); /* 36 → 62px */
-  --gl-size-editorial: clamp(2.6rem, 3.8vw, 3.6rem); /* 42 → 58px */
-  --gl-size-editorial-tight: clamp(2.4rem, 3.5vw, 3.5rem); /* 38 → 56px */
-  --gl-size-mono-display: clamp(2.2rem, 3.4vw, 3.4rem); /* 35 → 54px */
-  --gl-size-heading-lg: clamp(1.875rem, 3.2vw, 2.5rem); /* 30 → 40px */
-  --gl-size-heading-sm: clamp(1.35rem, 1.85vw, 1.85rem); /* 22 → 30px */
-  --gl-size-mono-heading: clamp(1.2rem, 1.5vw, 1.45rem); /* 19 → 23px */
-  --gl-size-heading-md: clamp(1.125rem, 1.8vw, 1.375rem); /* 18 → 22px */
-  --gl-size-title: 1.1rem; /* 17.6px */
+  --gl-size-display: clamp(1.875rem, 2.8vw, 2.75rem); /* 30 → 44px */
+  --gl-size-editorial: clamp(2rem, 2.8vw, 2.75rem); /* 32 → 44px */
+  --gl-size-editorial-tight: clamp(1.875rem, 2.6vw, 2.5rem); /* 30 → 40px */
+  --gl-size-mono-display: clamp(1.75rem, 2.4vw, 2.25rem); /* 28 → 36px */
+  --gl-size-heading-lg: clamp(1.5rem, 2.2vw, 1.875rem); /* 24 → 30px */
+  --gl-size-heading-sm: clamp(1.25rem, 1.5vw, 1.375rem); /* 20 → 22px */
+  --gl-size-mono-heading: clamp(1.125rem, 1.35vw, 1.25rem); /* 18 → 20px */
+  --gl-size-heading-md: clamp(1.0625rem, 1.4vw, 1.1875rem); /* 17 → 19px */
+  --gl-size-title: 1.1rem; /* 17.6px — already close to body-lg; left as-is */
   --gl-size-body-lg: 1.0625rem; /* 17px */
   --gl-size-body-base: 1rem; /* 16px */
   --gl-size-body-md: 0.9375rem; /* 15px */

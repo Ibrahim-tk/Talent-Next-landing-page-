@@ -8,15 +8,21 @@
    the left column's image has a capped height (object-fit: cover, same
    technique as InterviewSection's own media panel) rather than stretching
    to fill its column, so it stays modestly sized regardless of how tall the
-   right column's content runs. Both columns' content is vertically centred
-   within their own cell (`justify-content: center` on .sessionPanel and
-   .outcomeRow) so the image, and each visual + caption block on the right,
-   sit on the same centred line instead of pinned to the top.
+   right column's content runs.
+
+   Alignment is deliberately asymmetric within each cell: the left panel's
+   image + caption sit as one block pinned to the bottom of the column
+   (`justify-content: flex-end` on .sessionPanel). Each right-side row splits
+   that block apart instead — the visual gets its own flexible box centred
+   both ways (`.outcomeVisual { flex: 1; align-items/justify-content: center }`)
+   so it floats in the upper area of the cell, while the caption is left
+   outside that flexible box, which pushes it to sit flush at the bottom.
 
    Type is a plain three-step stack, Apple-style — one clear jump per level
    rather than a pile of near-identical sizes: `display` for the section
-   statement, `headingMd` (semibold, not the heavier bold `headingSm`) for
-   the three panel titles, `bodyLg` for every line of copy underneath.
+   statement, `headingMd` for the left panel's own title, the smaller
+   `title` role (see ArchetypeCard) for the two right-side row titles, and
+   `bodyLg` for every line of copy underneath.
    ========================================================================== */
 
 .headerRow {
@@ -44,7 +50,7 @@
     var(--gl-color-border-rule);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   padding: clamp(2rem, 4vw, 3rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
 
@@ -78,7 +84,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   background-color: var(--gl-color-surface-sunken);
   padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
@@ -89,13 +94,20 @@
 }
 
 .outcomeVisual {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding-bottom: clamp(1.5rem, 3vw, 2rem);
 }
 
 .outcomeText {
   max-width: 420px;
+}
+
+.stepperWrap {
+  width: 100%;
+  max-width: 240px;
 }
 
 .panelHeading {
@@ -107,7 +119,7 @@
    -------------------------------------------------------------------------- */
 .strengthCard {
   width: 100%;
-  max-width: 290px;
+  max-width: 240px;
 }
 
 .strengthCardTitle {

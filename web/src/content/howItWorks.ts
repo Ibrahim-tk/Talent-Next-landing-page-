@@ -3,7 +3,9 @@ import type { StepperStep } from "@gridline";
 /** "It Starts with 30 Minutes." — the three-panel process matrix. */
 
 export const howItWorksCopy = {
-  heading: "It Starts with 30 Minutes.",
+  headingBefore: "It Starts with ",
+  headingAccent: "30",
+  headingAfter: " Minutes.",
   session: {
     heading: "Talk About You",
     description:

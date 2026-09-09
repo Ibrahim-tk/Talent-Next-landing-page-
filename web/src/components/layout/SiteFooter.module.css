@@ -1,48 +1,60 @@
 /* ==========================================================================
    SiteFooter
+   --------------------------------------------------------------------------
+   A ruled row of cells, edge-to-edge between the GridCanvas's two constant
+   verticals — same idiom as the HowItWorks matrix and ArchetypeCard rail:
+   full-bleed panels, no gaps, divided only by the sitewide hairline. No
+   border-top here — GetStartedSection already draws its own `rule="bottom"`
+   immediately above, and a second line would double that seam.
    ========================================================================== */
 
 .footer {
   width: 100%;
   background-color: var(--gl-color-surface-raised);
-  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  padding: clamp(3rem, 6vh, 4.5rem) var(--gl-space-gutter-md)
-    clamp(2rem, 4vh, 3rem) var(--gl-space-gutter-md);
 }
 
-.top {
+.row {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.3fr) repeat(4, minmax(150px, 1fr));
+  align-items: stretch;
+}
+
+.cell {
+  padding: clamp(2.75rem, 5vw, 4rem) clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.cell:not(:last-child) {
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.brandCell {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--gl-space-17);
-  flex-wrap: wrap;
-  gap: var(--gl-space-13);
-}
-
-.brandCol {
-  max-width: 320px;
+  flex-direction: column;
 }
 
 .brandMark {
-  height: 20px;
+  height: 22px;
   width: auto;
-  margin-bottom: var(--gl-space-5);
+  margin-bottom: var(--gl-space-9);
 }
 
-.columns {
-  display: flex;
-  gap: clamp(2rem, 5vw, 4rem);
-  flex-wrap: wrap;
+.tagline {
+  max-width: 300px;
+}
+
+.copyright {
+  margin-top: var(--gl-space-17);
 }
 
 .columnTitle {
-  margin-bottom: var(--gl-space-7);
+  margin-bottom: var(--gl-space-9);
 }
 
 .linkList {
   display: flex;
   flex-direction: column;
-  gap: var(--gl-space-4);
+  gap: var(--gl-space-6);
 }
 
 .link {
@@ -55,12 +67,45 @@
   color: var(--gl-color-text-primary);
 }
 
-.bottom {
-  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  padding-top: var(--gl-space-11);
+.socialRow {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--gl-space-7);
+  gap: var(--gl-space-6);
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: var(--gl-radius-none);
+  color: var(--gl-color-text-secondary);
+  transition:
+    border-color var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.socialLink:hover {
+  border-color: var(--gl-color-border-interactive);
+  background-color: var(--gl-color-surface-hover);
+  color: var(--gl-color-text-primary);
+}
+
+.credit {
+  margin-top: var(--gl-space-17);
+}
+
+@media (max-width: 860px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .cell:not(:last-child) {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
 }

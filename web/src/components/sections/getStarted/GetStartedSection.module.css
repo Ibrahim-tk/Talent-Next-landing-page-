@@ -1,16 +1,28 @@
 /* ==========================================================================
-   GetStartedSection — backdrop for the three-step intake questionnaire
+   GetStartedSection — backdrop for the four-step intake questionnaire
    --------------------------------------------------------------------------
-   The card (IntakeForm) does all of the visual work; this section just
-   frames it in the same textured image its own intro panel's backdrop-filter
-   reads from, so the panel's blur looks like a continuous surface rather
-   than a separate cropped image. Padding is deliberately tight (not the
-   usual fluid `--gl-space-block-xl`) so the whole card sits inside one
-   viewport height instead of pushing the fold below it.
+   `.bleed` breaks out of GridCanvas's own max-width column the same way
+   DeliverablesSection's `.scrollTrack` does — `left: 50%` + a negative
+   `margin-left` re-centres a 100vw box on the true viewport regardless of
+   how narrow the constrained canvas around it is — so the textured image
+   runs to the actual browser edges instead of stopping at the sitewide
+   column. `.wrapper` then re-applies a normal centred measure so the card
+   itself still lines up with the rest of the page; only the image behind
+   it is wider. GridModule's own `rule="bottom"` hairline (at the ordinary
+   canvas width) is what closes the section out.
+
+   `.bleed`'s side padding uses the same fluid gutter every other section's
+   outer edge uses (`--gl-space-gutter-lg`) rather than a fixed value, so
+   the card keeps a visible margin from the true viewport edge at every
+   width instead of nearly touching it on narrower screens.
    ========================================================================== */
 
-.section {
-  padding: var(--gl-space-15) var(--gl-space-11);
+.bleed {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  padding: var(--gl-space-15) var(--gl-space-gutter-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,6 +33,6 @@
 
 .wrapper {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1200px;
   margin: 0 auto;
 }

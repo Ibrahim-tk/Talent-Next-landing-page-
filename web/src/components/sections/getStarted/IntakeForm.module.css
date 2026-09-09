@@ -13,16 +13,26 @@
    via `backdrop-filter`, tinted and blurred, so the texture reads as one
    continuous surface rather than a cropped, repositioned copy. The step
    panel instead paints fully opaque white over the same image.
+
+   The border is set here rather than via SurfaceCard's own `border="rule"`
+   — that token (`--gl-color-border-rule`) is a light neutral tuned for a
+   white background, so it read as a stark white outline against the image.
+   A low-opacity white instead stays a soft, subtle line against both the
+   image and the white step panel.
    ========================================================================== */
 
 .shell {
   display: grid;
   grid-template-columns: 5fr 7fr;
+  border: var(--gl-border-width-hairline) solid rgba(255, 255, 255, 0.25);
 }
 
 /* --------------------------------------------------------------------------
    Intro panel — background/backdrop-filter only; no image layer, no
-   gradient scrim, no elements besides the heading and progress bar.
+   elements besides the heading and progress bar. A lighter blur than a
+   first pass (which read as a flat black square) plus a soft white sheen
+   from the top-left keeps the underlying image's colour readable through
+   the frost instead of homogenising it to solid black.
    -------------------------------------------------------------------------- */
 .introPanel {
   position: relative;
@@ -32,20 +42,35 @@
   justify-content: space-between;
   gap: var(--gl-space-9);
   padding: var(--gl-space-11);
-  background-color: rgba(10, 6, 7, 0.6);
-  backdrop-filter: blur(40px) saturate(1.1);
-  -webkit-backdrop-filter: blur(40px) saturate(1.1);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
+    rgba(12, 7, 8, 0.48);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
 }
 
-.introHeading {
+/* Doubled-up selector so this reliably beats `Text`'s own `.headingLg`
+   class (equal specificity otherwise makes the winner depend on CSS
+   module import order) — sized and weighted down from that default, which
+   read too large and too heavy for a form-panel heading rather than a
+   page-level one. */
+.introPanel .introHeading {
   max-width: 22ch;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: var(--gl-weight-semibold);
 }
 
 /* --------------------------------------------------------------------------
-   Step panel — the active question, pure opaque white.
+   Step panel — the active question, pure opaque white. A fixed `min-height`
+   (comfortably taller than any single step's own content) is what actually
+   locks the card to one height across all four steps: `.stepPanel` is a
+   grid item in `.shell`, so its row stretches to match, and `.introPanel`
+   stretches right along with it — the card no longer resizes on
+   Next/Previous the way it did when one step held two stacked questions.
    -------------------------------------------------------------------------- */
 .stepPanel {
   position: relative;
+  min-height: 420px;
   padding: var(--gl-space-11);
   background-color: var(--gl-color-surface-raised);
 }

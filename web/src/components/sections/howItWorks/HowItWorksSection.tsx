@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import {
   GridModule,
+  Highlight,
   MeterRow,
   StepperTimeline,
   SurfaceCard,
@@ -32,7 +33,9 @@ export function HowItWorksSection() {
           align="center"
           className={styles.heading}
         >
-          {howItWorksCopy.heading}
+          {howItWorksCopy.headingBefore}
+          <Highlight>{howItWorksCopy.headingAccent}</Highlight>
+          {howItWorksCopy.headingAfter}
         </Text>
       </div>
 
@@ -86,7 +89,7 @@ export function HowItWorksSection() {
               </SurfaceCard>
             </div>
             <div className={styles.outcomeText}>
-              <Text variant="headingMd" className={styles.panelHeading}>
+              <Text variant="title" className={styles.panelHeading}>
                 {analysis.heading}
               </Text>
               <Text variant="bodyLg" tone="body" measure="medium">
@@ -97,13 +100,15 @@ export function HowItWorksSection() {
 
           <div className={styles.outcomeRow}>
             <div className={styles.outcomeVisual}>
-              <StepperTimeline
-                steps={nextSteps}
-                label="Your recommended next steps"
-              />
+              <div className={styles.stepperWrap}>
+                <StepperTimeline
+                  steps={nextSteps}
+                  label="Your recommended next steps"
+                />
+              </div>
             </div>
             <div className={styles.outcomeText}>
-              <Text variant="headingMd" className={styles.panelHeading}>
+              <Text variant="title" className={styles.panelHeading}>
                 {nextStepsCopy.heading}
               </Text>
               <Text variant="bodyLg" tone="body" measure="medium">

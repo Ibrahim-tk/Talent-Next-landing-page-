@@ -17,7 +17,7 @@
   --gl-color-surface-muted: var(--gl-neutral-100);
   --gl-color-surface-inverse: var(--gl-neutral-900);
   --gl-color-surface-letterbox: var(--gl-neutral-950);
-  --gl-color-surface-accent-soft: rgba(225, 29, 72, 0.08);
+  --gl-color-surface-accent-soft: rgba(189, 42, 42, 0.08);
   --gl-color-surface-success: var(--gl-green-50);
 
   /* ------------------------------------------------------------------------
@@ -60,7 +60,7 @@
      ---------------------------------------------------------------------- */
   --gl-color-accent: var(--gl-rose-600);
   --gl-color-accent-hover: var(--gl-rose-700);
-  --gl-color-accent-glow: rgba(225, 29, 72, 0.35);
+  --gl-color-accent-glow: rgba(189, 42, 42, 0.35);
 
   /* Quantitative marks — meter fills and timeline markers. The v4 source
      deliberately warms these off the rose accent; see ../README.md. */
@@ -104,9 +104,9 @@
   /* Hero ambient glow */
   --gl-gradient-hero-glow: radial-gradient(
     ellipse 85% 100% at 50% 100%,
-    rgba(225, 29, 72, 0.65) 0%,
-    rgba(244, 63, 94, 0.45) 28%,
-    rgba(251, 113, 133, 0.2) 55%,
+    rgba(189, 42, 42, 0.65) 0%,
+    rgba(218, 89, 89, 0.45) 28%,
+    rgba(229, 137, 137, 0.2) 55%,
     transparent 78%
   );
 
@@ -130,52 +130,55 @@
      variant is a single lookup rather than four.
      ---------------------------------------------------------------------- */
 
-  /* display — the hero headline */
+  /* display — reused as a large section heading (How It Works). The hero
+     headline does NOT read this: it wraps its own text in spans that set
+     font-size/weight directly, overriding whatever is inherited here. */
   --gl-type-display-size: var(--gl-size-display);
   --gl-type-display-leading: var(--gl-leading-tight);
-  --gl-type-display-weight: var(--gl-weight-semibold);
+  --gl-type-display-weight: var(--gl-weight-medium);
   --gl-type-display-tracking: var(--gl-tracking-tightest);
 
-  /* editorial — heavyweight section statements (archetypes, interview) */
+  /* editorial — section statements (archetypes, interview). Was extrabold;
+     dropped to semibold so scale, not weight, carries the emphasis. */
   --gl-type-editorial-size: var(--gl-size-editorial);
   --gl-type-editorial-leading: var(--gl-leading-display);
-  --gl-type-editorial-weight: var(--gl-weight-extrabold);
+  --gl-type-editorial-weight: var(--gl-weight-semibold);
   --gl-type-editorial-tracking: var(--gl-tracking-tightest);
 
   /* monoDisplay — the "It Starts with 30 Minutes." banner */
   --gl-type-mono-display-size: var(--gl-size-mono-display);
   --gl-type-mono-display-leading: var(--gl-leading-tight);
-  --gl-type-mono-display-weight: var(--gl-weight-bold);
+  --gl-type-mono-display-weight: var(--gl-weight-semibold);
   --gl-type-mono-display-tracking: var(--gl-tracking-tighter);
 
   /* headingLg — standard section heading */
   --gl-type-heading-lg-size: var(--gl-size-heading-lg);
   --gl-type-heading-lg-leading: var(--gl-leading-snug);
-  --gl-type-heading-lg-weight: var(--gl-weight-bold);
+  --gl-type-heading-lg-weight: var(--gl-weight-semibold);
   --gl-type-heading-lg-tracking: var(--gl-tracking-tighter);
 
   /* headingSm — sequenced step titles */
   --gl-type-heading-sm-size: var(--gl-size-heading-sm);
   --gl-type-heading-sm-leading: var(--gl-leading-title);
-  --gl-type-heading-sm-weight: var(--gl-weight-bold);
+  --gl-type-heading-sm-weight: var(--gl-weight-semibold);
   --gl-type-heading-sm-tracking: var(--gl-tracking-tight);
 
   /* monoHeading — column headings inside the How It Works matrix */
   --gl-type-mono-heading-size: var(--gl-size-mono-heading);
   --gl-type-mono-heading-leading: var(--gl-leading-heading);
-  --gl-type-mono-heading-weight: var(--gl-weight-bold);
+  --gl-type-mono-heading-weight: var(--gl-weight-semibold);
   --gl-type-mono-heading-tracking: var(--gl-tracking-snug);
 
   /* headingMd — card titles */
   --gl-type-heading-md-size: var(--gl-size-heading-md);
   --gl-type-heading-md-leading: var(--gl-leading-heading);
-  --gl-type-heading-md-weight: var(--gl-weight-semibold);
+  --gl-type-heading-md-weight: var(--gl-weight-medium);
   --gl-type-heading-md-tracking: var(--gl-tracking-slight);
 
-  /* title — compact card title */
+  /* title — compact card title, already close to body-lg in size */
   --gl-type-title-size: var(--gl-size-title);
   --gl-type-title-leading: var(--gl-leading-title);
-  --gl-type-title-weight: var(--gl-weight-bold);
+  --gl-type-title-weight: var(--gl-weight-medium);
   --gl-type-title-tracking: var(--gl-tracking-normal);
 
   /* bodyLg / bodyMd / bodySm / caption */

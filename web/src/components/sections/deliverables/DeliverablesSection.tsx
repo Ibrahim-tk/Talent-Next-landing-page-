@@ -323,6 +323,13 @@ export function DeliverablesSection() {
                   {deliverableStages.map((stage) => (
                     <div key={stage.id} className={styles.captionRow}>
                       <Text
+                        variant="headingMd"
+                        tone="inverse"
+                        className={styles.captionHeading}
+                      >
+                        {stage.tabLabel}
+                      </Text>
+                      <Text
                         variant="bodyMd"
                         tone="inverseSecondary"
                         className={styles.captionText}

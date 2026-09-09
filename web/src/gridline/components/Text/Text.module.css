@@ -34,7 +34,7 @@
 .editorialTight {
   font-size: var(--gl-size-editorial-tight);
   line-height: var(--gl-leading-display);
-  font-weight: var(--gl-weight-extrabold);
+  font-weight: var(--gl-weight-semibold);
   letter-spacing: var(--gl-tracking-tightest);
   color: var(--gl-color-text-primary);
   text-wrap: balance;

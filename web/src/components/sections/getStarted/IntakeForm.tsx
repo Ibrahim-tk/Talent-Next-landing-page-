@@ -24,13 +24,13 @@ import {
 
 import styles from "./IntakeForm.module.css";
 
-const STEP_COUNT = 3;
+const STEP_COUNT = 4;
 
 /** Percentage shown on the intro panel's progress bar for each step. */
-const stepProgress = [33, 66, 100] as const;
+const stepProgress = [25, 50, 75, 100] as const;
 
 /**
- * The three-step intake questionnaire.
+ * The four-step intake questionnaire.
  *
  * Laid out as two panels sharing one card: a dark intro panel (heading +
  * step progress, tinted and blurred via `backdrop-filter` straight through
@@ -38,6 +38,13 @@ const stepProgress = [33, 66, 100] as const;
  * beside the active step's fields, painted fully opaque white. Real React
  * state drives which step is mounted, so the browser's own validation can
  * run on submit.
+ *
+ * One question per step (situation, goal, call time + a free-text note,
+ * then contact info) rather than the earlier grouping of two pill
+ * questions into a single step — that step ran noticeably taller than
+ * the others, so the card visibly resized on every Next/Previous. The
+ * step panel also carries a fixed `min-height` (see IntakeForm.module.css)
+ * so the card holds one height across all four steps regardless.
  */
 export function IntakeForm() {
   const [step, setStep] = useState(1);
@@ -70,7 +77,7 @@ export function IntakeForm() {
     <SurfaceCard
       tone="none"
       radius="none"
-      border="rule"
+      border="none"
       elevation="none"
       padding="none"
       clip
@@ -107,34 +114,34 @@ export function IntakeForm() {
         ) : (
           <form onSubmit={handleSubmit} className={styles.form}>
             {step === 1 ? (
-              <>
-                <div className={styles.fieldGroup}>
-                  <Field label={formLabels.situation} required>
-                    <PillGroup
-                      label={formLabels.situation}
-                      options={situationOptions}
-                      value={situation}
-                      onChange={setSituation}
-                      columns={1}
-                    />
-                  </Field>
-                </div>
-
-                <div className={styles.fieldGroup}>
-                  <Field label={formLabels.goal} required>
-                    <PillGroup
-                      label={formLabels.goal}
-                      options={goalOptions}
-                      value={goal}
-                      onChange={setGoal}
-                      columns={1}
-                    />
-                  </Field>
-                </div>
-              </>
+              <div className={styles.fieldGroup}>
+                <Field label={formLabels.situation} required>
+                  <PillGroup
+                    label={formLabels.situation}
+                    options={situationOptions}
+                    value={situation}
+                    onChange={setSituation}
+                    columns={1}
+                  />
+                </Field>
+              </div>
             ) : null}
 
             {step === 2 ? (
+              <div className={styles.fieldGroup}>
+                <Field label={formLabels.goal} required>
+                  <PillGroup
+                    label={formLabels.goal}
+                    options={goalOptions}
+                    value={goal}
+                    onChange={setGoal}
+                    columns={1}
+                  />
+                </Field>
+              </div>
+            ) : null}
+
+            {step === 3 ? (
               <>
                 <div className={styles.fieldGroup}>
                   <Field label={formLabels.callTime} required>
@@ -160,7 +167,7 @@ export function IntakeForm() {
               </>
             ) : null}
 
-            {step === 3 ? (
+            {step === 4 ? (
               <div className={styles.fieldStack}>
                 <FieldRow>
                   <TextField
@@ -214,7 +221,7 @@ export function IntakeForm() {
 
             {/* Values from earlier steps travel with the submission even
                 though their controls are unmounted. */}
-            {step === 3 ? (
+            {step === 4 ? (
               <>
                 <input type="hidden" name="situation" value={situation} />
                 <input type="hidden" name="goal" value={goal} />

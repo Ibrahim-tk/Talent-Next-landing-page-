@@ -3,9 +3,17 @@
  * text can be edited (or later swapped for a CMS query) without touching JSX.
  */
 
+import type { IconName } from "@gridline";
+
 export interface NavItem {
   label: string;
   href: string;
+}
+
+export interface SocialItem {
+  label: string;
+  href: string;
+  icon: IconName;
 }
 
 export const primaryNav: readonly NavItem[] = [
@@ -51,6 +59,12 @@ export const footerColumns: readonly {
       { label: site.supportEmail, href: `mailto:${site.supportEmail}` },
     ],
   },
+];
+
+export const footerSocial: readonly SocialItem[] = [
+  { label: "LinkedIn", href: "#", icon: "linkedin" },
+  { label: "X (Twitter)", href: "#", icon: "x" },
+  { label: "Instagram", href: "#", icon: "instagram" },
 ];
 
 export const footerCopy = {

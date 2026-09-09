@@ -18,7 +18,10 @@ export type IconName =
   | "book"
   | "clock"
   | "star"
-  | "check";
+  | "check"
+  | "linkedin"
+  | "x"
+  | "instagram";
 
 export interface IconProps {
   name: IconName;
@@ -72,6 +75,28 @@ const iconPaths: Record<IconName, ReactNode> = {
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
   ),
   check: <polyline points="20 6 9 17 4 12" />,
+  linkedin: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <line x1="7.5" y1="6.5" x2="7.5" y2="6.5" />
+      <line x1="7.5" y1="10" x2="7.5" y2="17" />
+      <line x1="11" y1="10" x2="11" y2="17" />
+      <path d="M11 12.5a2.5 2.5 0 0 1 5 0V17" />
+    </>
+  ),
+  x: (
+    <>
+      <line x1="5" y1="5" x2="19" y2="19" />
+      <line x1="19" y1="5" x2="5" y2="19" />
+    </>
+  ),
+  instagram: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <line x1="17" y1="7" x2="17" y2="7" />
+    </>
+  ),
 };
 
 export function Icon({
