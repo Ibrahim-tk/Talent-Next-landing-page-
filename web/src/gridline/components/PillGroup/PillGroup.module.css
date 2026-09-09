@@ -24,7 +24,7 @@
 }
 
 .option {
-  padding: var(--gl-space-9) var(--gl-space-11);
+  padding: var(--gl-space-6) var(--gl-space-9);
   border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   border-radius: var(--gl-radius-md);
   font-size: var(--gl-size-body-md);

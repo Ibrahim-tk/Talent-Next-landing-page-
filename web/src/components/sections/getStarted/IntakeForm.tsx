@@ -66,16 +66,15 @@ export function IntakeForm() {
 
   return (
     <SurfaceCard
-      radius="xl"
+      tone="none"
+      radius="none"
       border="rule"
-      elevation="sm"
+      elevation="none"
       padding="none"
       clip
       className={styles.shell}
     >
       <div className={styles.introPanel}>
-        <div className={styles.introBg} aria-hidden="true" />
-        <div className={styles.introScrim} aria-hidden="true" />
         <Text
           variant="headingLg"
           as="h2"
@@ -88,7 +87,6 @@ export function IntakeForm() {
           value={progress}
           tone="accent"
           size="sm"
-          className={styles.introProgress}
           label={`Step ${step} of ${STEP_COUNT}`}
         />
       </div>

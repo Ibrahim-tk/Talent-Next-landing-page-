@@ -2,12 +2,15 @@
    GetStartedSection — backdrop for the three-step intake questionnaire
    --------------------------------------------------------------------------
    The card (IntakeForm) does all of the visual work; this section just
-   frames it in the same textured image its own intro panel blurs, so the
-   card reads as sitting on top of it rather than floating on plain white.
+   frames it in the same textured image its own intro panel's backdrop-filter
+   reads from, so the panel's blur looks like a continuous surface rather
+   than a separate cropped image. Padding is deliberately tight (not the
+   usual fluid `--gl-space-block-xl`) so the whole card sits inside one
+   viewport height instead of pushing the fold below it.
    ========================================================================== */
 
 .section {
-  padding: var(--gl-space-block-xl) var(--gl-space-11);
+  padding: var(--gl-space-15) var(--gl-space-11);
   display: flex;
   flex-direction: column;
   align-items: center;

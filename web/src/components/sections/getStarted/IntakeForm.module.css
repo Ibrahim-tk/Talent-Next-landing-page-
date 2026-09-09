@@ -1,11 +1,18 @@
 /* ==========================================================================
    IntakeForm — the two-panel intake questionnaire
    --------------------------------------------------------------------------
-   A dark "intro" column (heading + step progress, over a blurred crop of the
-   same textured image the section sits on) beside a light "step" column
-   (the active question). The two panels are grid siblings inside one
+   A dark "intro" column (heading + step progress) beside a light "step"
+   column (the active question). The two panels are grid siblings inside one
    SurfaceCard, so they always share a row height — whichever panel has more
    content sets it, and the other stretches to match.
+
+   The card itself carries no fill (`tone="none"` on SurfaceCard) and no
+   radius — it's a hairline-bordered window cut straight into the section's
+   own background image, not a separate object floating on top of it. The
+   intro panel doesn't reassert that image: it lets it bleed straight through
+   via `backdrop-filter`, tinted and blurred, so the texture reads as one
+   continuous surface rather than a cropped, repositioned copy. The step
+   panel instead paints fully opaque white over the same image.
    ========================================================================== */
 
 .shell {
@@ -14,60 +21,32 @@
 }
 
 /* --------------------------------------------------------------------------
-   Intro panel — dark, image-backed, holds the heading and step progress.
+   Intro panel — background/backdrop-filter only; no image layer, no
+   gradient scrim, no elements besides the heading and progress bar.
    -------------------------------------------------------------------------- */
 .introPanel {
   position: relative;
-  min-height: 460px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--gl-space-15);
-  padding: var(--gl-space-15);
-}
-
-/* The image itself, blurred and overscanned so the blur never reveals a
-   hard edge. `.shell`'s own `clip` (set via SurfaceCard) keeps this from
-   spilling past the card's rounded corners. */
-.introBg {
-  position: absolute;
-  inset: -15%;
-  background-image: url("/assets/form_gradient.png");
-  background-size: cover;
-  background-position: 30% 25%;
-  filter: blur(36px) saturate(1.15);
-  transform: scale(1.1);
-}
-
-/* A near-black scrim over the blurred image so white text stays legible
-   regardless of where the crop's brighter reds land. */
-.introScrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    165deg,
-    rgba(8, 4, 5, 0.8) 0%,
-    rgba(4, 2, 3, 0.9) 55%,
-    rgba(0, 0, 0, 0.95) 100%
-  );
+  gap: var(--gl-space-9);
+  padding: var(--gl-space-11);
+  background-color: rgba(10, 6, 7, 0.6);
+  backdrop-filter: blur(40px) saturate(1.1);
+  -webkit-backdrop-filter: blur(40px) saturate(1.1);
 }
 
 .introHeading {
-  position: relative;
-  z-index: var(--gl-z-content);
   max-width: 22ch;
 }
 
-.introProgress {
-  position: relative;
-  z-index: var(--gl-z-content);
-}
-
 /* --------------------------------------------------------------------------
-   Step panel — the active question, light surface.
+   Step panel — the active question, pure opaque white.
    -------------------------------------------------------------------------- */
 .stepPanel {
-  padding: var(--gl-space-15);
+  position: relative;
+  padding: var(--gl-space-11);
   background-color: var(--gl-color-surface-raised);
 }
 
@@ -78,13 +57,13 @@
 }
 
 .fieldGroup + .fieldGroup {
-  margin-top: var(--gl-space-11);
+  margin-top: var(--gl-space-9);
 }
 
 .fieldStack {
   display: flex;
   flex-direction: column;
-  gap: var(--gl-space-7);
+  gap: var(--gl-space-6);
 }
 
 /* --------------------------------------------------------------------------
@@ -98,7 +77,7 @@
   justify-content: space-between;
   gap: var(--gl-space-7);
   margin-top: auto;
-  padding-top: var(--gl-space-13);
+  padding-top: var(--gl-space-9);
 }
 
 /* --------------------------------------------------------------------------
@@ -106,7 +85,7 @@
    -------------------------------------------------------------------------- */
 .success {
   text-align: center;
-  padding: var(--gl-space-13) var(--gl-space-7);
+  padding: var(--gl-space-11) var(--gl-space-7);
 }
 
 .successBadge {
@@ -134,15 +113,15 @@
   }
 
   .introPanel {
-    min-height: 220px;
-    gap: var(--gl-space-13);
+    min-height: 200px;
+    gap: var(--gl-space-7);
   }
 }
 
 @media (max-width: 560px) {
   .introPanel,
   .stepPanel {
-    padding: var(--gl-space-11);
+    padding: var(--gl-space-9);
   }
 
   .footer {
