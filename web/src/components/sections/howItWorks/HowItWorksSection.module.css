@@ -5,9 +5,13 @@
    two-column matrix: a tall session panel on the left, and two stacked
    outcome rows on the right sitting on the sunken surface. Three cells of
    comparable weight, not one oversized hero image plus two smaller ones —
-   the left column's image is bound to its cell (object-fit: cover, same
-   technique as InterviewSection's own media panel) so it scales with the
-   grid instead of dominating it.
+   the left column's image has a capped height (object-fit: cover, same
+   technique as InterviewSection's own media panel) rather than stretching
+   to fill its column, so it stays modestly sized regardless of how tall the
+   right column's content runs. Both columns' content is vertically centred
+   within their own cell (`justify-content: center` on .sessionPanel and
+   .outcomeRow) so the image, and each visual + caption block on the right,
+   sit on the same centred line instead of pinned to the top.
 
    Type is a plain three-step stack, Apple-style — one clear jump per level
    rather than a pile of near-identical sizes: `display` for the section
@@ -40,13 +44,14 @@
     var(--gl-color-border-rule);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   padding: clamp(2rem, 4vw, 3rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
 
 .sessionMedia {
   position: relative;
-  flex: 1;
-  min-height: 320px;
+  flex: none;
+  height: clamp(260px, 28vw, 380px);
   overflow: hidden;
   border-radius: var(--gl-radius-lg);
   border: var(--gl-border-width-hairline) solid var(--gl-color-border-media);
@@ -73,6 +78,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background-color: var(--gl-color-surface-sunken);
   padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
@@ -126,7 +132,7 @@
   }
 
   .sessionMedia {
-    min-height: 260px;
+    height: 240px;
   }
 }
 

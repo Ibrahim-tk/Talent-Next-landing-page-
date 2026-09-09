@@ -33,9 +33,11 @@ const stepProgress = [33, 66, 100] as const;
  * The three-step intake questionnaire.
  *
  * Laid out as two panels sharing one card: a dark intro panel (heading +
- * step progress, over a blurred crop of the section's own background image)
- * beside the active step's fields. Real React state drives which step is
- * mounted, so the browser's own validation can run on submit.
+ * step progress, tinted and blurred via `backdrop-filter` straight through
+ * to the section's own background image — no image layer of its own)
+ * beside the active step's fields, painted fully opaque white. Real React
+ * state drives which step is mounted, so the browser's own validation can
+ * run on submit.
  */
 export function IntakeForm() {
   const [step, setStep] = useState(1);
