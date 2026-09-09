@@ -1,11 +1,4 @@
-import {
-  Button,
-  Crosshair,
-  DashedFrame,
-  GridModule,
-  Highlight,
-  Text,
-} from "@gridline";
+import { Button, Crosshair, GridModule, Highlight, Text } from "@gridline";
 import { heroCopy } from "@/content/hero";
 
 import { HeroStage } from "./HeroStage";
@@ -41,15 +34,15 @@ export function HeroSection() {
           {heroCopy.body}
         </Text>
 
-        <DashedFrame className={styles.ctaDock}>
-          <Button href={heroCopy.ctaHref} size="lg">
+        <div className={styles.ctaDock}>
+          {/* The accent variant rather than the default black square: this is
+              the one action on the page the whole hero exists to deliver, and
+              the accent is already carrying the headline's key word right
+              above it. */}
+          <Button href={heroCopy.ctaHref} variant="accent" size="lg">
             {heroCopy.ctaLabel}
           </Button>
-        </DashedFrame>
-
-        <Text variant="caption" as="span" className={styles.microcopy}>
-          {heroCopy.microcopy}
-        </Text>
+        </div>
       </div>
 
       <HeroStage />

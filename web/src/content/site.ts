@@ -34,6 +34,15 @@ export const site = {
   supportEmail: "support@talentnext.com",
 } as const;
 
+/**
+ * Referenced both from the "Legal & Support" column below and from the
+ * footer's closing legal bar, so the two never drift onto different hrefs.
+ */
+export const termsOfUse: NavItem = {
+  label: "Terms of Use",
+  href: "#get-started",
+};
+
 export const footerColumns: readonly {
   title: string;
   links: readonly NavItem[];
@@ -55,7 +64,7 @@ export const footerColumns: readonly {
     title: "Legal & Support",
     links: [
       { label: "Privacy Policy", href: "#get-started" },
-      { label: "Terms of Use", href: "#get-started" },
+      termsOfUse,
       { label: site.supportEmail, href: `mailto:${site.supportEmail}` },
     ],
   },

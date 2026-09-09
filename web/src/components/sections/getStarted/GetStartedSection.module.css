@@ -22,7 +22,11 @@
   left: 50%;
   width: 100vw;
   margin-left: -50vw;
-  padding: var(--gl-space-15) var(--gl-space-gutter-lg);
+  /* The block scale rather than a flat 40px: the backdrop needs enough room
+     above and below the card that the texture reads as a field the card sits
+     on, not as a border around it. Side padding stays on the fluid gutter
+     every other section's outer edge uses. */
+  padding: var(--gl-space-block-xl) var(--gl-space-gutter-lg);
   display: flex;
   flex-direction: column;
   align-items: center;

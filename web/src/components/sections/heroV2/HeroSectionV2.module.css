@@ -1,0 +1,377 @@
+/* ==========================================================================
+   HeroSectionV2 — standalone duplicate of HeroSection for the /hero-v2
+   preview page. Edit freely; nothing here affects the live homepage hero.
+
+   A full-bleed, dark, centred composition — modelled on a reference hero,
+   rebuilt in this system's own tokens (the documented dark-surface
+   tone/text roles, the shared grid pattern recoloured locally, the shared
+   accent) rather than reusing a photograph.
+   ========================================================================== */
+
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: var(--gl-space-block-xl) var(--gl-space-11) var(--gl-space-19)
+    var(--gl-space-11);
+  /* The two report cards in HeroStageV2 are pinned with `position: absolute`
+     against this whole module, so — unlike the centred `.center` column —
+     they don't contribute to its natural height. `GridModule`'s `clip` prop
+     puts `overflow: hidden` on this same element, so without a floor here
+     a viewport where the centred copy renders shorter than usual would
+     clip the cards' bottom edge rather than just leaving extra whitespace. */
+  min-height: 820px;
+}
+
+/* Fills the module with the dark surface tone. Kept as a separate absolute
+   layer rather than a `background-color` on `.section` itself — see the
+   note beside where this is rendered in HeroSectionV2.tsx. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gl-z-below);
+  background-color: var(--gl-color-surface-inverse);
+}
+
+/* The blueprint grid, recoloured for this section only: the shared
+   `--gl-gradient-blueprint` token draws dark lines for the white-canvas
+   modules elsewhere (the live hero, See It in Action), which would be
+   invisible here, so this is a local light-line variant at the same cell
+   size rather than a change to the shared token. Still visible edge to
+   edge — "a grid, all the time" — fading only at the top/bottom seams. */
+.blueprint {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-position: center top;
+  pointer-events: none;
+  z-index: var(--gl-z-base);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 72px,
+    black calc(100% - 72px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 72px,
+    black calc(100% - 72px),
+    transparent 100%
+  );
+}
+
+/* Two sweeping hairlines behind the headline — a quieter, technical-drawing
+   read of the reference's sketched arcs, in the same "hairline on a dark
+   surface" token used for dividers on the site's other dark cards. */
+.arcs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--gl-z-base);
+  pointer-events: none;
+}
+
+.arcs path {
+  fill: none;
+  stroke: var(--gl-color-border-inverse);
+  stroke-width: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   The synthetic orb — no photograph anywhere in this section. Two layers:
+   `.orb` is the sphere itself (a single radial gradient carrying its own
+   highlight and falloff, so its edge dissolves into the dark backdrop
+   rather than showing a hard circle), slowly breathing; `.orbCore` is a
+   second, independently rotating conic layer inset within it, blended in
+   for a "turning plasma" read. Each owns its own `transform` so the two
+   animations never fight over the same property on the same element.
+   -------------------------------------------------------------------------- */
+.orb {
+  position: absolute;
+  left: 50%;
+  top: 36%;
+  width: min(880px, 82vw);
+  height: min(880px, 82vw);
+  z-index: var(--gl-z-base);
+  border-radius: var(--gl-radius-full);
+  background-image: var(--gl-gradient-orb-body);
+  filter: blur(2px);
+  pointer-events: none;
+  /* The centring transform `orbPulse` re-asserts every frame while it
+     runs; declared here too so a reduced-motion viewer (for whom the
+     animation below is disabled) still sees the orb centred rather than
+     shifted to its untransformed top-left corner. */
+  transform: translate(-50%, -50%);
+  animation: orbPulse 9s ease-in-out infinite;
+}
+
+.orbCore {
+  position: absolute;
+  inset: 12%;
+  border-radius: var(--gl-radius-full);
+  background-image: var(--gl-gradient-orb-core);
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  filter: blur(18px);
+  animation: orbSpin 40s linear infinite;
+}
+
+@keyframes orbPulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes orbSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A fine film-grain texture over the whole section (an SVG `feTurbulence`
+   filter, not an image file) and a soft vignette darkening the edges —
+   the two touches that read as "cinematic" rather than "flat gradient". */
+.grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--gl-z-raised);
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gl-z-raised);
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 45%,
+    transparent 45%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.center {
+  position: relative;
+  z-index: var(--gl-z-content);
+  max-width: var(--gl-measure-hero);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Pill badge — the reference's icon + short phrase, above the headline.
+   -------------------------------------------------------------------------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-3);
+  padding: var(--gl-space-3) var(--gl-space-7);
+  margin-bottom: var(--gl-space-11);
+  border-radius: var(--gl-radius-full);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-inverse);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--gl-color-accent);
+}
+
+/* A flex column, rather than relying on natural inline wrapping, is what
+   guarantees each of the three segments sits on its own line and is
+   centred as a unit — `text-wrap: balance` alone can't promise that once
+   the accent word's size is this different from its neighbours. */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gl-space-2);
+  margin-bottom: var(--gl-space-9);
+  max-width: 980px;
+}
+
+/* Clips each line to its own text for the load-in reveal: the mask stays
+   fixed, GSAP slides its one child (the lead span or the accent Highlight)
+   up from below. The bottom padding keeps descenders (the "y" in "Already")
+   from being clipped mid-reveal. */
+.lineMask {
+  overflow: hidden;
+  padding-bottom: 0.14em;
+}
+
+/* "Uncover the" / "You Already Have." — the system face and weight, since
+   this page no longer loads a display face of its own. In the inverse text
+   colour this dark ground calls for, running h3 → the 76.29px step one
+   ratio above h1. */
+.headlineLead {
+  display: inline-block;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(var(--gl-scale-h3), 5.5vw, var(--gl-scale-2xl));
+  font-weight: var(--gl-weight-light);
+  letter-spacing: var(--gl-tracking-normal);
+  color: var(--gl-color-text-inverse);
+}
+
+/* "TALENT" — the one word the heading exists to deliver: the same face and
+   weight, two ratio steps larger again, filled with a slow accent gradient
+   sweep instead of a flat colour. The descendant selector (rather than
+   relying on source order against Highlight's own `.root`) is what
+   guarantees this wins over `font: inherit` — see gridline/README.md,
+   "CSS Module ordering — a real constraint". */
+.headline .headlineAccent {
+  display: inline-block;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(var(--gl-scale-h1), 8.5vw, var(--gl-scale-4xl));
+  font-weight: var(--gl-weight-light);
+  letter-spacing: var(--gl-tracking-normal);
+  line-height: 0.95;
+  background-image: var(--gl-gradient-accent-text);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 8px 32px var(--gl-color-accent-glow));
+  animation: accentSweep 6s ease-in-out infinite;
+}
+
+@keyframes accentSweep {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.subtitle {
+  max-width: 560px;
+  margin-bottom: var(--gl-space-14);
+}
+
+.ctaDock {
+  margin-bottom: var(--gl-space-6);
+}
+
+.microcopy {
+  margin-bottom: var(--gl-space-16);
+}
+
+/* --------------------------------------------------------------------------
+   Video row — a real photo standing in for the reference's avatar stack,
+   plus a play trigger and a caption. The play control is deliberately
+   circular rather than reaching for `Button` (which the system reserves for
+   square actions) — a round media-transport control is a standard,
+   recognised exception to that rule, not a fight against it.
+   -------------------------------------------------------------------------- */
+.videoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+  margin-bottom: var(--gl-space-16);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--gl-radius-full);
+  overflow: hidden;
+  border: 1.5px solid var(--gl-color-border-inverse);
+}
+
+.avatarMedia {
+  width: 100%;
+  height: 100%;
+}
+
+.playButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-color-accent);
+  color: var(--gl-color-text-inverse);
+  transition:
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    transform var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.playButton:hover {
+  background-color: var(--gl-color-accent-hover);
+  transform: scale(1.06);
+}
+
+.playButton:focus-visible {
+  outline: var(--gl-border-width-thick) solid var(--gl-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Nudges the triangle glyph so its visual centroid, not the button's own
+   centre, sits in the middle — an unshifted play icon reads as leaning
+   left inside a circular control. */
+.playButton svg {
+  transform: translateX(1px);
+}
+
+/* No colour override needed here: `<Text tone="inverse">` already sets it,
+   reliably, because Text's own tone classes are declared after its variant
+   classes in the same stylesheet — see Text.module.css. */
+.statement {
+  max-width: 720px;
+}
+
+/* Below 900px HeroStageV2's own breakpoint drops its cards out of absolute
+   positioning and into normal flow (see HeroStageV2.module.css), so the
+   height floor above is no longer needed here and would just add empty
+   space under shorter copy. */
+@media (max-width: 900px) {
+  .section {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: var(--gl-space-17);
+    padding-bottom: var(--gl-space-13);
+  }
+
+  .arcs {
+    display: none;
+  }
+
+  .headline {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headline .headlineAccent,
+  .orb,
+  .orbCore {
+    animation: none;
+  }
+}

@@ -3,14 +3,22 @@
    --------------------------------------------------------------------------
    A ruled row of cells, edge-to-edge between the GridCanvas's two constant
    verticals — same idiom as the HowItWorks matrix and ArchetypeCard rail:
-   full-bleed panels, no gaps, divided only by the sitewide hairline. No
-   border-top here — GetStartedSection already draws its own `rule="bottom"`
-   immediately above, and a second line would double that seam.
+   full-bleed panels, no gaps, divided only by the sitewide hairline. Each
+   cell also draws a top rule, which is why `.footer` carries its own small
+   top padding first — GetStartedSection already draws its own
+   `rule="bottom"` immediately above, and without that buffer the two lines
+   would sit flush and read as one doubled seam.
+
+   Below the column row, a thicker accent-coloured bar (the same role
+   RulerGauge's progress track plays — a bolder, `--gl-color-accent` closing
+   mark) separates the columns from the final legal line: copyright + Terms
+   of Use on the left, the credit line on the right.
    ========================================================================== */
 
 .footer {
   width: 100%;
   background-color: var(--gl-color-surface-raised);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .row {
@@ -20,7 +28,8 @@
 }
 
 .cell {
-  padding: clamp(2.75rem, 5vw, 4rem) clamp(1.75rem, 3vw, 2.75rem);
+  padding: clamp(4.5rem, 9vw, 7rem) clamp(2.25rem, 4vw, 3.5rem);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
 .cell:not(:last-child) {
@@ -34,31 +43,30 @@
 }
 
 .brandMark {
-  height: 22px;
+  height: 44px;
   width: auto;
-  margin-bottom: var(--gl-space-9);
+  margin-bottom: var(--gl-space-13);
 }
 
 .tagline {
   max-width: 300px;
 }
 
-.copyright {
-  margin-top: var(--gl-space-17);
-}
-
 .columnTitle {
-  margin-bottom: var(--gl-space-9);
+  margin-bottom: var(--gl-space-11);
 }
 
 .linkList {
   display: flex;
   flex-direction: column;
-  gap: var(--gl-space-6);
+}
+
+.linkList li {
+  padding-bottom: var(--gl-space-9);
 }
 
 .link {
-  font-size: var(--gl-size-body-md);
+  font-size: var(--gl-size-body-sm);
   color: var(--gl-color-text-secondary);
   transition: color var(--gl-duration-fast) var(--gl-ease-standard);
 }
@@ -67,35 +75,82 @@
   color: var(--gl-color-text-primary);
 }
 
-.socialRow {
+/* --------------------------------------------------------------------------
+   Connect — this list carries its own rhythm rather than `.linkList`'s.
+   A 22px brand glyph, not the 12.8px label, sets the row height here, so
+   rows that looked evenly spaced as plain text links sit too close together
+   once each one is a glyph: the gap has to clear the icon box, not the cap
+   height. Hence a real `gap` instead of a per-item `padding-bottom`, and a
+   little extra air under the column title so the first glyph — which rises
+   above its label's cap line — doesn't crowd it.
+
+   No border or box around the icon: it reads as part of the row, not as its
+   own bordered control.
+   -------------------------------------------------------------------------- */
+.socialList {
   display: flex;
-  align-items: center;
-  gap: var(--gl-space-6);
+  flex-direction: column;
+  gap: var(--gl-space-13);
+  margin-top: var(--gl-space-4);
 }
 
 .socialLink {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  border-radius: var(--gl-radius-none);
+  gap: var(--gl-space-6);
+  font-size: var(--gl-size-body-sm);
   color: var(--gl-color-text-secondary);
-  transition:
-    border-color var(--gl-duration-fast) var(--gl-ease-standard),
-    background-color var(--gl-duration-fast) var(--gl-ease-standard),
-    color var(--gl-duration-fast) var(--gl-ease-standard);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.socialGlyph {
+  flex: none;
 }
 
 .socialLink:hover {
-  border-color: var(--gl-color-border-interactive);
-  background-color: var(--gl-color-surface-hover);
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-accent);
 }
 
-.credit {
-  margin-top: var(--gl-space-17);
+/* --------------------------------------------------------------------------
+   Closing bar — accent rule + copyright/credit line
+   -------------------------------------------------------------------------- */
+.accentBar {
+  height: var(--gl-border-width-thick);
+  background-color: var(--gl-color-accent);
+}
+
+.legalBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gl-space-7);
+  padding: var(--gl-space-11) clamp(2.25rem, 4vw, 3.5rem);
+}
+
+.legalLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-6);
+}
+
+.legalDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--gl-color-border-interactive);
+}
+
+.legalLink {
+  font-size: var(--gl-type-caption-size);
+  color: var(--gl-color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.legalLink:hover {
+  color: var(--gl-color-text-primary);
 }
 
 @media (max-width: 860px) {

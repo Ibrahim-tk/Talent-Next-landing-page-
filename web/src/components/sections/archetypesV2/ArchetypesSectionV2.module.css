@@ -1,0 +1,117 @@
+/* ==========================================================================
+   ArchetypesSectionV2 — "TALENT looks different for everyone"
+   --------------------------------------------------------------------------
+   A static 2×3 grid of overlap tiles, replacing the live homepage band's
+   pinned horizontal scrub. Three stacked blocks inside the module, each
+   closed by a hairline: a split header (eyebrow + heading left, supporting
+   note right), the tile grid, and a footer plate — the accent mark, a rule
+   running out to the footnote, and the CTA.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Header — heading left, supporting note right, per the reference's split
+   -------------------------------------------------------------------------- */
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gl-space-15) var(--gl-space-gutter-xl);
+  padding: var(--gl-space-19) var(--gl-space-gutter-lg) var(--gl-space-17);
+}
+
+.heading {
+  margin-top: var(--gl-space-9);
+  max-width: 16ch;
+}
+
+/* Aligns the note's first line with the heading's, rather than with the
+   eyebrow above it. */
+.headerNote {
+  margin-top: var(--gl-space-11);
+  max-width: 44ch;
+}
+
+/* --------------------------------------------------------------------------
+   The tile grid
+   -------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* The portraits overhang each panel's left edge, so the column gap has to
+     stay wide enough that the right column's portrait never crowds the left
+     column's panel. */
+  gap: var(--gl-space-19) var(--gl-space-gutter-xl);
+  padding: 0 var(--gl-space-gutter-lg) var(--gl-space-19);
+}
+
+/* --------------------------------------------------------------------------
+   Footer plate — mark · rule · footnote · CTA
+   -------------------------------------------------------------------------- */
+.footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gl-space-13);
+  padding: var(--gl-space-15) var(--gl-space-gutter-lg);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.mark {
+  line-height: var(--gl-leading-flat);
+}
+
+/* The hairline running from the mark out to the footnote — the same rule
+   weight as every other divider in the system, never a second one. */
+.footerRule {
+  flex: 1;
+  min-width: var(--gl-space-19);
+  height: var(--gl-border-width-hairline);
+  background-color: var(--gl-color-border-rule);
+}
+
+.footnote {
+  max-width: 34ch;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gl-space-17);
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--gl-space-17) var(--gl-space-gutter-lg) var(--gl-space-15);
+  }
+
+  .heading,
+  .headerNote {
+    max-width: none;
+  }
+
+  .headerNote {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    padding-bottom: var(--gl-space-17);
+  }
+
+  .footer {
+    align-items: flex-start;
+    padding: var(--gl-space-13) var(--gl-space-gutter-lg);
+  }
+
+  /* The rule needs two anchors to read as a measuring line; stacked, it has
+     none, so it goes rather than floating loose. */
+  .footerRule {
+    display: none;
+  }
+}

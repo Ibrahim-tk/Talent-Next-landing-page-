@@ -1,56 +1,21 @@
-"use client";
-
 import Image from "next/image";
-import { useRef } from "react";
 
 import { GridModule, SectionHeader } from "@gridline";
-import { gsap, prefersReducedMotion, useGSAP } from "@gridline/motion";
 import { seeItInActionCopy } from "@/content/deliverables";
 
 import styles from "./SeeItInActionSection.module.css";
-
-/** The card's starting size, as a fraction of its resting scale. */
-const START_SCALE = 0.7;
 
 /**
  * "See It In Action" — a centred header over a single video card, bounded by
  * the GridCanvas's own vertical rules (never past them — see GridCanvas's
  * own doc comment).
  *
- * The card is laid out at its true resting size from the start (so nothing
- * reflows); the "small at first" look is purely a `transform: scale()` sat
- * below 1, scrubbed up to 1 across a long scroll span with a soft
- * `power2.out` ease and a generous `scrub` lag, so the growth reads as a
- * gradual settle rather than a snap. There's no opacity tween — the card is
- * always visible, just smaller, so the effect reads as an expansion rather
- * than a fade-in.
+ * The card is a still sat on top of the dot-matrix plate (videomask.png,
+ * carried as `.plate`'s background): the plate runs the full width of the
+ * column, and the video is centred on it at 80% of that width. There is no
+ * scroll-driven motion here — the card is simply present at its final size.
  */
 export function SeeItInActionSection() {
-  const frameRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      if (prefersReducedMotion() || !frameRef.current) return;
-
-      gsap.fromTo(
-        frameRef.current,
-        { scale: START_SCALE },
-        {
-          scale: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: frameRef.current,
-            start: "top 95%",
-            end: "top 10%",
-            scrub: 1.5,
-            invalidateOnRefresh: true,
-          },
-        },
-      );
-    },
-    { scope: frameRef },
-  );
-
   return (
     <GridModule
       id="see-it-in-action"
@@ -72,7 +37,7 @@ export function SeeItInActionSection() {
       </div>
 
       <div className={styles.body}>
-        <div className={styles.frameWrap} ref={frameRef}>
+        <div className={styles.plate}>
           {/* Temporary placeholder for the video — see the content file's
               note on `image`. */}
           <div className={styles.mediaFrame}>
@@ -80,7 +45,7 @@ export function SeeItInActionSection() {
               src={seeItInActionCopy.image}
               alt={seeItInActionCopy.imageAlt}
               fill
-              sizes="(max-width: 860px) 100vw, 1560px"
+              sizes="(max-width: 920px) 85vw, 1200px"
               className={styles.mediaImage}
               priority={false}
             />

@@ -13,6 +13,8 @@
 }
 
 html {
+  /* The 1rem base the whole modular scale is measured from: 1rem = 16px, so
+     `--gl-scale-h1: 3.8147rem` is the 61.04px step of the reference scale. */
   font-size: 16px;
   scroll-behavior: smooth;
   color-scheme: light;
@@ -34,11 +36,86 @@ body {
   background-color: var(--gl-color-surface-canvas);
   color: var(--gl-color-text-primary);
   font-size: var(--gl-type-body-md-size);
+  /* Helvetica Neue Light is the document default, so anything that does
+     not name a weight inherits Light. The small roles that need Regular
+     name it themselves — see the note in semantic.css. */
+  font-weight: var(--gl-weight-light);
   line-height: var(--gl-type-body-md-leading);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
+   Element defaults — the reference type scale, applied to the bare HTML
+   elements so a heading is correctly sized even when it is written directly
+   rather than through `Text`. `Text`'s role classes set their own font-size
+   and so always win over these; nothing here leaks into a Gridline
+   component.
+   -------------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--gl-font-sans);
+  font-weight: var(--gl-weight-light);
+  color: var(--gl-color-text-heading);
+  text-wrap: balance;
+}
+
+/* Every heading level tracks at 0, matching the `Text` roles — see the note
+   on the type-role block in tokens/semantic.css. */
+h1 {
+  font-size: var(--gl-scale-h1); /* 61.04px */
+  line-height: var(--gl-leading-display);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+h2 {
+  font-size: var(--gl-scale-h2); /* 48.83px */
+  line-height: var(--gl-leading-tight);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+h3 {
+  font-size: var(--gl-scale-h3); /* 39.06px */
+  line-height: var(--gl-leading-snug);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+h4 {
+  font-size: var(--gl-scale-h4); /* 31.25px */
+  line-height: var(--gl-leading-snug);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+h5 {
+  font-size: var(--gl-scale-h5); /* 25px */
+  line-height: var(--gl-leading-title);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+h6 {
+  font-size: var(--gl-scale-h6); /* 20px */
+  line-height: var(--gl-leading-heading);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+p {
+  font-size: var(--gl-scale-p); /* 16px */
+  font-weight: var(--gl-weight-light);
+  line-height: var(--gl-leading-body);
+}
+
+/* Regular, not Light: below 16px a 300 weight loses too much to
+   antialiasing to stay comfortably legible. */
+small {
+  font-size: var(--gl-scale-small); /* 12.8px */
+  font-weight: var(--gl-weight-regular);
+  line-height: var(--gl-leading-normal);
 }
 
 ::selection {

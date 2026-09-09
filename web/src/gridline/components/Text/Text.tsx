@@ -43,7 +43,7 @@ export type TextTone =
 
 export type TextAlign = "start" | "center" | "end";
 
-export type TextWeight = "regular" | "medium" | "semibold" | "bold";
+export type TextWeight = "light" | "regular" | "medium" | "semibold" | "bold";
 
 export type TextMeasure = "narrow" | "medium" | "wide" | "prose";
 
@@ -110,6 +110,7 @@ const alignClass: Record<TextAlign, string> = {
 };
 
 const weightClass: Record<TextWeight, string> = {
+  light: styles.weightLight,
   regular: styles.weightRegular,
   medium: styles.weightMedium,
   semibold: styles.weightSemibold,

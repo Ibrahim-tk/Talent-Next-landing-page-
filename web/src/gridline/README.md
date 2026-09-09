@@ -58,6 +58,56 @@ one: it draws the two vertical rules, every module divider, and every hairline.
 Prefix is `--gl-`, following the short-prefix convention used by Carbon
 (`--cds-`) and Polaris (`--p-`).
 
+### Typeface
+
+One face everywhere: **Helvetica Neue Light**. It is a platform font rather
+than a hosted one, so it is declared as a stack in `primitives.css` and the
+app downloads no webfont at all — the earlier Plus Jakarta Sans / Geist Mono /
+Space Mono / Outfit imports are gone, and the `--gl-font-mono` and
+`--gl-font-accent-mono` aliases survive as token names but resolve to the same
+family. Light is reached with `font-weight: 300`, which maps to the real
+Helvetica Neue Light cut on Apple platforms; Windows and Linux fall through to
+Helvetica/Arial and render Regular, since neither ships a Light cut.
+
+### Type scale
+
+One modular scale — 1rem (16px) base, 1.25 ratio — and every size in the
+system is a step on it:
+
+| step | rem         | px     | role         |
+| ---- | ----------- | ------ | ------------ |
+| +11  | `11.6415rem`| 186.26 | hero accent  |
+| +10  | `9.3132rem` | 149.01 |              |
+| +9   | `7.4506rem` | 119.21 |              |
+| +8   | `5.9605rem` | 95.37  |              |
+| +7   | `4.7684rem` | 76.29  |              |
+| +6   | `3.8147rem` | 61.04  | `h1`         |
+| +5   | `3.0518rem` | 48.83  | `h2`         |
+| +4   | `2.4414rem` | 39.06  | `h3`         |
+| +3   | `1.9531rem` | 31.25  | `h4`         |
+| +2   | `1.5625rem` | 25.00  | `h5`         |
+| +1   | `1.25rem`   | 20.00  | `h6`         |
+| 0    | `1rem`      | 16.00  | `p`          |
+| −1   | `0.8rem`    | 12.80  | `small`      |
+| −2   | `0.64rem`   | 10.24  | footnote     |
+
+Fluid roles `clamp()` between two steps, so a heading is never off-scale at
+any viewport width — only which step it has reached changes. The five steps
+above `h1` exist solely because the hero headline runs past `h1`; they are the
+same ratio carried further, not a second scale.
+
+This is also how a request like "make the hero headline 1.5x" gets answered:
+1.5 is not a power of 1.25, so it would land between steps. Two steps up is
+1.5625x — within 4% of the ask, and still on the scale. Round to the ratio,
+never to the number.
+
+Where a setting genuinely has to sit between rungs, multiply the step rather
+than replacing it: the hero headline carries a `--hero-type-trim` factor on
+its own class, applied with `calc()` to both clamp bounds and the `vw` term.
+The size still says which rung it came from, and the deviation is one number
+to retune. That is the escape hatch, not the norm — a role in `semantic.css`
+never does this.
+
 ### Composite type roles
 
 Each role in `semantic.css` bundles size, leading, weight and tracking, so a
@@ -66,9 +116,49 @@ Each role in `semantic.css` bundles size, leading, weight and tracking, so a
 ```css
 --gl-type-display-size: var(--gl-size-display);
 --gl-type-display-leading: var(--gl-leading-tight);
---gl-type-display-weight: var(--gl-weight-semibold);
+--gl-type-display-weight: var(--gl-weight-light);
 --gl-type-display-tracking: var(--gl-tracking-tightest);
 ```
+
+Weight is close to a constant: everything at 16px and above is Light (300).
+Below 16px the system holds at Regular (400) — `bodySm`, `caption`, `kicker`,
+`actionLg`, `actionMd`, `metric`. That is a legibility floor rather than a
+hierarchy device: at 12.8px and 10.24px a 300 weight leaves too little ink to
+survive antialiasing, and those roles are also the ones most likely to be
+uppercase and tracked out, which thins them further.
+
+### Making hierarchy work at one weight
+
+With weight held constant, three other things have to carry it, and all three
+are tuned for Light rather than inherited from the semibold system that came
+before:
+
+1. **Size.** The h6 step (20px) is the heading tier's floor and belongs to it
+   alone. `bodyLg` sits a full ratio step below at 16px, so the smallest
+   heading and the largest body never meet — that gap is what makes the two
+   tiers read as different kinds of thing.
+2. **Colour.** Three prose tiers, all darkened for Light and all clearing 7:1
+   on white: near-black (`--gl-color-text-primary` / `-heading`) for headings,
+   `-secondary` at 10.4:1 or `-body` at 7.9:1 for prose, `-muted` at 7.5:1 for
+   captions. A grey that measured fine at semibold reads washed out at 300
+   even though its contrast ratio has not moved, so these are deliberately
+   darker than a heavier system would need.
+3. **Leading.** Tight at display sizes, generous in body copy.
+
+Negative tracking is the trap here, and the system no longer takes it:
+**every heading tracks at 0**, in the `Text` roles, in the bare `h1`–`h6`
+defaults, and in the hero's own headline spans. Tightening was fighting the
+face — Helvetica Neue Light already has open counters and close sidebearings,
+so pulling the letters together read as cramped rather than as crisp, most
+visibly on the long headline settings this site is built around. An earlier
+ramp ran to -0.035em (tuned for semibold), then to -0.02em; both were
+wrong in kind rather than in degree. The negative steps stay in
+`primitives.css` as an unused part of the ramp so one alias can bring
+tightening back if a setting ever wants it. Positive tracking on uppercase
+marks is untouched, since letter-spacing genuinely helps there.
+
+`Text`'s `weight` prop remains the escape hatch when one piece of copy
+genuinely needs more ink.
 
 ## Usage
 

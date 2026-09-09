@@ -4,10 +4,9 @@ export const heroCopy = {
   headlineBefore: "Uncover the ",
   headlineAccent: "TALENT",
   headlineAfter: " You Already Have.",
-  body: "What you do next may start with what you're already good at. Through a 30-minute conversation with a TALENT Agent, you'll uncover skills you may not recognize in yourself and begin to see what they could mean for your future.",
+  body: "Through a 30-minute conversation with a TALENT Agent, you'll uncover skills you may not recognize in yourself and begin to see what they could mean for your future.",
   ctaLabel: "Get started",
   ctaHref: "#get-started",
-  microcopy: "Your first conversation is at no charge",
   phone: {
     src: "/assets/phone-hero.png",
     alt: "TALENT Agent on iPhone",

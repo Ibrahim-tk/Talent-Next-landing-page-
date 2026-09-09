@@ -12,13 +12,15 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 
 import { layout } from "../tokens";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText, DrawSVGPlugin);
 
-export { gsap, ScrollTrigger, useGSAP };
+export { DrawSVGPlugin, gsap, ScrollTrigger, SplitText, useGSAP };
 
 export { layout, pinnedMediaQuery } from "../tokens";
 export { prefersReducedMotion, useReducedMotion } from "./useReducedMotion";

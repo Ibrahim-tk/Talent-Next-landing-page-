@@ -40,8 +40,8 @@
   position: absolute;
   top: var(--gl-space-7);
   left: var(--gl-space-8);
-  font-size: 3.5rem;
-  font-weight: var(--gl-weight-bold);
+  font-size: var(--gl-scale-h1); /* 61.04px */
+  font-weight: var(--gl-weight-light);
   color: var(--gl-color-text-inverse);
   line-height: var(--gl-leading-flat);
   z-index: var(--gl-z-stage);

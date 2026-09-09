@@ -46,28 +46,89 @@
   align-items: center;
   margin-bottom: var(--gl-space-9);
   max-width: 1180px;
+
+  /* One knob for the whole headline. Both settings below are on-scale steps
+     multiplied by this factor, rather than off-scale numbers written out
+     directly: the sizes still declare which rung of the modular scale they
+     came from, and eye-tuning the headline stays a one-line edit. 0.9 is a
+     deliberate off-ratio trim on top of the two-step increase — 1.40625x the
+     original setting in total. */
+  --hero-type-trim: 0.9;
 }
 
-/* "Uncover the" / "You Already Have." — the system typeface, sized as the
-   frame around the accent word rather than the focal point. */
+/* "Uncover the" / "You Already Have." — sized as the frame around the accent
+   word rather than the focal point, and stepped up two rungs of the modular
+   scale (h5 → h3 becomes h3 → h1) for the larger headline setting. Two
+   rungs is 1.5625x, the on-scale reading of "1.5x": the scale's ratio is
+   1.25, so a literal 1.5 would land between steps and break the one rule
+   the type system has. The vw term is stepped by the same factor, so the
+   increase holds at every viewport width, not only at the clamp ends — and
+   `--hero-type-trim` above then takes the whole thing back down by eye. */
 .headlineLead {
   font-family: var(--gl-font-sans);
-  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
-  font-weight: var(--gl-weight-bold);
-  letter-spacing: var(--gl-tracking-tightest);
+  font-size: clamp(
+    calc(var(--gl-scale-h3) * var(--hero-type-trim)),
+    calc(4.06vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-h1) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-light);
+  letter-spacing: var(--gl-tracking-normal);
 }
 
-/* "TALENT" — the one word the heading exists to deliver: a distinct mono
-   face, sized well past the lead lines so the hierarchy reads instantly.
-   The descendant selector (rather than relying on source order against
-   Highlight's own `.root`) is what guarantees this wins over `font: inherit`. */
+/* "TALENT" — the one word the heading exists to deliver. The system is
+   single-typeface now, so scale alone separates it from the lead lines.
+   Stepped up the same two rungs as the lead: 3xl at the small end, and at
+   the top 6xl (186.26px) — two new steps added to primitives.css for this,
+   the same 1.25 ratio carried further, exactly as the three steps above h1
+   were added for this same word. The descendant selector (rather than
+   relying on source order against Highlight's own `.root`) is what
+   guarantees this wins over `font: inherit`. */
 .headline .headlineAccent {
   display: inline-block;
-  font-family: var(--gl-font-accent-mono);
-  font-size: clamp(4rem, 9vw, 7.5rem);
-  font-weight: var(--gl-weight-bold);
-  letter-spacing: -0.01em;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    calc(var(--gl-scale-3xl) * var(--hero-type-trim)),
+    calc(14.06vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-6xl) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-light);
+  letter-spacing: var(--gl-tracking-normal);
   line-height: 0.9;
+
+  /* The three lines are one block, not three stacked headings, so the gaps
+     around the accent word are pulled in. In `em` rather than a space token
+     deliberately: the overlap has to track the accent's own size, which is
+     fluid, or it would read as a hairline nudge at 86px and a chasm at
+     168px. Flex `gap` cannot go negative, hence margins. */
+  margin-block: -0.06em;
+}
+
+/* The gradient plate, painted through the letterforms.
+   `background-clip: text` with a transparent fill is the only way to get an
+   *image* into type; the guard matters because the fallback for an
+   unsupported browser is not "no gradient" but an invisible headline — so
+   the flat accent colour above stands until support is confirmed.
+
+   Only the plate's top-right quadrant is used: `200% 200%` scales the
+   artwork to twice the word's box in both axes and `right top` pins that
+   oversized image by its top-right corner, so the window onto it is exactly
+   the corner quarter. That crop is the hot red sweeping diagonally out to
+   pale pink — a brighter, more directional ramp across six letters than the
+   whole plate gives, which averages down to a flat mid-rose once it is
+   squeezed into a band this wide and short. The quadrant is squeezed too,
+   but the artwork is an out-of-focus gradient, so the aspect change has
+   nothing to distort. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .headline .headlineAccent {
+    background-image: var(--gl-image-accent-plate);
+    background-size: 200% 200%;
+    background-position: right top;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .body {
@@ -75,12 +136,9 @@
   margin-bottom: var(--gl-space-14);
 }
 
+/* The button stands on its own — no dashed dock, no microcopy line beneath
+   it — so this wrapper only carries the gap down to the asset stage. */
 .ctaDock {
-  margin-bottom: var(--gl-space-4);
-}
-
-.microcopy {
-  display: block;
   margin-bottom: clamp(2rem, 4vh, 3rem);
 }
 

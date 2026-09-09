@@ -77,7 +77,10 @@
 .phone {
   position: relative;
   z-index: var(--gl-z-stage);
-  width: clamp(340px, 30vw, 410px);
+  /* Trimmed ~10% against the enlarged headline — at the old width the phone
+     and the headline were competing for the same focal weight rather than
+     the composition reading top-down. */
+  width: clamp(306px, 27vw, 369px);
   margin: 0 auto;
   line-height: 0;
 }

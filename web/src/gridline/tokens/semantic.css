@@ -17,7 +17,7 @@
   --gl-color-surface-muted: var(--gl-neutral-100);
   --gl-color-surface-inverse: var(--gl-neutral-900);
   --gl-color-surface-letterbox: var(--gl-neutral-950);
-  --gl-color-surface-accent-soft: rgba(189, 42, 42, 0.08);
+  --gl-color-surface-accent-soft: rgba(255, 72, 55, 0.08);
   --gl-color-surface-success: var(--gl-green-50);
 
   /* ------------------------------------------------------------------------
@@ -40,17 +40,31 @@
   /* ------------------------------------------------------------------------
      Text
      ---------------------------------------------------------------------- */
-  --gl-color-text-primary: var(--gl-neutral-900);
-  --gl-color-text-heading: var(--gl-neutral-850);
-  --gl-color-text-secondary: var(--gl-neutral-700);
-  --gl-color-text-body: var(--gl-neutral-750);
-  --gl-color-text-muted: var(--gl-neutral-600);
-  --gl-color-text-metric: var(--gl-neutral-650);
+  /* Darkened across the board for a Light typeface. A 300 weight puts far
+     less ink on the page than a 400+ one, so a grey that measured as
+     comfortably legible at semibold reads washed out and blurry at Light
+     even though its contrast ratio has not changed. Every prose tier now
+     clears 7:1 on white rather than sitting near the 4.5:1 floor, which is
+     what actually makes Light legible. The three tiers stay distinct, so
+     colour can carry hierarchy that weight no longer does. */
+  --gl-color-text-primary: var(--gl-neutral-900); /* 18.9:1 — headings */
+  --gl-color-text-heading: var(--gl-neutral-850); /* 16.9:1 — headings */
+  /* Darkened one rung each after the Light weight went in site-wide: the
+     old values were tuned when prose still carried some weight of its own,
+     and at Light the mid-greys read as washed out rather than quiet. The
+     tiers keep their spacing, so hierarchy still reads — everything just
+     sits closer to the ink end of the ramp. */
+  --gl-color-text-secondary: var(--gl-neutral-800); /* 16.1:1 — prose */
+  --gl-color-text-body: var(--gl-neutral-775); /* 10.4:1 — prose on panels */
+  --gl-color-text-muted: var(--gl-neutral-750); /* 7.9:1 — captions */
+  --gl-color-text-metric: var(--gl-neutral-750); /* 7.9:1 — small numerics */
   --gl-color-text-inverse: var(--gl-neutral-0);
   /* Secondary text on a dark surface (deliverables). Not a straight neutral
      swap of --gl-color-text-secondary — that token is tuned for white
-     backgrounds and reads too low-contrast reversed onto black. */
-  --gl-color-text-inverse-secondary: rgba(255, 255, 255, 0.68);
+     backgrounds and reads too low-contrast reversed onto black. Raised from
+     0.68 for the same reason the greys above were darkened: reversed-out
+     Light text loses more to the dark ground than a heavier weight does. */
+  --gl-color-text-inverse-secondary: rgba(255, 255, 255, 0.84);
   --gl-color-text-accent: var(--gl-rose-600);
   --gl-color-text-decoration: var(--gl-neutral-500);
   --gl-color-text-success: var(--gl-green-600);
@@ -60,7 +74,7 @@
      ---------------------------------------------------------------------- */
   --gl-color-accent: var(--gl-rose-600);
   --gl-color-accent-hover: var(--gl-rose-700);
-  --gl-color-accent-glow: rgba(189, 42, 42, 0.35);
+  --gl-color-accent-glow: rgba(255, 72, 55, 0.35);
 
   /* Quantitative marks — meter fills and timeline markers. The v4 source
      deliberately warms these off the rose accent; see ../README.md. */
@@ -104,11 +118,62 @@
   /* Hero ambient glow */
   --gl-gradient-hero-glow: radial-gradient(
     ellipse 85% 100% at 50% 100%,
-    rgba(189, 42, 42, 0.65) 0%,
-    rgba(218, 89, 89, 0.45) 28%,
-    rgba(229, 137, 137, 0.2) 55%,
+    rgba(255, 72, 55, 0.65) 0%,
+    rgba(255, 110, 96, 0.45) 28%,
+    rgba(255, 151, 142, 0.2) 55%,
     transparent 78%
   );
+
+  /* Hero-v2 synthetic "orb" backdrop — a fully code-rendered stand-in for
+     photography, built from two layers. `-orb-body` is the sphere itself:
+     a hot white highlight, then the rose ramp light-to-dark, closing in
+     the near-black surface tone so its edge dissolves into the section's
+     own background rather than showing a hard circle. `-orb-core` is a
+     second, independently-rotated conic layer that sits inside it for a
+     "turning plasma" read — same rose stops, different geometry. Same
+     provenance rule as every other gradient here: only rose primitives (
+     plus the neutrals a highlight/edge genuinely needs), never a raw hex
+     outside that ramp. */
+  --gl-gradient-orb-body: radial-gradient(
+    circle at 38% 32%,
+    var(--gl-neutral-0) 0%,
+    var(--gl-rose-300) 8%,
+    var(--gl-rose-500) 24%,
+    var(--gl-rose-600) 42%,
+    var(--gl-rose-800) 62%,
+    var(--gl-rose-900) 78%,
+    var(--gl-color-surface-inverse) 92%
+  );
+  --gl-gradient-orb-core: conic-gradient(
+    from 220deg at 50% 50%,
+    var(--gl-rose-400),
+    var(--gl-rose-700),
+    var(--gl-rose-900),
+    var(--gl-rose-600),
+    var(--gl-rose-300),
+    var(--gl-rose-400)
+  );
+
+  /* Hero-v2 accent headline treatment — a slow gradient sweep across the
+     accent word's text fill. Same provenance rule as the glow above: rose
+     stops only, never a raw hex, so re-theming the accent re-tints this too. */
+  --gl-gradient-accent-text: linear-gradient(
+    100deg,
+    var(--gl-rose-700) 0%,
+    var(--gl-rose-600) 30%,
+    var(--gl-rose-500) 50%,
+    var(--gl-rose-600) 70%,
+    var(--gl-rose-700) 100%
+  );
+
+  /* The homepage hero's accent word ("TALENT") is filled with a supplied
+     gradient plate rather than a CSS gradient — the artwork's ramp runs
+     deep rose on the left out to a near-white pink on the right, which no
+     stop list here reproduces exactly. It is painted through the
+     letterforms with `background-clip: text`, so it behaves as a fill, not
+     as a background box. Declared here with the other accent treatments so
+     the hero's own stylesheet holds no raw asset path. */
+  --gl-image-accent-plate: url("/assets/maskgradient.png");
 
   /* Hero blueprint grid, faded out radially so it reads only behind the copy */
   --gl-gradient-blueprint: linear-gradient(
@@ -128,6 +193,31 @@
      Composite type roles
      Each role bundles size + leading + weight + tracking so a `Text`
      variant is a single lookup rather than four.
+
+     Every heading role now tracks at 0. Negative tracking is an optical
+     correction for the gaps that open at display sizes, but it was fighting
+     the face: Helvetica Neue Light's counters are already open and its
+     sidebearings already tight, so pulling the letters together read as
+     cramped rather than as crisp — particularly on the long headline
+     settings this site leans on. The negative steps survive in
+     primitives.css as an unused part of the ramp rather than being deleted,
+     so a single alias can be re-pointed if one heading ever wants it back.
+     Positive tracking on the small uppercase marks is untouched.
+
+     Weight is close to a constant: everything at 16px and above is
+     Helvetica Neue Light (300). Hierarchy is therefore carried by size (a
+     step on the modular scale), by colour tier, and by leading — never by
+     weight.
+
+     Below 16px the system holds at Regular (400). That is a legibility
+     floor, not a hierarchy device: at 12.8px and 10.24px a 300 weight
+     leaves too little ink to survive antialiasing, and the small roles
+     here (bodySm, caption, kicker, actionLg, actionMd) are also the ones
+     most likely to be uppercase and tracked out, which thins them further.
+
+     The colour tiers do the work weight used to. Headings take the two
+     near-black tokens, prose takes secondary or body, and captions take
+     muted — all of them darkened for Light, and all clearing 7:1.
      ---------------------------------------------------------------------- */
 
   /* display — reused as a large section heading (How It Works). The hero
@@ -135,60 +225,60 @@
      font-size/weight directly, overriding whatever is inherited here. */
   --gl-type-display-size: var(--gl-size-display);
   --gl-type-display-leading: var(--gl-leading-tight);
-  --gl-type-display-weight: var(--gl-weight-medium);
-  --gl-type-display-tracking: var(--gl-tracking-tightest);
+  --gl-type-display-weight: var(--gl-weight-light);
+  --gl-type-display-tracking: var(--gl-tracking-normal);
 
-  /* editorial — section statements (archetypes, interview). Was extrabold;
-     dropped to semibold so scale, not weight, carries the emphasis. */
+  /* editorial — section statements (archetypes, interview). Light, like
+     every other role at this size: scale carries the emphasis now. */
   --gl-type-editorial-size: var(--gl-size-editorial);
   --gl-type-editorial-leading: var(--gl-leading-display);
-  --gl-type-editorial-weight: var(--gl-weight-semibold);
-  --gl-type-editorial-tracking: var(--gl-tracking-tightest);
+  --gl-type-editorial-weight: var(--gl-weight-light);
+  --gl-type-editorial-tracking: var(--gl-tracking-normal);
 
   /* monoDisplay — the "It Starts with 30 Minutes." banner */
   --gl-type-mono-display-size: var(--gl-size-mono-display);
   --gl-type-mono-display-leading: var(--gl-leading-tight);
-  --gl-type-mono-display-weight: var(--gl-weight-semibold);
-  --gl-type-mono-display-tracking: var(--gl-tracking-tighter);
+  --gl-type-mono-display-weight: var(--gl-weight-light);
+  --gl-type-mono-display-tracking: var(--gl-tracking-normal);
 
   /* headingLg — standard section heading */
   --gl-type-heading-lg-size: var(--gl-size-heading-lg);
   --gl-type-heading-lg-leading: var(--gl-leading-snug);
-  --gl-type-heading-lg-weight: var(--gl-weight-semibold);
-  --gl-type-heading-lg-tracking: var(--gl-tracking-tighter);
+  --gl-type-heading-lg-weight: var(--gl-weight-light);
+  --gl-type-heading-lg-tracking: var(--gl-tracking-normal);
 
   /* headingSm — sequenced step titles */
   --gl-type-heading-sm-size: var(--gl-size-heading-sm);
   --gl-type-heading-sm-leading: var(--gl-leading-title);
-  --gl-type-heading-sm-weight: var(--gl-weight-semibold);
-  --gl-type-heading-sm-tracking: var(--gl-tracking-tight);
+  --gl-type-heading-sm-weight: var(--gl-weight-light);
+  --gl-type-heading-sm-tracking: var(--gl-tracking-normal);
 
   /* monoHeading — column headings inside the How It Works matrix */
   --gl-type-mono-heading-size: var(--gl-size-mono-heading);
   --gl-type-mono-heading-leading: var(--gl-leading-heading);
-  --gl-type-mono-heading-weight: var(--gl-weight-semibold);
-  --gl-type-mono-heading-tracking: var(--gl-tracking-snug);
+  --gl-type-mono-heading-weight: var(--gl-weight-light);
+  --gl-type-mono-heading-tracking: var(--gl-tracking-normal);
 
   /* headingMd — card titles */
   --gl-type-heading-md-size: var(--gl-size-heading-md);
   --gl-type-heading-md-leading: var(--gl-leading-heading);
-  --gl-type-heading-md-weight: var(--gl-weight-medium);
-  --gl-type-heading-md-tracking: var(--gl-tracking-slight);
+  --gl-type-heading-md-weight: var(--gl-weight-light);
+  --gl-type-heading-md-tracking: var(--gl-tracking-normal);
 
   /* title — compact card title, already close to body-lg in size */
   --gl-type-title-size: var(--gl-size-title);
   --gl-type-title-leading: var(--gl-leading-title);
-  --gl-type-title-weight: var(--gl-weight-medium);
+  --gl-type-title-weight: var(--gl-weight-light);
   --gl-type-title-tracking: var(--gl-tracking-normal);
 
   /* bodyLg / bodyMd / bodySm / caption */
   --gl-type-body-lg-size: var(--gl-size-body-lg);
   --gl-type-body-lg-leading: var(--gl-leading-relaxed);
-  --gl-type-body-lg-weight: var(--gl-weight-regular);
+  --gl-type-body-lg-weight: var(--gl-weight-light);
 
   --gl-type-body-md-size: var(--gl-size-body-md);
   --gl-type-body-md-leading: var(--gl-leading-body);
-  --gl-type-body-md-weight: var(--gl-weight-regular);
+  --gl-type-body-md-weight: var(--gl-weight-light);
 
   --gl-type-body-sm-size: var(--gl-size-body-sm);
   --gl-type-body-sm-leading: var(--gl-leading-normal);
@@ -200,20 +290,20 @@
 
   /* label — form field labels */
   --gl-type-label-size: var(--gl-size-body-md);
-  --gl-type-label-weight: var(--gl-weight-semibold);
+  --gl-type-label-weight: var(--gl-weight-light);
 
   /* kicker — the mono, tracked-out accent eyebrow on deliverable cards */
   --gl-type-kicker-size: var(--gl-size-nano);
-  --gl-type-kicker-weight: var(--gl-weight-bold);
+  --gl-type-kicker-weight: var(--gl-weight-regular);
   --gl-type-kicker-tracking: var(--gl-tracking-widest);
 
   /* actionLg / actionMd — the two permitted button label sizes */
   --gl-type-action-lg-size: var(--gl-size-body-sm);
-  --gl-type-action-lg-weight: var(--gl-weight-bold);
+  --gl-type-action-lg-weight: var(--gl-weight-regular);
   --gl-type-action-lg-tracking: var(--gl-tracking-wider);
 
   --gl-type-action-md-size: var(--gl-size-micro);
-  --gl-type-action-md-weight: var(--gl-weight-bold);
+  --gl-type-action-md-weight: var(--gl-weight-regular);
   --gl-type-action-md-tracking: var(--gl-tracking-wide);
 
   /* ------------------------------------------------------------------------

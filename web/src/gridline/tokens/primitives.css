@@ -16,20 +16,20 @@
 :root {
   /* ------------------------------------------------------------------------
      Color — Rose (the single accent family)
-     Rebased on the brand accent #BD2A2A (rose-600); the rest of the ramp is
-     that same hue/saturation carried across the original scale's lightness
-     steps, so every tint and shade stays in the new red family.
+     Rebased on the brand accent #FF4837 (rose-600); the rest of the ramp is
+     that same hue carried across the original scale's lightness steps, so
+     every tint and shade stays in the new red family.
      ---------------------------------------------------------------------- */
-  --gl-rose-50: #fdf5f5;
-  --gl-rose-100: #faebeb;
-  --gl-rose-200: #f6d7d7;
-  --gl-rose-300: #f0b9b9;
-  --gl-rose-400: #e58989; /* hero glow, outer stop */
-  --gl-rose-500: #da5959; /* hero glow, mid stop */
-  --gl-rose-600: #bd2a2a; /* THE accent */
-  --gl-rose-700: #972222; /* accent, pressed/hover */
-  --gl-rose-800: #8e2020;
-  --gl-rose-900: #7c1c1c;
+  --gl-rose-50: #fff7f6;
+  --gl-rose-100: #ffedeb;
+  --gl-rose-200: #ffdcd9;
+  --gl-rose-300: #ffc2bc;
+  --gl-rose-400: #ff978e; /* hero glow, outer stop */
+  --gl-rose-500: #ff6e60; /* hero glow, mid stop */
+  --gl-rose-600: #F9423A; /* THE accent */
+  --gl-rose-700: #bf3629; /* accent, pressed/hover */
+  --gl-rose-800: #a02d23;
+  --gl-rose-900: #8c271e;
 
   /* Crimson used by the archetype media tint (rgba(190, 24, 93)) — a pink-
      leaning red that is deliberately distinct from --gl-rose-700. */
@@ -60,6 +60,7 @@
   --gl-neutral-650: #6b7280; /* metric value, de-emphasised */
   --gl-neutral-700: #52525b; /* text, secondary */
   --gl-neutral-750: #4b5563; /* body copy on inset panels, icon */
+  --gl-neutral-775: #3f3f46; /* secondary prose at Light weight */
   --gl-neutral-800: #18181b;
   --gl-neutral-850: #111827; /* heading, cool black */
   --gl-neutral-900: #111111; /* text, primary */
@@ -76,18 +77,28 @@
   /* ------------------------------------------------------------------------
      Typeface
      ---------------------------------------------------------------------- */
-  --gl-font-sans-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  /* Helvetica Neue is the single typeface for the whole system — headings,
+     body copy, labels, and the registration marks that used to be mono.
+     It ships with macOS/iOS and is not licensable through Google Fonts, so
+     it is a platform stack rather than a next/font import: the app now
+     downloads no webfont at all. Light is reached through
+     `font-weight: 300`, which resolves to the real Helvetica Neue Light cut
+     on Apple platforms; Helvetica/Arial cover Windows and Linux, where no
+     Light cut exists and text renders at Regular instead. */
+  --gl-font-sans-stack: "Helvetica Neue", Helvetica, Arial, "Liberation Sans",
+    sans-serif;
+
+  /* Retained for reference only — nothing points at this while the system
+     is single-typeface. Re-point `--gl-font-mono` at it to bring mono back. */
   --gl-font-mono-stack: ui-monospace, SFMono-Regular, "SF Mono", Menlo,
     Consolas, monospace;
 
-  /* `--gl-font-sans` / `--gl-font-mono` are injected by next/font in
-     app/layout.tsx (Plus Jakarta Sans and Geist Mono) and fall back to the
-     stacks above. `--gl-font-accent-mono` (Space Mono) is a one-off, used
-     only by the hero headline's accent word — not a general mono swap. */
-  --gl-font-sans: var(--gl-font-plus-jakarta, var(--gl-font-sans-stack));
-  --gl-font-mono: var(--gl-font-geist-mono, var(--gl-font-mono-stack));
-  --gl-font-accent-mono: var(--gl-font-space-mono, var(--gl-font-mono-stack));
+  /* One face, three aliases. `--gl-font-mono` and `--gl-font-accent-mono`
+     survive as tokens so that no component stylesheet needed to change, but
+     both now resolve to Helvetica Neue. */
+  --gl-font-sans: var(--gl-font-sans-stack);
+  --gl-font-mono: var(--gl-font-sans-stack);
+  --gl-font-accent-mono: var(--gl-font-sans-stack);
 
   /* ------------------------------------------------------------------------
      Type — weight
@@ -102,31 +113,78 @@
 
   /* ------------------------------------------------------------------------
      Type — size
-     Fluid steps clamp between a mobile and a desktop bound; fixed steps are
-     rem values that never scale.
+     One modular scale, 1rem (16px) base, 1.25 ratio (the "major third"):
+     every type size in the system is a step on it, and every step is
+     expressed in rem so the whole page scales with the root font size.
 
-     The display/editorial/heading steps below were trimmed down from a
-     louder, much larger scale to sit closer to body size — an Apple-style
-     restraint where hierarchy comes mostly from weight and color, not sheer
-     scale, so the heading-to-body ratio stays subtle. (The hero headline is
-     exempt: it sets its own sizes directly in HeroSection.module.css.)
+         step   rem          px       role in the reference scale
+         +9     7.4506rem    119.21   hero accent word
+         +8     5.9605rem     95.37
+         +7     4.7684rem     76.29
+         +6     3.8147rem     61.04   h1
+         +5     3.0518rem     48.83   h2
+         +4     2.4414rem     39.06   h3
+         +3     1.9531rem     31.25   h4
+         +2     1.5625rem     25.00   h5
+         +1     1.25rem       20.00   h6
+          0     1rem          16.00   p
+         −1     0.8rem        12.80   small
+         −2     0.64rem       10.24   footnote
+
+     The three steps above h1 exist only because the hero headline runs
+     past h1; they are the same ratio carried further, not a second scale.
      ---------------------------------------------------------------------- */
-  --gl-size-display: clamp(1.875rem, 2.8vw, 2.75rem); /* 30 → 44px */
-  --gl-size-editorial: clamp(2rem, 2.8vw, 2.75rem); /* 32 → 44px */
-  --gl-size-editorial-tight: clamp(1.875rem, 2.6vw, 2.5rem); /* 30 → 40px */
-  --gl-size-mono-display: clamp(1.75rem, 2.4vw, 2.25rem); /* 28 → 36px */
-  --gl-size-heading-lg: clamp(1.5rem, 2.2vw, 1.875rem); /* 24 → 30px */
-  --gl-size-heading-sm: clamp(1.25rem, 1.5vw, 1.375rem); /* 20 → 22px */
-  --gl-size-mono-heading: clamp(1.125rem, 1.35vw, 1.25rem); /* 18 → 20px */
-  --gl-size-heading-md: clamp(1.0625rem, 1.4vw, 1.1875rem); /* 17 → 19px */
-  --gl-size-title: 1.1rem; /* 17.6px — already close to body-lg; left as-is */
-  --gl-size-body-lg: 1.0625rem; /* 17px */
-  --gl-size-body-base: 1rem; /* 16px */
-  --gl-size-body-md: 0.9375rem; /* 15px */
-  --gl-size-body-sm: 0.875rem; /* 14px */
-  --gl-size-caption: 0.8125rem; /* 13px */
-  --gl-size-micro: 0.75rem; /* 12px */
-  --gl-size-nano: 0.6875rem; /* 11px */
+  --gl-scale-6xl: 11.6415rem; /* 186.26px */
+  --gl-scale-5xl: 9.3132rem; /* 149.01px */
+  --gl-scale-4xl: 7.4506rem; /* 119.21px */
+  --gl-scale-3xl: 5.9605rem; /* 95.37px */
+  --gl-scale-2xl: 4.7684rem; /* 76.29px */
+  --gl-scale-h1: 3.8147rem; /* 61.04px */
+  --gl-scale-h2: 3.0518rem; /* 48.83px */
+  --gl-scale-h3: 2.4414rem; /* 39.06px */
+  --gl-scale-h4: 1.9531rem; /* 31.25px */
+  --gl-scale-h5: 1.5625rem; /* 25px */
+  --gl-scale-h6: 1.25rem; /* 20px */
+  --gl-scale-p: 1rem; /* 16px */
+  --gl-scale-small: 0.8rem; /* 12.8px */
+  --gl-scale-footnote: 0.64rem; /* 10.24px */
+
+  /* Role sizes. Fluid roles clamp between two steps of the scale above, so
+     a heading is never off-scale at any viewport width — only which step it
+     has reached changes. Fixed roles name a single step. */
+  /* h3 → h1 */
+  --gl-size-display: clamp(var(--gl-scale-h3), 5.2vw, var(--gl-scale-h1));
+  /* h4 → h2 */
+  --gl-size-editorial: clamp(var(--gl-scale-h4), 4.4vw, var(--gl-scale-h2));
+  /* h4 → h3 */
+  --gl-size-editorial-tight: clamp(
+    var(--gl-scale-h4),
+    3.6vw,
+    var(--gl-scale-h3)
+  );
+  /* h5 → h3 */
+  --gl-size-mono-display: clamp(var(--gl-scale-h5), 3.2vw, var(--gl-scale-h3));
+  /* h5 → h4 */
+  --gl-size-heading-lg: clamp(var(--gl-scale-h5), 2.6vw, var(--gl-scale-h4));
+  /* h6 → h5 */
+  --gl-size-heading-sm: clamp(var(--gl-scale-h6), 1.9vw, var(--gl-scale-h5));
+
+  --gl-size-mono-heading: var(--gl-scale-h6); /* h6 */
+  --gl-size-heading-md: var(--gl-scale-h6); /* h6 */
+  --gl-size-title: var(--gl-scale-h6); /* h6 */
+
+  /* The h6 step (20px) is the heading tier's floor and belongs to it alone:
+     keeping the largest body role a full ratio step below the smallest
+     heading is what makes the two tiers read as different things when every
+     one of them is the same weight. bodyLg is therefore "large body" by
+     leading and measure, not by size. */
+  --gl-size-body-lg: var(--gl-scale-p); /* p */
+  --gl-size-body-base: var(--gl-scale-p); /* p */
+  --gl-size-body-md: var(--gl-scale-p); /* p */
+  --gl-size-body-sm: var(--gl-scale-small); /* small */
+  --gl-size-caption: var(--gl-scale-small); /* small */
+  --gl-size-micro: var(--gl-scale-small); /* small */
+  --gl-size-nano: var(--gl-scale-footnote); /* footnote */
 
   /* ------------------------------------------------------------------------
      Type — line height
@@ -143,13 +201,22 @@
 
   /* ------------------------------------------------------------------------
      Type — letter spacing
+     The negative half of this ramp is currently unused: every heading role
+     in semantic.css tracks at 0 (see the note there), and body copy always
+     did. The steps are kept rather than deleted so a single alias can be
+     re-pointed if one setting ever wants tightening back, and they are
+     already scaled for a Light face — the ramp before this one ran to
+     -0.035em, tuned for semibold, which at 300 weight closed the counters
+     until the strokes merged and read as blur rather than as tightness.
+     Positive tracking for uppercase marks is the live half: letter-spacing
+     genuinely helps there.
      ---------------------------------------------------------------------- */
-  --gl-tracking-tightest: -0.035em;
-  --gl-tracking-tighter: -0.03em;
-  --gl-tracking-tight: -0.025em;
-  --gl-tracking-snug: -0.02em;
-  --gl-tracking-slight: -0.015em;
-  --gl-tracking-minimal: -0.01em;
+  --gl-tracking-tightest: -0.02em;
+  --gl-tracking-tighter: -0.016em;
+  --gl-tracking-tight: -0.012em;
+  --gl-tracking-snug: -0.008em;
+  --gl-tracking-slight: -0.004em;
+  --gl-tracking-minimal: -0.002em;
   --gl-tracking-normal: 0;
   --gl-tracking-wide: 0.05em;
   --gl-tracking-wider: 0.06em;

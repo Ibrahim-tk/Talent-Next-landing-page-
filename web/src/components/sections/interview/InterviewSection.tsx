@@ -1,18 +1,14 @@
-import { GridModule, MeterRow, SurfaceCard, Text } from "@gridline";
-import {
-  interviewCopy,
-  interviewStages,
-  interviewTopStrengths,
-} from "@/content/interview";
+import Image from "next/image";
+
+import { GridModule, Text } from "@gridline";
+import { interviewCopy, interviewStages } from "@/content/interview";
 
 import styles from "./InterviewSection.module.css";
 
 /**
  * The reassurance band — a centred heading over a static three-up row.
- * Each panel is identical in structure: the same "Top Strength" card (the
- * pattern lives in HowItWorksSection — a SurfaceCard of MeterRows) floating
- * over the same ambient-glow backdrop, with one line of copy underneath.
- * Only that one line of copy differs panel to panel.
+ * Each panel is identical in structure: a gradient plate (grad1–3) with the
+ * matching still (pic1–3) floating over it, and one line of copy underneath.
  */
 export function InterviewSection() {
   return (
@@ -37,30 +33,23 @@ export function InterviewSection() {
         {interviewStages.map((stage) => (
           <div key={stage.id} className={styles.panel}>
             <div className={styles.media}>
-              <SurfaceCard
-                radius="xl"
-                border="elevated"
-                elevation="sm"
-                padding="lg"
-                className={styles.strengthCard}
-              >
-                <Text
-                  variant="metricLabel"
-                  as="h4"
-                  className={styles.strengthCardTitle}
-                >
-                  {interviewCopy.cardTitle}
-                </Text>
-                <div className={styles.strengthRows}>
-                  {interviewTopStrengths.map((strength) => (
-                    <MeterRow
-                      key={strength.name}
-                      name={strength.name}
-                      value={strength.value}
-                    />
-                  ))}
-                </div>
-              </SurfaceCard>
+              <Image
+                src={stage.background}
+                alt=""
+                aria-hidden
+                fill
+                sizes="(max-width: 860px) 100vw, 34vw"
+                className={styles.backdrop}
+              />
+              <div className={styles.overlay}>
+                <Image
+                  src={stage.overlay}
+                  alt={stage.overlayAlt}
+                  fill
+                  sizes="(max-width: 860px) 83vw, 28vw"
+                  className={styles.overlayImage}
+                />
+              </div>
             </div>
 
             <div className={styles.caption}>

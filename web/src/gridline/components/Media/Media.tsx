@@ -108,7 +108,7 @@ export function Thumbnail({
         />
       </div>
       <figcaption className={styles.thumbnailCaption}>
-        <Text variant="bodySm" as="span" tone="primary" weight="medium">
+        <Text variant="bodySm" as="span" tone="primary">
           {caption}
         </Text>
       </figcaption>

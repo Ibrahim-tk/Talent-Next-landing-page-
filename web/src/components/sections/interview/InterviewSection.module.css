@@ -2,11 +2,12 @@
    InterviewSection — "This isn't a Job Interview."
    --------------------------------------------------------------------------
    A centred banner heading (same headerRow shape as HowItWorksSection) over
-   a static three-up row. Each panel is identical: the same red-gradient.png
-   halftone plate carrying the same floating "Top Strength" card (verbatim
-   the SurfaceCard + MeterRow pattern from HowItWorksSection) and one line
-   of reassurance copy below. No scroll-driven motion here — three identical
-   treatments side by side reads better static than pinned.
+   a static three-up row. Each panel carries its own gradient plate (grad1–3)
+   with the matching still (pic1–3) floating centred over it, and one line of
+   reassurance copy below. Both images come in from the content file, so the
+   plates are set on the <Image> elements themselves rather than as CSS
+   backgrounds. No scroll-driven motion here — three treatments side by side
+   read better static than pinned.
    ========================================================================== */
 
 .headerRow {
@@ -44,40 +45,47 @@
 }
 
 /* --------------------------------------------------------------------------
-   The glow plate — the halftone asset itself, not a CSS approximation.
+   The gradient plate + the still that floats over it. `.media` is the
+   positioning context for both fill images: the backdrop covers the whole
+   panel, the overlay is a centred box the still is contained inside.
    -------------------------------------------------------------------------- */
 .media {
   position: relative;
   height: 460px;
   overflow: hidden;
   background-color: var(--gl-color-surface-inverse);
-  background-image: url("/img/red-gradient.png");
-  background-size: cover;
-  background-position: center;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
+  /* The overlay box is sized from the panel's own width, not the viewport's
+     — the panel is a third of the canvas here and full width on mobile. */
+  container-type: inline-size;
 }
 
-/* --------------------------------------------------------------------------
-   Strength card — identical block to HowItWorksSection's own
-   -------------------------------------------------------------------------- */
-.strengthCard {
+.backdrop {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Height is the dimension that's pinned, and width is left at the full panel
+   so it never becomes the binding constraint: the three stills differ in
+   aspect ratio (pic1 square, pic2 portrait at 0.73:1, pic3 landscape at
+   1.85:1), and with `contain` inside a box this shape each one resolves to
+   exactly the box height — so all three read at the same height across the
+   row, centred on their plates. The number is set by the widest of them:
+   45cqw puts pic3 at ~83cqw across, which still clears the panel edges. The
+   280px cap stops the row growing unreasonably on very wide viewports, and
+   holds the same 83% relation once it takes over. */
+.overlay {
   position: relative;
   z-index: var(--gl-z-content);
   width: 100%;
-  max-width: 290px;
-  margin-bottom: var(--gl-space-16);
+  height: min(45cqw, 280px);
 }
 
-.strengthCardTitle {
-  margin-bottom: var(--gl-space-8);
-}
-
-.strengthRows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gl-space-6);
+.overlayImage {
+  object-fit: contain;
+  object-position: center;
 }
 
 /* --------------------------------------------------------------------------
@@ -123,7 +131,10 @@
       var(--gl-color-border-rule);
   }
 
+  /* One panel per row now, so the container is the full viewport width and
+     the stills land much larger — the plate shortens to match rather than
+     leaving a deep band of bare gradient under them. */
   .media {
-    height: 380px;
+    height: 320px;
   }
 }

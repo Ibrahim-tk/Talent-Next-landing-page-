@@ -28,7 +28,7 @@
   border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   border-radius: var(--gl-radius-none);
   font-size: var(--gl-size-body-md);
-  font-weight: var(--gl-weight-medium);
+  font-weight: var(--gl-weight-light);
   line-height: var(--gl-leading-normal);
   color: var(--gl-color-text-primary);
   background-color: var(--gl-color-surface-raised);

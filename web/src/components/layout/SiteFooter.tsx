@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { cx, Icon, Text } from "@gridline";
-import { footerColumns, footerCopy, footerSocial, site } from "@/content/site";
+import {
+  footerColumns,
+  footerCopy,
+  footerSocial,
+  site,
+  termsOfUse,
+} from "@/content/site";
 
 import styles from "./SiteFooter.module.css";
 
@@ -15,21 +21,13 @@ export function SiteFooter() {
             <Image
               src={site.logoBlack}
               alt={site.name}
-              width={52}
-              height={20}
+              width={104}
+              height={40}
               className={styles.brandMark}
             />
           </Link>
           <Text variant="bodyMd" className={styles.tagline}>
             {footerCopy.tagline}
-          </Text>
-          <Text
-            variant="caption"
-            as="p"
-            tone="muted"
-            className={styles.copyright}
-          >
-            {footerCopy.legal}
           </Text>
         </div>
 
@@ -54,27 +52,38 @@ export function SiteFooter() {
           <Text variant="eyebrow" as="h2" className={styles.columnTitle}>
             Connect
           </Text>
-          <div className={styles.socialRow}>
+          <ul className={styles.socialList}>
             {footerSocial.map((social) => (
-              <Link
-                key={social.label}
-                href={social.href}
-                aria-label={social.label}
-                className={styles.socialLink}
-              >
-                <Icon name={social.icon} size={17} />
-              </Link>
+              <li key={social.label}>
+                <Link href={social.href} className={styles.socialLink}>
+                  <Icon
+                    name={social.icon}
+                    size={22}
+                    className={styles.socialGlyph}
+                  />
+                  <span>{social.label}</span>
+                </Link>
+              </li>
             ))}
-          </div>
-          <Text
-            variant="caption"
-            as="p"
-            tone="muted"
-            className={styles.credit}
-          >
-            {footerCopy.credit}
-          </Text>
+          </ul>
         </div>
+      </div>
+
+      <div className={styles.accentBar} aria-hidden="true" />
+
+      <div className={styles.legalBar}>
+        <div className={styles.legalLeft}>
+          <Text variant="caption" as="span" tone="muted">
+            {footerCopy.legal}
+          </Text>
+          <span className={styles.legalDot} aria-hidden="true" />
+          <Link href={termsOfUse.href} className={styles.legalLink}>
+            {termsOfUse.label}
+          </Link>
+        </div>
+        <Text variant="caption" as="span" tone="muted">
+          {footerCopy.credit}
+        </Text>
       </div>
     </footer>
   );

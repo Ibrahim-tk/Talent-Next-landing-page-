@@ -14,7 +14,7 @@
   background-color: var(--gl-color-action-primary-bg);
   color: var(--gl-color-action-primary-fg);
   font-size: var(--gl-size-micro);
-  font-weight: var(--gl-weight-bold);
+  font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-wide);
   text-transform: uppercase;
   transform: translateY(-200%);

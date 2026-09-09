@@ -86,7 +86,7 @@
 
 .navLink {
   font-size: var(--gl-size-body-md);
-  font-weight: var(--gl-weight-medium);
+  font-weight: var(--gl-weight-light);
   color: var(--gl-color-text-secondary);
   transition: color var(--gl-duration-fast) var(--gl-ease-standard);
 }
@@ -131,7 +131,7 @@
   display: block;
   padding: var(--gl-space-6) 0;
   font-size: var(--gl-size-body-lg);
-  font-weight: var(--gl-weight-medium);
+  font-weight: var(--gl-weight-light);
   color: var(--gl-color-text-primary);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-subtle);
