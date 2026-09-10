@@ -41,11 +41,13 @@
   top: var(--gl-space-7);
   left: var(--gl-space-8);
   font-size: var(--gl-scale-h1); /* 61.04px */
-  font-weight: var(--gl-weight-light);
+  /* Medium (500), not the system's Light. This is the one place a heavier
+     cut is right: the letter sits reversed-out over photography, where a
+     300 weight loses its thin strokes to whatever is behind it. */
+  font-weight: var(--gl-weight-medium);
   color: var(--gl-color-text-inverse);
   line-height: var(--gl-leading-flat);
   z-index: var(--gl-z-stage);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
 

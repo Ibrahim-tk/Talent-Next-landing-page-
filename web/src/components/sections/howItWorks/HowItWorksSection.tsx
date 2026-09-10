@@ -1,18 +1,7 @@
 import Image from "next/image";
 
-import {
-  GridModule,
-  Highlight,
-  MeterRow,
-  StepperTimeline,
-  SurfaceCard,
-  Text,
-} from "@gridline";
-import {
-  howItWorksCopy,
-  nextSteps,
-  topStrengths,
-} from "@/content/howItWorks";
+import { GridModule, Highlight, StepperTimeline, Text } from "@gridline";
+import { howItWorksCopy, nextSteps } from "@/content/howItWorks";
 
 import styles from "./HowItWorksSection.module.css";
 
@@ -47,6 +36,7 @@ export function HowItWorksSection() {
               alt={session.imageAlt}
               fill
               sizes="(max-width: 860px) 90vw, 45vw"
+              quality={95}
               className={styles.sessionImage}
             />
           </div>
@@ -63,30 +53,16 @@ export function HowItWorksSection() {
         <div className={styles.outcomes}>
           <div className={styles.outcomeRow}>
             <div className={styles.outcomeVisual}>
-              <SurfaceCard
-                radius="xl"
-                border="elevated"
-                elevation="sm"
-                padding="lg"
-                className={styles.strengthCard}
-              >
-                <Text
-                  variant="metricLabel"
-                  as="h4"
-                  className={styles.strengthCardTitle}
-                >
-                  {analysis.cardTitle}
-                </Text>
-                <div className={styles.strengthRows}>
-                  {topStrengths.map((strength) => (
-                    <MeterRow
-                      key={strength.name}
-                      name={strength.name}
-                      value={strength.value}
-                    />
-                  ))}
-                </div>
-              </SurfaceCard>
+              <div className={styles.analysisMedia}>
+                <Image
+                  src={analysis.image}
+                  alt={analysis.imageAlt}
+                  fill
+                  sizes="336px"
+                  quality={95}
+                  className={styles.analysisImage}
+                />
+              </div>
             </div>
             <div className={styles.outcomeText}>
               <Text variant="title" className={styles.panelHeading}>

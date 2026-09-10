@@ -19,7 +19,14 @@ export interface TintedMediaProps {
   fill?: boolean;
   sizes?: string;
   priority?: boolean;
-  /** Overlaid on top of the tint — e.g. the archetype letter. */
+  /**
+   * The house crimson duotone. Defaults on — it is what unifies stock
+   * photography from mixed sources into one palette. Turn it off for
+   * commissioned or curated imagery, where there is nothing to unify and
+   * the tint only stands between the viewer and the photograph.
+   */
+  tint?: boolean;
+  /** Overlaid on top of the media — e.g. the archetype letter. */
   children?: ReactNode;
   className?: string;
 }
@@ -41,6 +48,7 @@ export function TintedMedia({
   fill = false,
   sizes,
   priority = false,
+  tint = true,
   children,
   className,
 }: TintedMediaProps) {
@@ -66,7 +74,9 @@ export function TintedMedia({
           className={styles.tintedImage}
         />
       )}
-      <span className={styles.tintedOverlay} aria-hidden="true" />
+      {tint ? (
+        <span className={styles.tintedOverlay} aria-hidden="true" />
+      ) : null}
       {children}
     </div>
   );

@@ -17,7 +17,8 @@ export const howItWorksCopy = {
     heading: "See What Stands Out",
     description:
       "Your interview is analyzed to identify the skills you demonstrate, including where you’re strongest and where you have room to improve.",
-    cardTitle: "Top Strength",
+    image: "/assets/talagent.png",
+    imageAlt: "The TALENT Agent, rendered as a softly glowing orb",
   },
   nextSteps: {
     heading: "Get Your Next Steps",
@@ -25,17 +26,6 @@ export const howItWorksCopy = {
       "Get recommended focus areas and personalized plan based on your results",
   },
 } as const;
-
-export interface SkillScore {
-  name: string;
-  value: number;
-}
-
-export const topStrengths: readonly SkillScore[] = [
-  { name: "Leadership", value: 72 },
-  { name: "Communication", value: 46 },
-  { name: "Adaptability", value: 83 },
-];
 
 export const nextSteps: readonly StepperStep[] = [
   {

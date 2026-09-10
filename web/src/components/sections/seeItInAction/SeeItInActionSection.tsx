@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { GridModule, SectionHeader } from "@gridline";
+import { GridModule, Highlight, SectionHeader } from "@gridline";
 import { seeItInActionCopy } from "@/content/deliverables";
 
 import styles from "./SeeItInActionSection.module.css";
@@ -29,10 +29,22 @@ export function SeeItInActionSection() {
       <div className={styles.gridBox} aria-hidden="true" />
 
       <div className={styles.headerPad}>
+        {/* `display` — the scale's h3 → h1 role — rather than the default
+            `headingLg`: this header opens the section over a large video
+            card, and at the standard module measure it read as a caption
+            above the plate instead of a headline. Still an <h2>; only the
+            size changes. */}
         <SectionHeader
           headingId="see-it-in-action-heading"
-          heading={seeItInActionCopy.heading}
+          heading={
+            <>
+              {seeItInActionCopy.headingBefore}
+              <Highlight>{seeItInActionCopy.headingAccent}</Highlight>
+              {seeItInActionCopy.headingAfter}
+            </>
+          }
           description={seeItInActionCopy.description}
+          headingVariant="display"
         />
       </div>
 

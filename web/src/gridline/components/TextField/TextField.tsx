@@ -2,6 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from "react";
 
 import { cx } from "../../utils/cx";
 import { Text } from "../Text/Text";
+import type { TextVariant } from "../Text/Text";
 import styles from "./TextField.module.css";
 
 export interface FieldProps {
@@ -15,6 +16,14 @@ export interface FieldProps {
   htmlFor?: string;
   required?: boolean;
   hint?: ReactNode;
+  /**
+   * Type role for the label. Defaults to `label` (16px) — the right size
+   * for naming a control ("Email", "Postal Code"). Step it up to `title`
+   * (20px, the h6 rung) when the label is the *question* a whole step is
+   * asking, not just the name of a box: at that point it is doing a
+   * heading's job and should be sized like one.
+   */
+  labelVariant?: TextVariant;
   className?: string;
   children: ReactNode;
 }
@@ -28,13 +37,14 @@ export function Field({
   htmlFor,
   required = false,
   hint,
+  labelVariant = "label",
   className,
   children,
 }: FieldProps) {
   return (
     <div className={cx(styles.field, className)}>
       <Text
-        variant="label"
+        variant={labelVariant}
         as={htmlFor ? "label" : "span"}
         htmlFor={htmlFor}
         className={styles.label}
@@ -57,6 +67,8 @@ export interface TextFieldProps
   id: string;
   label: ReactNode;
   hint?: ReactNode;
+  /** Passed straight through to `Field` — see its own note. */
+  labelVariant?: TextVariant;
   className?: string;
 }
 
@@ -70,11 +82,19 @@ export function TextField({
   label,
   hint,
   required,
+  labelVariant,
   className,
   ...inputProps
 }: TextFieldProps) {
   return (
-    <Field label={label} htmlFor={id} required={required} hint={hint} className={className}>
+    <Field
+      label={label}
+      htmlFor={id}
+      required={required}
+      hint={hint}
+      labelVariant={labelVariant}
+      className={className}
+    >
       <input
         id={id}
         required={required}

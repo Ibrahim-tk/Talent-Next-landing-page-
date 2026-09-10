@@ -3,7 +3,8 @@
    --------------------------------------------------------------------------
    A centred banner heading (same shape as InterviewSection's own) over a
    two-column matrix: a tall session panel on the left, and two stacked
-   outcome rows on the right sitting on the sunken surface. Three cells of
+   outcome rows on the right. All three cells are white — the hairline grid
+   alone divides them, with no tonal shift between the columns. Three cells of
    comparable weight, not one oversized hero image plus two smaller ones —
    the left column's image has a capped height (object-fit: cover, same
    technique as InterviewSection's own media panel) rather than stretching
@@ -73,18 +74,50 @@
 }
 
 /* --------------------------------------------------------------------------
-   Right panels — outcomes, stacked, same sunken surface as before
+   Right panels — outcomes, stacked. White (`--gl-color-surface-raised`)
+   rather than the sunken grey these rows used to carry, so both columns of
+   the matrix sit on one continuous white surface and the only thing
+   separating the three cells is the hairline grid itself. The rows still
+   paint their fill explicitly instead of leaving it transparent: that keeps
+   the white a deliberate choice here, rather than whatever the section
+   happens to inherit.
    -------------------------------------------------------------------------- */
 .outcomes {
   display: flex;
   flex-direction: column;
+  /* One place to tune both rows. 400px is deliberately the height these
+     rows already had between them before they were pinned — the analysis
+     row ran ~460px and the next-steps row ~326px, so an equal split of
+     that same column keeps the section's overall height where it was.
+
+     The orb does NOT factor into this number: it's absolutely positioned
+     (see `.analysisMedia`), so it contributes nothing to layout and the
+     row can be sized purely around the caption pinned at its bottom. What
+     that does mean is that the orb is free to overlap the caption rather
+     than push it down — at 400px its box runs from 15% (60px) to 396px
+     while the caption block occupies the last ~142px, so the glow's soft
+     lower half sits behind the heading. That's the intended look; the
+     overlap is transparent pixels, and `pointer-events: none` on the orb
+     keeps the heading selectable through it. Raise this value if a clean
+     gap between the two is ever wanted instead. */
+  --outcome-row-height: 400px;
 }
 
+/* `flex: none` + an explicit height rather than the `flex: 1` these rows
+   used to share: in a column flex container `flex: 1` also sets
+   `flex-basis: 0%`, which wins over `height` on the main axis — the rows
+   would go back to splitting whatever height the grid row happened to be,
+   and the analysis row's taller content would push them out of step. Fixed
+   and equal is the point here, so the basis has to come from `height`.
+
+   `position: relative` makes each row the containing block for the orb. */
 .outcomeRow {
-  flex: 1;
+  position: relative;
+  flex: none;
+  height: var(--outcome-row-height);
   display: flex;
   flex-direction: column;
-  background-color: var(--gl-color-surface-sunken);
+  background-color: var(--gl-color-surface-raised);
   padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
 
@@ -115,21 +148,40 @@
 }
 
 /* --------------------------------------------------------------------------
-   Strength card
+   Analysis visual — the TALENT Agent orb, 336px (1.4x the 240px measure the
+   Top Strength card used to occupy, and that `.stepperWrap` still does).
+
+   Taken out of flow and anchored 15% down its row, so its size can no
+   longer set that row's height — that's what lets `--outcome-row-height`
+   stay fixed and keep both outcome rows equal. `left`/`right: 0` plus auto
+   side margins centre it inside the row's padding box; the auto margins
+   only have an effect because `max-width` keeps it narrower than that box.
+
+   Square, because the source is: `aspect-ratio` gives the `fill` image a
+   box to fill without an explicit height. `contain` rather than `cover` —
+   the artwork is a radial glow that fades to transparent on a square
+   canvas, so cropping it to a non-square box would clip the glow unevenly
+   and shift the orb off centre. No border, radius or background: the glow
+   is meant to sit directly on the panel, not inside a frame.
+
+   `pointer-events: none` because it now floats over the row rather than
+   sitting beside its caption: without it, the transparent lower edge of
+   the glow would swallow clicks and text selection on the heading beneath.
    -------------------------------------------------------------------------- */
-.strengthCard {
+.analysisMedia {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
   width: 100%;
-  max-width: 240px;
+  max-width: 336px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
 }
 
-.strengthCardTitle {
-  margin-bottom: var(--gl-space-8);
-}
-
-.strengthRows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gl-space-6);
+.analysisImage {
+  object-fit: contain;
 }
 
 @media (max-width: 860px) {
@@ -145,6 +197,21 @@
 
   .sessionMedia {
     height: 240px;
+  }
+
+  /* Stacked in one column down here, so the fixed height and the
+     out-of-flow orb both stop being useful: there's no second column left
+     to match, and each row can simply size to its own content. Putting the
+     orb back in flow is what keeps it from overlapping the caption once
+     the copy wraps to the many more lines a narrow column produces. */
+  .outcomeRow {
+    height: auto;
+  }
+
+  .analysisMedia {
+    position: relative;
+    top: auto;
+    pointer-events: auto;
   }
 }
 

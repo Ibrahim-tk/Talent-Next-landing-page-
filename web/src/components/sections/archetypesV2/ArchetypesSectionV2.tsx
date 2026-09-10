@@ -17,7 +17,7 @@ import styles from "./ArchetypesSectionV2.module.css";
  * Modelled on a reference grid (numbered panels with a product card
  * overhanging each one, a split header, and a plate mark closing the page)
  * but rebuilt in this system's vocabulary rather than copied: sunken
- * `SurfaceCard` panels and `TintedMedia` portraits instead of screenshots on
+ * `SurfaceCard` panels and untinted portraits instead of screenshots on
  * a dark ground, `Crosshair` registration marks instead of the reference's
  * corner dots, the accent used once per tile on the kicker, and the plate
  * number dropped to the hairline grey so it annotates rather than shouts.

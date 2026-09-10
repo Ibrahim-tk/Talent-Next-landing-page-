@@ -102,6 +102,18 @@
    below, which is deliberately taken out of flow so it can never push
    `.row` off-centre. */
 .content {
+  /* Desktop nudge: the section reads better with the heading sitting lower
+     than the panel's own top edge, and with more air between the heading
+     block and the image/caption row below it. `.row` is vertically centred
+     in this box, so a padding-top here moves it down by HALF of this value
+     (border-box, so the padding eats into the content box rather than
+     growing it — the row can't be pushed past the bottom of `.stage`).
+     `.headingBar` below subtracts the same half from its own anchor so the
+     heading travels down with the row instead of the gap between them
+     stretching by that amount as well. Reset to 0 in the narrow layout,
+     where `.stage` is `height: auto` and nothing is centred. */
+  --deliverables-top-shift: var(--gl-space-23);
+  padding-top: var(--deliverables-top-shift);
   padding-left: clamp(20px, 3vw, 44px);
   display: flex;
   flex-direction: column;
@@ -146,12 +158,22 @@
      `left: 0` here would ignore that padding and start too far left. */
   left: clamp(20px, 3vw, 44px);
   right: 0;
-  /* The gap between this block and `.row` below — kept as small as still
-     reads cleanly (`--gl-space-9`, not the larger `--gl-space-16` this
-     used before) specifically to leave more headroom above for the
-     heading + paragraph to render into before hitting `.content`'s clipped
-     top edge (see `.content`'s own `overflow: hidden` above). */
-  bottom: calc(50% + 190px + var(--gl-space-9));
+  /* The gap between this block and `.row` below. This was held down to
+     `--gl-space-9` while the heading's own headroom was the binding
+     constraint (see `.content`'s `overflow: hidden` above) — now that
+     `--deliverables-top-shift` moves the whole group down, there's room to
+     open it back up so the heading and the row don't read as one crowded
+     block. The shift's half is subtracted here so this term alone sets the
+     gap: without it, moving the row down would stretch this gap too. Half
+     the row
+     height is read from `--caption-row-height` (published by the component
+     from `CAPTION_ROW_HEIGHT`) rather than written out as a literal, so
+     rescaling the row cannot leave this anchor pointing at the old
+     centreline. */
+  bottom: calc(
+    50% - (var(--deliverables-top-shift) / 2) +
+      (var(--caption-row-height) / 2) + var(--gl-space-14)
+  );
   padding-bottom: var(--gl-space-9);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-inverse);
@@ -177,8 +199,9 @@
    -------------------------------------------------------------------------- */
 .imageFrame {
   position: relative;
-  flex: 0 0 clamp(240px, 18vw, 280px);
-  height: 380px;
+  /* The original clamp(240px, 18vw, 280px) at 1.2x. */
+  flex: 0 0 clamp(288px, 21.6vw, 336px);
+  height: var(--caption-row-height);
   overflow: hidden;
   background-color: var(--gl-color-surface-inverse);
   box-shadow: var(--gl-shadow-md);
@@ -196,7 +219,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  /* Dead centre, not the `center 20%` bias the photographic frames use.
+     These layers are product mockups — a card centred in its own artboard
+     with even margins — so biasing the crop upward would shave the bottom
+     of the card off while leaving dead space at the top. */
+  object-position: center;
 }
 
 .layerStacked {
@@ -217,7 +244,7 @@
 .captionViewport {
   position: relative;
   flex: 1;
-  height: 380px;
+  height: var(--caption-row-height);
   overflow: hidden;
 }
 
@@ -226,14 +253,19 @@
 }
 
 .captionRow {
-  height: 380px;
+  height: var(--caption-row-height);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+/* Desktop only: a real gap between the stage title and its paragraph, so
+   the two read as heading-then-body rather than as one block. The narrow
+   layout keeps the original 12px (see the media query at the bottom) —
+   down there the rows are stacked and separated by their own rules, and
+   this much air inside a row would compete with the space between rows. */
 .captionHeading {
-  margin-bottom: var(--gl-space-5);
+  margin-bottom: var(--gl-space-11);
 }
 
 .headline {
@@ -247,7 +279,9 @@
 }
 
 .captionText {
-  max-width: 460px;
+  /* 460px at 1.2x — the paragraph block grows with the row even though the
+     type itself stays at the system's 16px body ceiling. */
+  max-width: 552px;
 }
 
 .captionFadeTop,
@@ -309,6 +343,8 @@
   }
 
   .content {
+    --deliverables-top-shift: 0px;
+    padding-top: 0;
     padding-left: 0;
   }
 
@@ -348,6 +384,13 @@
     margin-bottom: var(--gl-space-9);
     border-bottom: var(--gl-border-width-hairline) solid
       var(--gl-color-border-inverse);
+  }
+
+  /* Back to the original gap — the desktop value is tuned for a 456px row
+     with the paragraph sitting beside a large image, not for stacked rows
+     divided by hairlines. */
+  .captionHeading {
+    margin-bottom: var(--gl-space-5);
   }
 
   .captionRow:last-child {

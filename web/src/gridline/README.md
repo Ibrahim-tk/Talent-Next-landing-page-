@@ -26,8 +26,12 @@ conventional marketing page.
    as the grid. There are no smooth gradient bars.
 5. **Type is a closed set.** Sections pick a role from `Text`; they never set
    `font-size`. Adding a role is a design-system decision.
-6. **Photography is always tinted.** `TintedMedia` applies the house crimson
-   duotone, which unifies stock imagery from mixed sources into one palette.
+6. **Photography is tinted by default.** `TintedMedia` applies the house
+   crimson duotone, which unifies stock imagery from mixed sources into one
+   palette. Pass `tint={false}` for commissioned or curated photography —
+   the archetype cards do, now that their six portraits are a deliberate
+   set rather than assorted stock: there is nothing left to unify, and the
+   tint only stands between the viewer and the photograph.
 
 ## Architecture
 
@@ -184,7 +188,7 @@ import { Button, GridModule, Highlight, SectionHeader, Text } from "@gridline";
 | --- | --- |
 | `GridCanvas` | The architectural frame — the two constant vertical rules |
 | `GridModule` | A ruled section box; `rule` picks which edges draw a hairline |
-| `SectionHeader` | Centred module header, closed by a hairline |
+| `SectionHeader` | Centred module header, closed by a hairline; `headingVariant` raises it from `headingLg` to a larger heading role |
 | `SurfaceCard` | Generic content surface; tone / border / radius / elevation / padding |
 | `Text` | Every type role in the system |
 | `Highlight` | One accent-coloured word inside a heading |

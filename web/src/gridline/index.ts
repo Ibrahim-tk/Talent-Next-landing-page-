@@ -20,7 +20,10 @@ export type {
 } from "./components/GridModule/GridModule";
 
 export { SectionHeader } from "./components/SectionHeader/SectionHeader";
-export type { SectionHeaderProps } from "./components/SectionHeader/SectionHeader";
+export type {
+  SectionHeaderProps,
+  SectionHeaderVariant,
+} from "./components/SectionHeader/SectionHeader";
 
 export { SurfaceCard } from "./components/SurfaceCard/SurfaceCard";
 export type {

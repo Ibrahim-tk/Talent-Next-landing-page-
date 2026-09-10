@@ -21,36 +21,32 @@ export const deliverableStages: readonly DeliverableStage[] = [
   {
     id: "talent-level",
     tabLabel: "Your TALENT Level",
-    image:
-      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Reviewing a TALENT Level score",
+    image: "/assets/del1.png",
+    imageAlt: "A Talent Level card reading Level 4 of 6, Emerging leader",
     description:
       "A clear score based on the six TALENT traits, giving you an objective baseline for where your natural abilities lie.",
   },
   {
     id: "strengths-gaps",
     tabLabel: "Your Strengths + Skill Gaps",
-    image:
-      "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Reviewing strengths and skill gaps",
+    image: "/assets/del2.png",
+    imageAlt: "A strength curve card highlighting Communication and Adaptability",
     description:
       "A breakdown of what you're naturally good at, along with the specific areas where focused effort could have the biggest impact.",
   },
   {
     id: "highlights",
     tabLabel: "Highlights From Your Interview",
-    image:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Reviewing interview highlight clips",
+    image: "/assets/del3.png",
+    imageAlt: "Three highlight clips from a recorded interview",
     description:
       "Key moments from your conversation that illustrate your strengths in action, curated by your Agent.",
   },
   {
     id: "personalized-plan",
     tabLabel: "Your Personalized Development Plan",
-    image:
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Reviewing a personalized development plan",
+    image: "/assets/del4.png",
+    imageAlt: "A Tal recommends card listing personalized next steps",
     // Placeholder — no source copy exists for this stage yet; distinguish
     // it from "12 Weeks…" as the roadmap/strategy, not the weekly schedule.
     description:
@@ -59,9 +55,8 @@ export const deliverableStages: readonly DeliverableStage[] = [
   {
     id: "development-plan",
     tabLabel: "12 Weeks of Development Built for You",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Reviewing a 12-week development schedule",
+    image: "/assets/del5.png",
+    imageAlt: "A 12-week development plan laid out week by week",
     description:
       "Recommended next steps based on your results, designed to help you build on what you already have.",
   },
@@ -74,7 +69,13 @@ export const deliverablesCopy = {
 } as const;
 
 export const seeItInActionCopy = {
-  heading: "See What a TALENTnext Conversation Is Really Like",
+  // Split for the accent, the same way `howItWorksCopy` carries its own
+  // heading. The break falls mid-word — "TALENT" is accented and "next"
+  // is not — so `headingAfter` deliberately opens with no leading space:
+  // the two must still render as the single word "TALENTnext".
+  headingBefore: "See What a ",
+  headingAccent: "TALENT",
+  headingAfter: "next Conversation Is Really Like",
   description:
     "Wondering what you’ll be asked? Watch part of a real conversation with a TALENT Agent and see for yourself.",
   videoSources: ["/video/agent-loop.mp4", "/video/candidate-loop.mp4"],

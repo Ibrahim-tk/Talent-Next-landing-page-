@@ -32,10 +32,9 @@ const stepProgress = [25, 50, 75, 100] as const;
 /**
  * The four-step intake questionnaire.
  *
- * Laid out as two panels sharing one card: a dark intro panel (heading +
- * step progress, tinted and blurred via `backdrop-filter` straight through
- * to the section's own background image — no image layer of its own)
- * beside the active step's fields, painted fully opaque white. Real React
+ * Laid out as two panels sharing one card: a flat black intro panel
+ * (heading + step progress, no image layer of its own) beside the active
+ * step's fields, painted fully opaque white. Real React
  * state drives which step is mounted, so the browser's own validation can
  * run on submit.
  *
@@ -115,7 +114,7 @@ export function IntakeForm() {
           <form onSubmit={handleSubmit} className={styles.form}>
             {step === 1 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.situation} required>
+                <Field label={formLabels.situation} labelVariant="title" required>
                   <PillGroup
                     label={formLabels.situation}
                     options={situationOptions}
@@ -129,7 +128,7 @@ export function IntakeForm() {
 
             {step === 2 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.goal} required>
+                <Field label={formLabels.goal} labelVariant="title" required>
                   <PillGroup
                     label={formLabels.goal}
                     options={goalOptions}
@@ -144,7 +143,7 @@ export function IntakeForm() {
             {step === 3 ? (
               <>
                 <div className={styles.fieldGroup}>
-                  <Field label={formLabels.callTime} required>
+                  <Field label={formLabels.callTime} labelVariant="title" required>
                     <PillGroup
                       label={formLabels.callTime}
                       options={callTimeOptions}
@@ -161,6 +160,7 @@ export function IntakeForm() {
                     name="whats_next"
                     type="text"
                     label={formLabels.whatsNext}
+                    labelVariant="title"
                     placeholder={formLabels.whatsNextPlaceholder}
                   />
                 </div>

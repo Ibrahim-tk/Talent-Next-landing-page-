@@ -41,9 +41,18 @@ const WIPE_DURATION = 0.35;
 /**
  * Each stage's caption row is this tall, matching `.imageFrame`'s own
  * height so the image and the caption column read as one evenly matched
- * row. Kept in one place because the drift math below needs the number.
+ * row. The drift math below needs the number, and so does the stylesheet
+ * (three heights plus the zero-state heading's anchor, which is measured
+ * from half of it) — so it is published to CSS as `--caption-row-height`
+ * on the track element rather than written out again there. Changing the
+ * row's scale is this one line.
+ *
+ * 456 is the original 380 at 1.2x. Note the cost: the zero-state heading
+ * is anchored half a row above centre, so every px added here is a px of
+ * headroom taken from it before `.content`'s `overflow: hidden` starts
+ * trimming its top on short viewports.
  */
-const CAPTION_ROW_HEIGHT = 380;
+const CAPTION_ROW_HEIGHT = 456;
 
 /**
  * How long, in timeline units, the zero-state heading takes to slide up and
@@ -212,10 +221,18 @@ export function DeliverablesSection() {
           );
         }
 
-        // Stage 0 is already showing (its photo is the default), so image
-        // wipes start from stage 1: each one lands at timeline position
-        // `CAPTION_START + index`, exactly when the caption column's
-        // continuous drift finishes bringing that stage's row into view.
+        // Stage 0 is already showing (its image is the default), so wipes
+        // start from stage 1. Each one *finishes* at `CAPTION_START + index`
+        // — the instant the caption column's continuous drift lands that
+        // stage's row and the tab flips — which means it has to be
+        // scheduled a full `WIPE_DURATION` earlier.
+        //
+        // Starting it *at* the landing point instead (what this did before)
+        // is what made the image read as trailing the text: the caption
+        // never rests, so by the time a wipe completed, the column had
+        // already drifted a third of the way toward the next row and the
+        // tab had already moved. The image looked like it was catching up
+        // to a stage the rest of the section had left.
         for (let index = 1; index < STAGE_COUNT; index += 1) {
           const imageLayer = layerRefs.current[index];
           if (!imageLayer) continue;
@@ -228,7 +245,7 @@ export function DeliverablesSection() {
               duration: WIPE_DURATION,
               ease: "power1.inOut",
             },
-            CAPTION_START + index,
+            CAPTION_START + index - WIPE_DURATION,
           );
         }
       });
@@ -246,6 +263,7 @@ export function DeliverablesSection() {
         style={
           {
             "--extra-scroll": `${EXTRA_SCROLL_PX}px`,
+            "--caption-row-height": `${CAPTION_ROW_HEIGHT}px`,
           } as CSSProperties
         }
       >
@@ -322,8 +340,11 @@ export function DeliverablesSection() {
                 <div className={styles.captionStack} ref={captionStackRef}>
                   {deliverableStages.map((stage) => (
                     <div key={stage.id} className={styles.captionRow}>
+                      {/* One step up the modular scale from headingMd:
+                          headingSm runs h6 → h5, so it is 20px on mobile
+                          (identical to before) and 25px at desktop width. */}
                       <Text
-                        variant="headingMd"
+                        variant="headingSm"
                         tone="inverse"
                         className={styles.captionHeading}
                       >

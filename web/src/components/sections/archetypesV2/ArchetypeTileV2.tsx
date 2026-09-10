@@ -10,7 +10,7 @@ export interface ArchetypeTileV2Props {
 }
 
 /**
- * One tile of the archetype grid: a tinted portrait overhanging the left
+ * One tile of the archetype grid: a portrait overhanging the left
  * edge of a wider sunken panel that carries the plate number, the archetype
  * name, and its statement.
  *
@@ -47,7 +47,13 @@ export function ArchetypeTileV2({ archetype, index }: ArchetypeTileV2Props) {
             <Text variant="headingMd" as="h3" className={styles.statement}>
               {archetype.statement}
             </Text>
-            <Text variant="caption" tone="muted" className={styles.description}>
+            {/* Light, matching the live archetype card — see the note there. */}
+            <Text
+              variant="caption"
+              tone="muted"
+              weight="light"
+              className={styles.description}
+            >
               {archetype.description}
             </Text>
           </div>
@@ -65,6 +71,7 @@ export function ArchetypeTileV2({ archetype, index }: ArchetypeTileV2Props) {
           src={archetype.image}
           alt={archetype.imageAlt}
           fill
+          tint={false}
           sizes="(max-width: 768px) 100vw, (max-width: 1100px) 260px, 300px"
         >
           <span className={styles.letter} aria-hidden="true">

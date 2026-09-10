@@ -8,11 +8,11 @@
 
    The card itself carries no fill (`tone="none"` on SurfaceCard) and no
    radius — it's a hairline-bordered window cut straight into the section's
-   own background image, not a separate object floating on top of it. The
-   intro panel doesn't reassert that image: it lets it bleed straight through
-   via `backdrop-filter`, tinted and blurred, so the texture reads as one
-   continuous surface rather than a cropped, repositioned copy. The step
-   panel instead paints fully opaque white over the same image.
+   own background image. Both panels are fully opaque over that image: the
+   intro column in the system's dark surface, the step column in white. An
+   earlier pass let the image bleed through the intro column via a tinted,
+   blurred `backdrop-filter`; it now reads as flat black instead, which
+   makes the card a solid two-tone window rather than a frosted one.
 
    The border is set here rather than via SurfaceCard's own `border="rule"`
    — that token (`--gl-color-border-rule`) is a light neutral tuned for a
@@ -28,11 +28,16 @@
 }
 
 /* --------------------------------------------------------------------------
-   Intro panel — background/backdrop-filter only; no image layer, no
-   elements besides the heading and progress bar. A lighter blur than a
-   first pass (which read as a flat black square) plus a soft white sheen
-   from the top-left keeps the underlying image's colour readable through
-   the frost instead of homogenising it to solid black.
+   Intro panel — a flat, opaque black column holding nothing but the heading
+   and the progress bar. `--gl-color-surface-inverse` is the same near-black
+   (#111111) every other dark surface in the system uses, so this column
+   matches the Deliverables band rather than introducing a second black.
+
+   Being opaque, it needs neither the `backdrop-filter` nor the white sheen
+   gradient it carried while it was frosted glass — both were there purely
+   to keep the section's background image readable through the panel, and a
+   `backdrop-filter` behind an opaque fill is invisible while still costing
+   a compositing layer.
    -------------------------------------------------------------------------- */
 .introPanel {
   position: relative;
@@ -42,11 +47,7 @@
   justify-content: space-between;
   gap: var(--gl-space-9);
   padding: var(--gl-space-11);
-  background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
-    rgba(12, 7, 8, 0.48);
-  backdrop-filter: blur(20px) saturate(1.15);
-  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  background-color: var(--gl-color-surface-inverse);
 }
 
 /* Doubled-up selector so this reliably beats `Text`'s own `.headingLg`
