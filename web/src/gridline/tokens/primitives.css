@@ -57,10 +57,15 @@
   --gl-neutral-450: #a1a1aa; /* interactive border, hover */
   --gl-neutral-500: #9ca3af; /* crosshair glyph */
   --gl-neutral-600: #71717a; /* text, muted */
+  --gl-neutral-640: #69707c; /* caption / metric, cool — 5.0:1 */
   --gl-neutral-650: #6b7280; /* metric value, de-emphasised */
+  --gl-neutral-675: #5f6672; /* body copy, cool — 5.8:1 */
   --gl-neutral-700: #52525b; /* text, secondary */
+  --gl-neutral-725: #4d545f; /* prose, cool — 7.8:1 */
   --gl-neutral-750: #4b5563; /* body copy on inset panels, icon */
-  --gl-neutral-775: #3f3f46; /* secondary prose at Light weight */
+  --gl-neutral-775: #3f3f46;
+  --gl-neutral-780: #333a45; /* heading, second tier — 11.4:1 */
+  --gl-neutral-790: #23282f; /* heading ink — dark, never black — 14.7:1 */
   --gl-neutral-800: #18181b;
   --gl-neutral-850: #111827; /* heading, cool black */
   --gl-neutral-900: #111111; /* text, primary */
@@ -81,10 +86,10 @@
      body copy, labels, and the registration marks that used to be mono.
      It ships with macOS/iOS and is not licensable through Google Fonts, so
      it is a platform stack rather than a next/font import: the app now
-     downloads no webfont at all. Light is reached through
-     `font-weight: 300`, which resolves to the real Helvetica Neue Light cut
-     on Apple platforms; Helvetica/Arial cover Windows and Linux, where no
-     Light cut exists and text renders at Regular instead. */
+     downloads no webfont at all. The system sets Regular (400) everywhere,
+     which is the one cut every platform in this stack actually has — the
+     Light (300) cut resolved only on Apple platforms, so Windows and Linux
+     silently rendered at Regular anyway and the two never matched. */
   --gl-font-sans-stack: "Helvetica Neue", Helvetica, Arial, "Liberation Sans",
     sans-serif;
 
@@ -201,15 +206,12 @@
 
   /* ------------------------------------------------------------------------
      Type — letter spacing
-     The negative half of this ramp is currently unused: every heading role
-     in semantic.css tracks at 0 (see the note there), and body copy always
-     did. The steps are kept rather than deleted so a single alias can be
-     re-pointed if one setting ever wants tightening back, and they are
-     already scaled for a Light face — the ramp before this one ran to
-     -0.035em, tuned for semibold, which at 300 weight closed the counters
-     until the strokes merged and read as blur rather than as tightness.
-     Positive tracking for uppercase marks is the live half: letter-spacing
-     genuinely helps there.
+     The negative half of this ramp is entirely unused: every role in the
+     system — headings, prose, metrics — now tracks at 0. The steps are kept
+     rather than deleted so a single alias can be re-pointed if one setting
+     ever wants tightening back. Positive tracking for uppercase marks is
+     the live half: small, all-caps labels genuinely need the extra room,
+     and that is the only place letter-spacing is set at all.
      ---------------------------------------------------------------------- */
   --gl-tracking-tightest: -0.02em;
   --gl-tracking-tighter: -0.016em;
@@ -307,7 +309,19 @@
   /* ------------------------------------------------------------------------
      Layout — the architectural frame
      ---------------------------------------------------------------------- */
-  --gl-frame-max-width: min(1560px, 95vw);
+  /* The architectural frame: the measure GridCanvas's two vertical rules sit
+     on, and that SiteHeader and the Deliverables stage re-apply so their own
+     edges land exactly on those rules. One token, so all three move
+     together — never hard-code the number.
+
+     Two terms, and they bind at different sizes. The 1400px cap governs
+     desktop: above a ~1474px viewport it is what holds, so lowering it (it
+     was 1560px) is what pulls the page inwards there — at a 1728px screen
+     the side margins roughly double, from 84px to 164px. The 95vw term
+     governs everything narrower, where the page should keep hugging the
+     viewport with a thin margin rather than sitting in a well; it is
+     deliberately left alone so tablets and phones are unaffected. */
+  --gl-frame-max-width: min(1400px, 95vw);
   --gl-header-height: 78px;
   --gl-measure-prose: 680px;
   --gl-measure-header: 960px;

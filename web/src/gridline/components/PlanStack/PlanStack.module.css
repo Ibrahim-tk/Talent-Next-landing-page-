@@ -1,0 +1,207 @@
+/* ==========================================================================
+   GRIDLINE — PlanStack
+   --------------------------------------------------------------------------
+   Flat cards: a hairline and the fill alone, no shadow. Depth in the stack
+   comes from the scale and opacity steps between the slots, which the
+   compositor can animate for free; a drop shadow would have added a second,
+   static depth cue that fights the moving one, and six overlapping shadows
+   in a 212px window muddied the whites they sat on.
+
+   A stack of plan cards that deals itself out on a loop: a new week rises in
+   at the bottom, the stack shifts up a slot, and the card at the top leaves.
+   Three cards are visible at a time; the two behind the front one sit a step
+   further back, drawn very slightly smaller and lighter so the stack reads as
+   depth rather than as a list that happens to be moving.
+
+   The whole loop is CSS. Every card runs one shared infinite animation and is
+   offset from its neighbour by a negative `animation-delay` of `i/6` of a
+   cycle (see PHASE_BEATS in the .tsx), so the six cards are always six
+   different frames of the same six-beat journey. No timer, no state, no
+   re-render — and nothing for a slow main thread to stall.
+
+   The animation touches `transform` and `opacity` and nothing else. Those are
+   the two properties a browser can animate on the compositor, off the main
+   thread, with no layout and no repaint per frame; animating `top` or
+   `background-color` instead would put a layout or paint pass in every one of
+   those frames. `translate3d` (rather than `translateY`) and `will-change`
+   promote each card to its own layer up front, so the first beat of the loop
+   is as smooth as the hundredth.
+
+   Motion preference: `reset.css` neutralises animation globally under
+   `prefers-reduced-motion`, but for a loop that is not enough — collapsing
+   the duration to 0.01ms would freeze every card on its *last* keyframe,
+   which is the parked, invisible one, and the stack would vanish. So the
+   media query at the bottom takes the animation off entirely and lays the
+   first three cards out statically in the three slots.
+   ========================================================================== */
+
+.root {
+  /* One place to retune the stack. `--plan-step` is the distance between two
+     slots and `--plan-card-height` the card itself; the gap between cards is
+     the difference, and the window is three slots tall plus the fade strip
+     the next card enters through.
+
+     Both are fluid rather than fixed because the stack lives in a panel of
+     fixed height whose caption grows a line as the column narrows: at
+     1440px the window is a full 212px, and by ~1050px — where that caption
+     has taken a third line — it has given ~28px back. Everything else in
+     the loop is expressed in these two values, so the choreography scales
+     with them and nothing has to be re-timed. */
+  --plan-card-height: clamp(52px, 4.2vw, 60px);
+  --plan-step: clamp(60px, 4.75vw, 68px);
+  --plan-cycle: 12s;
+  /* The strip of window below the last slot that the incoming card rises
+     through. It is masked out, so the card is already fading up from nothing
+     by the time any of it is on screen. */
+  --plan-fade: 16px;
+
+  position: relative;
+  width: 100%;
+  max-width: 288px;
+  height: calc(
+    var(--plan-card-height) + var(--plan-step) * 2 + var(--plan-fade)
+  );
+
+  /* Softens both ends of the window so a card enters and leaves by fading
+     into the panel rather than by being clipped against a hard edge. The
+     mask is static — it costs nothing per frame. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 26px,
+    #000 calc(100% - var(--plan-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 26px,
+    #000 calc(100% - var(--plan-fade)),
+    transparent 100%
+  );
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--plan-card-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--gl-space-2);
+  padding: 0 var(--gl-space-9);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-elevated);
+  border-radius: var(--gl-radius-xl);
+
+  /* The state a card holds before the animation's first frame lands, and the
+     state it keeps if animations never run at all: parked below the window,
+     invisible. */
+  transform: translate3d(0, calc(var(--plan-step) * 3), 0) scale(0.94);
+  opacity: 0;
+
+  will-change: transform, opacity;
+  animation: planCycle var(--plan-cycle) var(--gl-ease-inout) infinite both;
+  animation-delay: calc(var(--plan-cycle) * var(--plan-offset) * -1);
+}
+
+.kicker {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Card fills. Three tints, all of them within the system's black-white-grey
+   plus one accent: white, the sunken grey, and the accent wash that is
+   already used for soft accent surfaces elsewhere. Alternating them down the
+   list is what keeps the loop legible — with six identical white cards it is
+   hard to see that the stack is turning over at all.
+   -------------------------------------------------------------------------- */
+.toneNeutral {
+  background-color: var(--gl-color-surface-raised);
+}
+
+.toneAccent {
+  background-color: var(--gl-color-surface-accent-soft);
+}
+
+.toneSunken {
+  background-color: var(--gl-color-surface-sunken);
+}
+
+/* --------------------------------------------------------------------------
+   One turn of the loop, in six equal beats of 16.667%. Each beat is a hold
+   followed by a 6% (0.72s) move into the next slot, which is what gives the
+   stack its cadence — a deliberate step, a pause, another step — instead of
+   one continuous crawl.
+
+       beat 0   0.00 → 16.67   waiting below the window
+       beat 1  16.67 → 33.33   slot 0, the front card
+       beat 2  33.33 → 50.00   slot 1
+       beat 3  50.00 → 66.67   slot 2, the back card
+       beat 4  66.67 → 83.33   leaving through the top
+       beat 5  83.33 → 100.0   parked, invisible
+
+   Slot 2 sits at y=0 (the top of the window) and each slot in front of it is
+   one `--plan-step` lower, so the front card sits at 2 steps and a card
+   waiting to come in at 3 — just below the window's bottom edge.
+
+   The jump back from "left through the top" to "waiting below" happens at
+   83.33%, between two keyframes that are both fully transparent, so the reset
+   is never visible. That is what lets the loop run seamlessly rather than
+   snapping at the end.
+   -------------------------------------------------------------------------- */
+@keyframes planCycle {
+  0%,
+  10.67% {
+    transform: translate3d(0, calc(var(--plan-step) * 3), 0) scale(0.94);
+    opacity: 0;
+  }
+
+  16.67%,
+  27.33% {
+    transform: translate3d(0, calc(var(--plan-step) * 2), 0) scale(1);
+    opacity: 1;
+  }
+
+  33.33%,
+  44% {
+    transform: translate3d(0, var(--plan-step), 0) scale(0.975);
+    opacity: 0.88;
+  }
+
+  50%,
+  60.67% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0.6;
+  }
+
+  66.67%,
+  83.33% {
+    transform: translate3d(0, calc(var(--plan-step) * -0.9), 0) scale(0.93);
+    opacity: 0;
+  }
+
+  83.34%,
+  100% {
+    transform: translate3d(0, calc(var(--plan-step) * 3), 0) scale(0.94);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+    will-change: auto;
+    /* Slot 2 at the top down to slot 0 at the front: card i sits (2 − i)
+       steps from the top of the window. */
+    transform: translate3d(0, calc(var(--plan-step) * (2 - var(--plan-index))), 0);
+    opacity: 1;
+  }
+
+  /* Only three slots exist, and with nothing moving there is nowhere for the
+     rest of the programme to go. */
+  .card:nth-child(n + 4) {
+    display: none;
+  }
+}

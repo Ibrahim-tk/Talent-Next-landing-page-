@@ -41,9 +41,9 @@
   top: var(--gl-space-7);
   left: var(--gl-space-8);
   font-size: var(--gl-scale-h1); /* 61.04px */
-  /* Medium (500), not the system's Light. This is the one place a heavier
+  /* Medium (500), not the system's Regular. This is the one place a heavier
      cut is right: the letter sits reversed-out over photography, where a
-     300 weight loses its thin strokes to whatever is behind it. */
+     lighter weight loses its strokes to whatever is behind it. */
   font-weight: var(--gl-weight-medium);
   color: var(--gl-color-text-inverse);
   line-height: var(--gl-leading-flat);

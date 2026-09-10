@@ -6,8 +6,19 @@
   display: block;
 }
 
+/* The tight gap that binds a label to the box it names ("Email", "Postal
+   Code") — close enough that the two read as one unit. */
 .label {
   margin-bottom: var(--gl-space-4);
+}
+
+/* The gap under a label that is the *question* a whole step is asking rather
+   than the name of a box — set by `question` (or implied by stepping
+   `labelVariant` past the `label` role); see `FieldProps`. A question gets a
+   heading's air beneath it instead of the label gap above, at any size: at
+   10px it sat almost on top of its own options. */
+.labelQuestion {
+  margin-bottom: var(--gl-space-11);
 }
 
 .input {

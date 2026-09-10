@@ -7,10 +7,10 @@ import type { PillChoice } from "@gridline";
 
 export const getStartedCopy = {
   heading:
-    "Fill out the form below to get connected with a TALENT Agent",
+    "Fill out the form below to get connected with a Talent Agent",
   success: {
     title: "Thank you! Your information has been submitted.",
-    body: "A TALENT Agent will reach out to you shortly to confirm your session.",
+    body: "A Talent Agent will reach out to you shortly to confirm your session.",
   },
 } as const;
 

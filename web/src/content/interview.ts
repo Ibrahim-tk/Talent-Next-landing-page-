@@ -33,7 +33,7 @@ export const interviewStages: readonly InterviewStage[] = [
     background: "/assets/grad2.png",
     overlay: "/assets/pic2-trim.png",
     overlayAlt: "The Tal AI prompt panel, ready for a question",
-    body: "Your TALENT Agent will ask about real experiences from your life and give you a chance to talk through what happened and how you handled it.",
+    body: "Your Talent Agent will ask about real experiences from your life and give you a chance to talk through what happened and how you handled it.",
   },
   {
     id: "hidden-strengths",

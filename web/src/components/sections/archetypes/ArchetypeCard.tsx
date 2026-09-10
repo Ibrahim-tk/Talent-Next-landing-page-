@@ -31,11 +31,7 @@ export function ArchetypeCard({ archetype }: ArchetypeCardProps) {
         <Text variant="title" className={styles.title}>
           {archetype.name}
         </Text>
-        {/* Light rather than the caption role's Regular. The system holds
-            sub-16px roles at 400 as a legibility floor, but this is a full
-            paragraph of card copy sitting directly under a Light title —
-            at 400 it reads heavier than the heading above it. */}
-        <Text variant="caption" tone="secondary" weight="light">
+        <Text variant="caption" tone="secondary">
           {archetype.description}
         </Text>
       </div>

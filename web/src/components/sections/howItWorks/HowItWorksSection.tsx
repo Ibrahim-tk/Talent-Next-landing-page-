@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import { GridModule, Highlight, StepperTimeline, Text } from "@gridline";
-import { howItWorksCopy, nextSteps } from "@/content/howItWorks";
+import { GridModule, Highlight, PlanStack, Text } from "@gridline";
+import { howItWorksCopy, planPhases } from "@/content/howItWorks";
 
 import styles from "./HowItWorksSection.module.css";
 
@@ -58,7 +58,7 @@ export function HowItWorksSection() {
                   src={analysis.image}
                   alt={analysis.imageAlt}
                   fill
-                  sizes="336px"
+                  sizes="302px"
                   quality={95}
                   className={styles.analysisImage}
                 />
@@ -76,10 +76,10 @@ export function HowItWorksSection() {
 
           <div className={styles.outcomeRow}>
             <div className={styles.outcomeVisual}>
-              <div className={styles.stepperWrap}>
-                <StepperTimeline
-                  steps={nextSteps}
-                  label="Your recommended next steps"
+              <div className={styles.planWrap}>
+                <PlanStack
+                  phases={planPhases}
+                  label="An example week-by-week plan"
                 />
               </div>
             </div>

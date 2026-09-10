@@ -2,18 +2,21 @@
    DeliverablesSection — "Know Where You Stand and What to Do Next."
    --------------------------------------------------------------------------
    Three columns: tab list · ruler gauge · a zero-state-only heading above a
-   fixed image beside a caption column. `.stage` is a native `position:
-   sticky` panel, not a GSAP-pinned one — see DeliverablesSection.tsx's own
-   top comment for how that and the scroll-driven timeline work together.
+   fixed image beside a caption column, all three stepping together on one
+   shared beat with the scroll magnetically snapped to the still moment
+   between beats. `.stage` is a native `position: sticky` panel, not a
+   GSAP-pinned one — see DeliverablesSection.tsx's own top comment for how
+   that, the scroll-driven timeline and the snap work together.
    ========================================================================== */
 
 /* Full-bleed breakout: GridCanvas constrains everything to a centred
-   1560px column with two vertical rules at its edges, but this section is a
+   fixed-measure column with two vertical rules at its edges (see
+   `--gl-frame-max-width`), but this section is a
    deliberate exception — the dark background is meant to run to the actual
    edges of the browser window, not stop at that column like every other
    (light) section does. `left: 50%` + negative margins re-centres a 100vw
    box on the viewport regardless of how narrow its constrained ancestor is;
-   `.stage` then re-applies that same 1560px measure so the CONTENT still
+   `.stage` then re-applies that same frame measure so the CONTENT still
    lines up with the rest of the page, only the black behind it is wider.
 
    Unlike a pinned box, this track's height is deliberately *more* than one
@@ -72,20 +75,37 @@
   padding-right: clamp(10px, 1.5vw, 20px);
 }
 
+/* Only the active tab reads as live; the rest are deliberately knocked
+   back to look inactive — the list is a progress indicator, not a set of
+   controls, so at any moment four of the five are "not your stage yet".
+
+   The dimming is `opacity` on the row rather than a dimmer text colour
+   because `Text` here renders with `tone="inherit"`: one property fades
+   the label and its hairline together, and it cannot drift out of step
+   with the palette the way a second hardcoded grey would. 0.38 is low
+   enough to read as clearly disabled against the black surface while
+   leaving the labels legible — they still have to be readable, since they
+   are the only preview of what is coming.
+
+   No media query needed: `.tabs` is `display: none` below the breakpoint,
+   so every rule in this block is desktop-only by construction. */
 .tab {
   padding: var(--gl-space-7) var(--gl-space-9);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-inverse);
   color: var(--gl-color-text-inverse-secondary);
+  opacity: 0.38;
   transition:
     background-color var(--gl-duration-moderate) var(--gl-ease-standard),
-    color var(--gl-duration-moderate) var(--gl-ease-standard);
+    color var(--gl-duration-moderate) var(--gl-ease-standard),
+    opacity var(--gl-duration-moderate) var(--gl-ease-standard);
 }
 
 .tabActive {
   background-color: var(--gl-color-accent);
   color: var(--gl-color-text-inverse);
   border-bottom-color: var(--gl-color-accent);
+  opacity: 1;
 }
 
 /* --------------------------------------------------------------------------
@@ -98,88 +118,62 @@
 /* --------------------------------------------------------------------------
    Column 3 — the image + caption row
    -------------------------------------------------------------------------- */
-/* `position: relative` makes this the containing block for `.headingBar`
-   below, which is deliberately taken out of flow so it can never push
-   `.row` off-centre. */
 .content {
-  /* Desktop nudge: the section reads better with the heading sitting lower
-     than the panel's own top edge, and with more air between the heading
-     block and the image/caption row below it. `.row` is vertically centred
-     in this box, so a padding-top here moves it down by HALF of this value
-     (border-box, so the padding eats into the content box rather than
-     growing it — the row can't be pushed past the bottom of `.stage`).
-     `.headingBar` below subtracts the same half from its own anchor so the
-     heading travels down with the row instead of the gap between them
-     stretching by that amount as well. Reset to 0 in the narrow layout,
-     where `.stage` is `height: auto` and nothing is centred. */
-  --deliverables-top-shift: var(--gl-space-23);
-  padding-top: var(--deliverables-top-shift);
   padding-left: clamp(20px, 3vw, 44px);
   display: flex;
   flex-direction: column;
+  /* Heading and row are two ordinary flex children now, centred in the
+     panel as one group. This is what replaced the old arrangement, where
+     the heading was absolutely positioned and anchored off a percentage
+     of this box's height: that existed purely so the heading could slide
+     away without shifting the row under it, and it brought a chain of
+     compensating offsets (a top-shift whose half had to be subtracted
+     back out of the heading's anchor) along with it. The heading is
+     permanent now, so the whole mechanism is gone and the plain
+     centring below does the same job with nothing to keep in sync. */
   justify-content: center;
   height: 100%;
-  position: relative;
-  /* `.headingBar` below is anchored purely by `bottom`, so its top edge
-     grows upward by however tall its own text renders — on shorter
-     viewports (or a longer wrap of `deliverablesCopy.description`) that
-     can exceed the headroom the anchor math assumes. Without this, that
-     overflow isn't clipped: it bleeds straight up out of the section and
-     overlaps whatever sits above it (HowItWorksSection) at rest, before
-     any scrolling/animation even starts. Clipping here guarantees the
-     zero state always reads as contained within this section, at worst
-     trimming the top of the heading on very short viewports rather than
-     spilling into the section above. */
+  /* The group is heading + gap + a fixed 456px row, so on a short desktop
+     viewport it can run taller than the one-screen panel. Clipping keeps
+     the overflow inside the section — trimming the heading's top at worst
+     — rather than letting it bleed up into HowItWorksSection above. */
   overflow: hidden;
 }
 
-/* The zero-state-only heading: visible above the image/caption row until
-   the user starts scrolling, then it slides up and fades away for good
-   (see DeliverablesSection.tsx) and never comes back.
+/* The section's heading. Permanent — it stays put for the whole span and
+   is never animated, so unlike everything else in this file it needs no
+   scroll-driven positioning at all: a plain in-flow block above `.row`,
+   with `.content`'s centring holding the pair together and a margin for
+   the gap between them.
 
-   It's positioned absolutely, floating above `.row` rather than sitting in
-   flow above it, specifically so the image stays dead-centre in the
-   section at all times — heading visible or not. `.row`'s own vertical
-   centre sits at 50% of `.content`'s height (it's the only flex child
-   left once this is out of flow); `bottom` is measured from `.content`'s
-   own bottom edge, so anchoring it `.captionRowHeight / 2` above that
-   centreline, plus a gap, puts this heading's own bottom edge right where
-   `.row`'s top edge is, regardless of how tall the heading itself renders.
-   190px is half of `.imageFrame`/`.captionRow`'s shared 380px height
-   (`CAPTION_ROW_HEIGHT` in DeliverablesSection.tsx). The hairline below is
-   the same row-divider every other card row in this system uses
-   (ArchetypeCard, HowItWorksSection); it runs the full width of
-   `.content`, not just the text measure, which is why the max-width lives
-   on `.headline`/`.subtext` themselves rather than on this container. */
+   The hairline below is the same row-divider every other card row in this
+   system uses (ArchetypeCard, HowItWorksSection); it runs the full width
+   of `.content`, not just the text measure, which is why the max-width
+   lives on `.headline`/`.subtext` themselves rather than on this
+   container. */
 .headingBar {
-  position: absolute;
-  /* Matches `.content`'s own padding-left: an absolutely positioned box is
-     contained by `.content`'s padding edge, not its content edge, so
-     `left: 0` here would ignore that padding and start too far left. */
-  left: clamp(20px, 3vw, 44px);
-  right: 0;
-  /* The gap between this block and `.row` below. This was held down to
-     `--gl-space-9` while the heading's own headroom was the binding
-     constraint (see `.content`'s `overflow: hidden` above) — now that
-     `--deliverables-top-shift` moves the whole group down, there's room to
-     open it back up so the heading and the row don't read as one crowded
-     block. The shift's half is subtracted here so this term alone sets the
-     gap: without it, moving the row down would stretch this gap too. Half
-     the row
-     height is read from `--caption-row-height` (published by the component
-     from `CAPTION_ROW_HEIGHT`) rather than written out as a literal, so
-     rescaling the row cannot leave this anchor pointing at the old
-     centreline. */
-  bottom: calc(
-    50% - (var(--deliverables-top-shift) / 2) +
-      (var(--caption-row-height) / 2) + var(--gl-space-14)
-  );
+  margin-bottom: var(--gl-space-14);
   padding-bottom: var(--gl-space-9);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-inverse);
 }
 
 .row {
+  /* The square frame's edge length. Independent of `--caption-row-height`
+     — the two used to be the same number, back when the frame was a
+     portrait box exactly as tall as a caption row. Now the frame is
+     square and DELIBERATELY shorter than the row it sits in: the row
+     height still sets the caption cadence (and the whole scroll/anchor
+     arithmetic in DeliverablesSection.tsx depends on it), so squaring the
+     frame by growing it to 456px would both crush the caption column's
+     measure and force that arithmetic to change. Keeping it smaller and
+     letting `align-items: center` below centre it in the taller row gets
+     the square shape for free, with nothing else to re-derive.
+
+     The ceiling is what the caption beside it can afford: at the 1560px
+     canvas, column three is ~985px after padding, and 400px of frame plus
+     the gap below leaves just enough for `.captionText`'s 552px measure. */
+  --deliverables-frame-size: clamp(300px, 26vw, 400px);
   display: flex;
   /* Centred, not stretched: both `.imageFrame` and `.captionViewport` carry
      the same explicit height, so this only matters if that ever drifts out
@@ -193,15 +187,18 @@
 
 /* --------------------------------------------------------------------------
    The image stage — fixed in place; only one layer visible at a time. Each
-   later layer clip-path-wipes in from the bottom exactly when the caption
-   column finishes drifting onto that stage's row (see
-   DeliverablesSection.tsx), then stays until its own turn to wipe away.
+   later layer clip-path-wipes in from the bottom over exactly the same
+   window, and on the same ease, as the caption column's step onto that
+   stage's row (see DeliverablesSection.tsx), so the two land together.
    -------------------------------------------------------------------------- */
 .imageFrame {
   position: relative;
-  /* The original clamp(240px, 18vw, 280px) at 1.2x. */
-  flex: 0 0 clamp(288px, 21.6vw, 336px);
-  height: var(--caption-row-height);
+  flex: 0 0 var(--deliverables-frame-size);
+  height: var(--deliverables-frame-size);
+  /* Belt and braces alongside the explicit height above: if the flex
+     basis is ever overridden (a future breakpoint, a narrower column),
+     the box stays square instead of silently going back to a rectangle. */
+  aspect-ratio: 1;
   overflow: hidden;
   background-color: var(--gl-color-surface-inverse);
   box-shadow: var(--gl-shadow-md);
@@ -215,15 +212,48 @@
   overflow: hidden;
 }
 
-.layerImage {
+/* The gradient behind everything: fills the square frame edge to edge,
+   centre-cropped. The source art is a tall portrait (1680×2472), so a
+   square frame keeps its middle band and drops roughly the same amount
+   off the top and the bottom — dead centre, not the `center 20%` bias the
+   photographic frames use, since these gradients have no subject to keep
+   in shot and an off-centre crop would just make the five look
+   inconsistent with each other. */
+.layerBackground {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Dead centre, not the `center 20%` bias the photographic frames use.
-     These layers are product mockups — a card centred in its own artboard
-     with even margins — so biasing the crop upward would shave the bottom
-     of the card off while leaving dead space at the top. */
   object-position: center;
+}
+
+/* The mockup on top, with the gradient showing around it.
+
+   `object-fit: contain` means it can never be cropped whatever its own
+   aspect ratio. `--card-inset` is the padding that holds it clear of the
+   frame's edges, and `--card-bias` nudges it down — both percentages, so
+   they scale with the frame instead of eating a bigger share of it as the
+   frame shrinks, and both supplied per stage from `cardFraming` in
+   content/deliverables.ts (see the field's own comment for what the
+   numbers mean and how they were measured). The fallbacks are the
+   already-centred, already-tightly-cropped case.
+
+   The bias is what stops these reading as stuck to the top of the frame:
+   four of the five exports put their card in the top of the canvas with
+   the drop shadow filling the bottom, so centring the canvas is NOT the
+   same as centring the card. It has to be a `transform` rather than
+   asymmetric padding — with a portrait image in a square frame `contain`
+   is height-limited, which leaves zero vertical slack for
+   `object-position` to work with, and the padding budget is far too small
+   to absorb a 12% offset. Any shadow the shift pushes past the bottom
+   edge is clipped by `.imageFrame`'s own `overflow: hidden`, which is a
+   natural boundary for it to fade out against. */
+.layerCard {
+  width: 100%;
+  height: 100%;
+  padding: var(--card-inset, 6%);
+  object-fit: contain;
+  object-position: center;
+  transform: translateY(var(--card-bias, 0%));
 }
 
 .layerStacked {
@@ -234,12 +264,12 @@
 
 /* --------------------------------------------------------------------------
    The caption column — a real (not absolutely-stacked) list, one row per
-   stage, each exactly `CAPTION_ROW_HEIGHT` (380px, matching `.imageFrame`)
-   tall — see DeliverablesSection.tsx for why that fixed height is what
-   lets the whole column drift by pure arithmetic. `.captionViewport` clips
-   it to that same one-row-tall window, with a gradient fading each end so
-   a row dissolves out the top and dissolves in from the bottom rather than
-   popping at a hard edge.
+   stage, each exactly `CAPTION_ROW_HEIGHT` tall (matching `.imageFrame`) —
+   see DeliverablesSection.tsx for why that fixed height is what lets the
+   column step by pure arithmetic: one row-height per stage transition,
+   then a full stop. `.captionViewport` clips it to that same one-row-tall
+   window, with a gradient fading each end so a row dissolves out the top
+   and dissolves in from the bottom rather than popping at a hard edge.
    -------------------------------------------------------------------------- */
 .captionViewport {
   position: relative;
@@ -343,18 +373,10 @@
   }
 
   .content {
-    --deliverables-top-shift: 0px;
-    padding-top: 0;
     padding-left: 0;
   }
 
-  /* `.headingBar`'s desktop positioning anchors off `.content`'s height in
-     percentages (see above), which is meaningless once `.stage` collapses
-     to `height: auto` down here — back to a normal, in-flow block, with a
-     plain margin standing in for the gap the `bottom` calc used to give
-     it. */
   .headingBar {
-    position: static;
     margin-bottom: var(--gl-space-16);
   }
 
@@ -374,6 +396,9 @@
     overflow: visible;
   }
 
+  /* The stepped `y` the timeline writes is meaningless here — the whole
+     timeline is skipped below this breakpoint — but a resize down from
+     desktop mid-section can leave the last value on the element. */
   .captionStack {
     transform: none !important;
   }

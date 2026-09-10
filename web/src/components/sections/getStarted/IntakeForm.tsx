@@ -114,7 +114,7 @@ export function IntakeForm() {
           <form onSubmit={handleSubmit} className={styles.form}>
             {step === 1 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.situation} labelVariant="title" required>
+                <Field label={formLabels.situation} question required>
                   <PillGroup
                     label={formLabels.situation}
                     options={situationOptions}
@@ -128,7 +128,7 @@ export function IntakeForm() {
 
             {step === 2 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.goal} labelVariant="title" required>
+                <Field label={formLabels.goal} question required>
                   <PillGroup
                     label={formLabels.goal}
                     options={goalOptions}
@@ -143,7 +143,7 @@ export function IntakeForm() {
             {step === 3 ? (
               <>
                 <div className={styles.fieldGroup}>
-                  <Field label={formLabels.callTime} labelVariant="title" required>
+                  <Field label={formLabels.callTime} question required>
                     <PillGroup
                       label={formLabels.callTime}
                       options={callTimeOptions}
@@ -160,7 +160,7 @@ export function IntakeForm() {
                     name="whats_next"
                     type="text"
                     label={formLabels.whatsNext}
-                    labelVariant="title"
+                    question
                     placeholder={formLabels.whatsNextPlaceholder}
                   />
                 </div>

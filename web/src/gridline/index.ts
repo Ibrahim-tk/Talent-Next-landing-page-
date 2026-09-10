@@ -98,6 +98,13 @@ export type {
 export { RulerGauge } from "./components/RulerGauge/RulerGauge";
 export type { RulerGaugeProps } from "./components/RulerGauge/RulerGauge";
 
+export { PlanStack } from "./components/PlanStack/PlanStack";
+export type {
+  PlanStackProps,
+  PlanPhase,
+  PlanPhaseTone,
+} from "./components/PlanStack/PlanStack";
+
 export { StepperTimeline } from "./components/StepperTimeline/StepperTimeline";
 export type {
   StepperTimelineProps,

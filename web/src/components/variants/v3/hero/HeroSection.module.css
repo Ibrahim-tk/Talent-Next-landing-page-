@@ -1,0 +1,238 @@
+/* ==========================================================================
+   HeroSection — landing page variation 3 (/v3)
+
+   A full-bleed photographic hero. The picture is `HeroBackdrop`; everything
+   here is the copy laid over it, bottom-aligned and split into three
+   columns.
+   ========================================================================== */
+
+.section {
+  position: relative;
+
+  /* No `overflow: hidden` and no `clip` on the GridModule: the backdrop is
+     a 100vw box that has to escape the GridCanvas column, and either one
+     would cut it back to the column's width. Nothing else in this section
+     leaves the frame, so there is nothing left to clip. */
+
+  /* One gutter value for the whole section, so the headline's left edge and
+     the CTA's right edge are the same distance from the viewport edge — the
+     thing that reads as "properly padded" more than any single number. */
+  --hero-gutter: clamp(1.5rem, 4vw, 4.5rem);
+
+  /* The picture starts at the very top of the page, behind the nav. The
+     header is `position: sticky` and therefore still takes its own height
+     out of the flow, so the hero is pulled back up by exactly that much;
+     the sticky bar then floats over the image instead of sitting above it.
+     `HeroBackdrop` puts the nav into its transparent "overlay" theme for
+     as long as this section is on screen, which is the other half of the
+     effect — without it a white bar would still cap the photograph.
+
+     The same height then goes back onto the top padding, so the copy is
+     measured from below the nav rather than from behind it. */
+  margin-top: calc(var(--gl-header-height) * -1);
+
+  /* Exactly one screenful, uncapped. `min(100vh, 980px)` was wrong here:
+     the cap meant that on any display taller than 980px — which is most
+     desktops — the hero stopped short and the next section showed under
+     it. `svh` is the small-viewport unit, so a mobile browser measures
+     against its collapsed chrome and the hero doesn't jump as the address
+     bar hides; `vh` stays as the fallback for anything that lacks it.
+
+     Paired with the negative margin above, this fills the window edge to
+     edge: the hero starts at the very top of the document, behind the
+     nav, and ends exactly at the fold. */
+  min-height: 100vh;
+  min-height: 100svh;
+
+  padding: calc(var(--gl-header-height) + clamp(4rem, 12vh, 9rem))
+    var(--hero-gutter) clamp(2.5rem, 6vh, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* --------------------------------------------------------------------------
+   The three columns.
+
+   Ratios rather than fixed widths: the headline column has to be wide
+   enough to hold "TALENT" at this size (see `.headlineAccent`), the aside
+   needs a readable measure for the body copy, and the middle column takes
+   whatever is left over as the gap between them. `align-items: end` is what
+   puts both blocks on the same baseline at the bottom of the frame.
+   -------------------------------------------------------------------------- */
+.columns {
+  position: relative;
+  z-index: var(--gl-z-content);
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.25fr) minmax(0, 1fr);
+  align-items: end;
+}
+
+/* A container, so the headline below can be sized against this column's own
+   width instead of the viewport's. That is the whole reason the type here
+   can be this large without a width existing at which "TALENT" runs past
+   the column's right edge. */
+.headlineColumn {
+  container-type: inline-size;
+}
+
+.spacerColumn {
+  /* Intentionally empty. Present so the two content columns hold their
+     corners rather than closing the distance as the viewport narrows. */
+}
+
+.asideColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gl-space-14);
+
+  /* Nudged off the bottom rule so the button doesn't sit on it — the
+     headline's descenders already give the left column that clearance. */
+  padding-bottom: var(--gl-space-9);
+}
+
+/* --------------------------------------------------------------------------
+   Headline — left-aligned, three lines, one per part.
+   -------------------------------------------------------------------------- */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 0;
+  color: var(--gl-color-text-inverse);
+
+  /* The same one-knob trim v1's hero uses, at 1.5x its setting (0.9 → 1.35)
+     — which is what makes this headline half again the size of v1's. Both
+     settings below are on-scale steps multiplied by this factor. */
+  --hero-type-trim: 1.35;
+}
+
+/* "Uncover the" / "You Already Have." — the frame around the accent word.
+   Same h3 → h1 pair v1 uses; only the fluid middle term differs. It is
+   `cqw` (a share of the headline column) rather than `vw` (a share of the
+   viewport) because at 1.5x the type is now large enough that the column,
+   not the window, is the constraint that matters: 10cqw keeps the longest
+   line, "You Already Have.", inside the column at every width, which a
+   viewport-relative term cannot promise once the grid takes a share of the
+   viewport away. */
+.headlineLead {
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    var(--gl-scale-h3),
+    calc(7.4cqw * var(--hero-type-trim)),
+    calc(var(--gl-scale-h1) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+  color: var(--gl-color-text-inverse);
+}
+
+/* "TALENT" — the one word the heading exists to deliver.
+
+   17.8cqw x 1.35 is 24cqw. Six capitals in this face measure about 3.8em,
+   so 24cqw fills roughly 91% of the column: large as it can be while still
+   leaving the line visibly inside its own column rather than touching the
+   spacer. The cap is v1's own 5xl ceiling times the trim.
+
+   The descendant selector (rather than relying on source order against
+   Highlight's own `.root`) is what guarantees this wins over
+   `font: inherit`. */
+.headline .headlineAccent {
+  display: inline-block;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    var(--gl-scale-2xl),
+    calc(17.8cqw * var(--hero-type-trim)),
+    calc(var(--gl-scale-5xl) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+  line-height: 0.9;
+  margin-block: 0.04em;
+  color: var(--gl-color-text-inverse);
+}
+
+/* The gradient plate, painted through the letterforms — the same treatment
+   v1's accent word gets. The `@supports` guard matters because the fallback
+   for an unsupported browser is not "no gradient" but an invisible word, so
+   the flat inverse colour above stands until support is confirmed. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .headline .headlineAccent {
+    background-image: var(--gl-image-accent-plate);
+    background-size: 200% 200%;
+    background-position: right top;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Aside — body copy and the call to action, lower right.
+   -------------------------------------------------------------------------- */
+.body {
+  /* Left-aligned rather than flush right: the column sits in the right
+     corner, but ragged-left body copy is markedly harder to read than
+     ragged-right, and this is the paragraph that has to actually be read. */
+  text-align: left;
+  max-width: 46ch;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+/* Below the desktop layout the three columns stop earning their keep: the
+   aside gets too narrow for a readable measure long before the headline
+   gets too narrow for its type. So the grid collapses to a single column,
+   the headline goes back to being sized against the viewport (it now spans
+   the full width, so the column and the window are the same constraint),
+   and the two blocks stack in reading order. */
+@media (max-width: 900px) {
+  .section {
+    padding-top: calc(var(--gl-header-height) + clamp(3rem, 9vh, 6rem));
+  }
+
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--gl-space-14);
+  }
+
+  .spacerColumn {
+    display: none;
+  }
+
+  .headlineColumn {
+    container-type: normal;
+  }
+
+  .headlineLead {
+    font-size: clamp(
+      var(--gl-scale-h4),
+      calc(6.2vw * var(--hero-type-trim)),
+      calc(var(--gl-scale-h2) * var(--hero-type-trim))
+    );
+  }
+
+  .headline .headlineAccent {
+    font-size: clamp(
+      var(--gl-scale-h2),
+      calc(14.8vw * var(--hero-type-trim)),
+      calc(var(--gl-scale-3xl) * var(--hero-type-trim))
+    );
+  }
+
+  .asideColumn {
+    padding-bottom: 0;
+    gap: var(--gl-space-11);
+  }
+
+  .body {
+    max-width: none;
+  }
+}

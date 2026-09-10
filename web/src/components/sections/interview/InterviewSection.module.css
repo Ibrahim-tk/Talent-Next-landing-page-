@@ -53,7 +53,13 @@
   position: relative;
   height: 460px;
   overflow: hidden;
-  background-color: var(--gl-color-surface-inverse);
+  /* White, not the dark surface this used to hold. It matters now that
+     `.backdrop` is translucent: whatever sits here is what the gradient
+     composites against, and over the old near-black the same 40% would
+     have read as three muddy, darkened plates instead of the pale wash
+     intended. White also matches the module and the captions below, so a
+     faded plate now sits on one continuous surface. */
+  background-color: var(--gl-color-surface-raised);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,9 +68,16 @@
   container-type: inline-size;
 }
 
+/* Held at 40% so the plates read as a soft tint behind their stills rather
+   than as three saturated colour fields competing with them. Applied to the
+   backdrop alone — the stills in `.overlay` above stay fully opaque, since
+   the chat bubbles and the recommendation card are the content here and
+   have to stay legible. See `.media` for why its fill had to change with
+   this. */
 .backdrop {
   object-fit: cover;
   object-position: center;
+  opacity: 0.4;
 }
 
 /* Height is the dimension that's pinned, and width is left at the full panel

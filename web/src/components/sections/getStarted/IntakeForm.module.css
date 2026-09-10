@@ -25,6 +25,30 @@
   display: grid;
   grid-template-columns: 5fr 7fr;
   border: var(--gl-border-width-hairline) solid rgba(255, 255, 255, 0.25);
+
+  /* Two scoped token overrides, not global edits: custom properties
+     inherit, so redeclaring them here re-tints everything the card renders
+     — pills, inputs, buttons — without touching the rest of the site.
+
+     1. The card was carrying two different blacks: `.introPanel` sits on
+        `--gl-color-surface-inverse` (#111111) while the Next/Send button
+        defaults to `--gl-color-action-primary-bg` (#000000, pure black).
+        Side by side in one card that reads as a mistake rather than a
+        contrast, so the button is pointed at the same near-black the panel
+        uses. The hover step stays as it is — it was already #262626, on the
+        same ramp.
+     2. The hairlines were `--gl-neutral-200`, a cool grey, sitting in a
+        warm, red-lit scene. Mixing a little of the accent into that grey
+        keeps the same quiet weight while putting the rules in the same
+        family as everything around them. `color-mix` from the accent token
+        (rather than a hand-picked hex) so a re-themed accent re-tints these
+        too — the same provenance rule the accent media tint follows. */
+  --gl-color-action-primary-bg: var(--gl-color-surface-inverse);
+  --gl-color-border-rule: color-mix(
+    in srgb,
+    var(--gl-color-accent) 14%,
+    var(--gl-neutral-200)
+  );
 }
 
 /* --------------------------------------------------------------------------
@@ -46,7 +70,10 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--gl-space-9);
-  padding: var(--gl-space-11);
+  /* Was a flat 24px all round. Both panels now carry 48px top/bottom and
+     56px left/right — the extra on the sides is deliberate, so the copy and
+     the options sit well inside the card's edges rather than close to them. */
+  padding: var(--gl-space-17) var(--gl-space-19);
   background-color: var(--gl-color-surface-inverse);
 }
 
@@ -57,8 +84,14 @@
    page-level one. */
 .introPanel .introHeading {
   max-width: 22ch;
-  font-size: clamp(var(--gl-scale-h6), 2.4vw, var(--gl-scale-h5));
-  font-weight: var(--gl-weight-light);
+  /* Up one rung of the modular scale from where it was (h6 → h5 at the
+     small end, h5 → h4 at the top), with the vw term multiplied by the
+     scale's own 1.25 ratio to match so the step holds at every width and
+     not just at the clamp ends. It is still set below `headingLg`'s own
+     default — this is a form panel's heading, not a page's — just no longer
+     the same size as the copy it sits above. */
+  font-size: clamp(var(--gl-scale-h5), 3vw, var(--gl-scale-h4));
+  font-weight: var(--gl-weight-regular);
 }
 
 /* --------------------------------------------------------------------------
@@ -71,8 +104,13 @@
    -------------------------------------------------------------------------- */
 .stepPanel {
   position: relative;
-  min-height: 420px;
-  padding: var(--gl-space-11);
+  /* Raised from 420px. This is the number that sets the whole card's
+     height: it's the taller of the two panels, so the grid row stretches
+     `.introPanel` to match. Note it counts the padding too (border-box),
+     so the 48/56 padding above eats into it — the content box grows by
+     less than the 140px this went up by. */
+  min-height: 560px;
+  padding: var(--gl-space-17) var(--gl-space-19);
   background-color: var(--gl-color-surface-raised);
 }
 
@@ -142,12 +180,22 @@
     min-height: 200px;
     gap: var(--gl-space-7);
   }
+
+  /* Stacked in one column, the step panel no longer has to match a
+     side-by-side intro panel's height — hold enough room for the tallest
+     step without carrying the full desktop figure down. */
+  .stepPanel {
+    min-height: 480px;
+  }
 }
 
 @media (max-width: 560px) {
+  /* The generous desktop padding would leave very little room for the
+     options on a phone, but 20px was tighter than the card now reads
+     elsewhere — 24px is the compromise. */
   .introPanel,
   .stepPanel {
-    padding: var(--gl-space-9);
+    padding: var(--gl-space-11);
   }
 
   .footer {

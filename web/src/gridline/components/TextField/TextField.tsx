@@ -19,11 +19,20 @@ export interface FieldProps {
   /**
    * Type role for the label. Defaults to `label` (16px) — the right size
    * for naming a control ("Email", "Postal Code"). Step it up to `title`
-   * (20px, the h6 rung) when the label is the *question* a whole step is
-   * asking, not just the name of a box: at that point it is doing a
-   * heading's job and should be sized like one.
+   * (20px, the h6 rung) for a label that should read a rung louder than the
+   * control it names.
    */
   labelVariant?: TextVariant;
+  /**
+   * Marks this label as the *question* a whole step is asking rather than
+   * the name of a box, which earns it a heading's space beneath it instead
+   * of the tight label gap. Kept separate from `labelVariant` on purpose:
+   * how loud the question is set and how much air sits under it are two
+   * decisions, and a question can want the extra room at any size. A label
+   * stepped up past the `label` role implies it too, so callers that only
+   * raise `labelVariant` keep the wider gap they already had.
+   */
+  question?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -38,6 +47,7 @@ export function Field({
   required = false,
   hint,
   labelVariant = "label",
+  question = false,
   className,
   children,
 }: FieldProps) {
@@ -47,7 +57,10 @@ export function Field({
         variant={labelVariant}
         as={htmlFor ? "label" : "span"}
         htmlFor={htmlFor}
-        className={styles.label}
+        className={cx(
+          styles.label,
+          (question || labelVariant !== "label") && styles.labelQuestion,
+        )}
       >
         {label}
         {required ? <span aria-hidden="true">*</span> : null}
@@ -69,6 +82,8 @@ export interface TextFieldProps
   hint?: ReactNode;
   /** Passed straight through to `Field` — see its own note. */
   labelVariant?: TextVariant;
+  /** Passed straight through to `Field` — see its own note. */
+  question?: boolean;
   className?: string;
 }
 
@@ -83,6 +98,7 @@ export function TextField({
   hint,
   required,
   labelVariant,
+  question,
   className,
   ...inputProps
 }: TextFieldProps) {
@@ -93,6 +109,7 @@ export function TextField({
       required={required}
       hint={hint}
       labelVariant={labelVariant}
+      question={question}
       className={className}
     >
       <input

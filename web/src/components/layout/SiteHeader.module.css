@@ -3,11 +3,12 @@
    Sticky, translucent, closed off by the same hairline every module uses.
    ========================================================================== */
 
-/* Full-bleed: GridCanvas centres everything in a 1560px column, but a sticky
+/* Full-bleed: GridCanvas centres everything in the frame column
+   (`--gl-frame-max-width`), but a sticky
    nav's background is conventionally expected to run to the actual edges of
    the browser window — otherwise the page's own white shows through as a
    pair of gutters beside it above that width. `.inner` below re-applies the
-   1560px measure so the logo/links/button still line up with the rest of
+   same frame measure so the logo/links/button still line up with the rest of
    the page.
 
    Margin-only breakout, not `left: 50%` + negative margin: `left` on a
@@ -58,6 +59,54 @@
   color: var(--gl-color-text-inverse);
 }
 
+/* --------------------------------------------------------------------------
+   Overlay theme — set by `useDarkNavRegion(ref, "overlay")` while a
+   full-bleed image hero is on screen (currently variation 3's). The bar
+   itself disappears: no plate, no hairline, so the photograph behind it is
+   the top of the page and the nav simply floats on it.
+
+   A top-down scrim replaces the plate. Without it the links would be at the
+   mercy of whichever still is showing — these are photographs, and a bright
+   sky behind white type is not something a fixed colour can survive.
+   -------------------------------------------------------------------------- */
+:global(html[data-nav-theme="overlay"]) .header {
+  background-color: transparent;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.28) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+
+  /* Redefining the action tokens in the header's own scope, rather than
+     writing competing rules against Button's stylesheet: the black CTA is
+     near-invisible on a dark photograph, and this is what the token layer
+     is for. Inheritance settles it, so there is no cross-module ordering
+     question (see gridline/README.md, "CSS Module ordering"). */
+  --gl-color-action-primary-bg: var(--gl-color-text-inverse);
+  --gl-color-action-primary-bg-hover: rgba(255, 255, 255, 0.86);
+  --gl-color-action-primary-fg: var(--gl-color-text-primary);
+}
+
+:global(html[data-nav-theme="overlay"]) .navLink {
+  color: var(--gl-color-text-inverse-secondary);
+}
+
+:global(html[data-nav-theme="overlay"]) .navLink:hover {
+  color: var(--gl-color-text-inverse);
+}
+
+:global(html[data-nav-theme="overlay"]) .brandMark {
+  filter: invert(1);
+}
+
+:global(html[data-nav-theme="overlay"]) .menuButton {
+  color: var(--gl-color-text-inverse);
+}
+
 .inner {
   display: flex;
   align-items: center;
@@ -86,7 +135,7 @@
 
 .navLink {
   font-size: var(--gl-size-body-md);
-  font-weight: var(--gl-weight-light);
+  font-weight: var(--gl-weight-regular);
   color: var(--gl-color-text-secondary);
   transition: color var(--gl-duration-fast) var(--gl-ease-standard);
 }
@@ -131,7 +180,7 @@
   display: block;
   padding: var(--gl-space-6) 0;
   font-size: var(--gl-size-body-lg);
-  font-weight: var(--gl-weight-light);
+  font-weight: var(--gl-weight-regular);
   color: var(--gl-color-text-primary);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-subtle);

@@ -17,31 +17,52 @@ import { deliverableStages, deliverablesCopy } from "@/content/deliverables";
 import styles from "./DeliverablesSection.module.css";
 
 /**
- * Scroll distance allotted to each stage while stuck, in px. Deliberately
- * long — the sticky hold is meant to read as a slow, cinematic beat rather
- * than a quick swap, so a full pass through all five stages asks for
- * several screens' worth of scrolling.
+ * Scroll distance allotted to each stage while stuck, in px. This is also
+ * the gap between two neighbouring snap points, so it doubles as the "one
+ * gesture" unit: long enough that the sticky hold still reads as a slow,
+ * cinematic beat, short enough that a single deliberate flick of the wheel
+ * carries you from one stage to the next rather than stalling halfway.
  */
-const SCROLL_PER_STAGE = 1400;
+const SCROLL_PER_STAGE = 900;
 
 /**
  * Extra scroll, in whole stages, held at the very end after the last stage
  * has arrived — a beat to let the final image and caption sit before the
  * panel releases, instead of scrolling away the instant they arrive.
  */
-const TAIL_HOLD_STAGES = 0.6;
+const TAIL_HOLD_STAGES = 0.5;
 
 /**
- * The image reveal on each stage transition animates as a bottom-up
- * clip-path wipe, over this duration in timeline units (one unit = one
- * `SCROLL_PER_STAGE`).
+ * How each stage's beat is split, in timeline units (one unit = one
+ * `SCROLL_PER_STAGE`). The two must add up to exactly 1 — the arithmetic
+ * below, the snap points especially, assumes it.
+ *
+ * `TRANSITION_DURATION` is the moving part: the caption row, the image
+ * wipe and the tab all travel over exactly this long, from exactly the
+ * same start, with the same ease, so the three read as one gesture rather
+ * than three things loosely following each other.
+ * `HOLD_DURATION` is the still part that follows, and it is what makes a
+ * stage a *place* rather than a moment you pass through — every snap
+ * point aims at the centre of one.
  */
-const WIPE_DURATION = 0.35;
+const TRANSITION_DURATION = 0.45;
+const HOLD_DURATION = 1 - TRANSITION_DURATION;
 
 /**
- * Each stage's caption row is this tall, matching `.imageFrame`'s own
- * height so the image and the caption column read as one evenly matched
- * row. The drift math below needs the number, and so does the stylesheet
+ * The one ease every synced move shares. Two tweens only look like a
+ * single gesture if their easing matches as well as their timing, so the
+ * caption step, the image wipe and the snap tween itself all use this.
+ */
+const STEP_EASE = "power2.inOut";
+
+/**
+ * Each stage's caption row is this tall — the height of the window one
+ * stage's text occupies, and the exact distance the column steps on each
+ * transition. It is deliberately taller than the square image frame
+ * beside it (`--deliverables-frame-size`, set in the stylesheet), which
+ * simply centres within it; the two were the same number back when the
+ * frame was a portrait box, and no longer are.
+ * The step math below needs the number, and so does the stylesheet
  * (three heights plus the zero-state heading's anchor, which is measured
  * from half of it) — so it is published to CSS as `--caption-row-height`
  * on the track element rather than written out again there. Changing the
@@ -54,14 +75,6 @@ const WIPE_DURATION = 0.35;
  */
 const CAPTION_ROW_HEIGHT = 456;
 
-/**
- * How long, in timeline units, the zero-state heading takes to slide up and
- * away once scrolling begins. The caption column's own cycle doesn't start
- * until this finishes — see `CAPTION_START` below — so the two never move
- * at once: the heading goes first, on its own, then the stages begin.
- */
-const HEADING_EXIT_DURATION = 1;
-
 // Every number below is derived once, from the constants above and the
 // (static) stage count — none of it depends on measuring the DOM — so it's
 // hoisted out of the component: both the JSX (which needs `EXTRA_SCROLL_PX`
@@ -69,11 +82,19 @@ const HEADING_EXIT_DURATION = 1;
 // schedule the timeline) read the exact same numbers.
 const STAGE_COUNT = deliverableStages.length;
 const GAP_COUNT = STAGE_COUNT - 1;
-const CAPTION_DRIFT = GAP_COUNT * CAPTION_ROW_HEIGHT;
-/** Timeline position the caption column starts drifting at — right after
- *  the heading has completely finished exiting, never before. */
-const CAPTION_START = HEADING_EXIT_DURATION;
-/** Total timeline duration, tail hold excluded. */
+/** Timeline position the first stage transition begins at — one hold beat
+ *  in, so stage 0 gets a resting place (and a snap point) of its own
+ *  before anything starts moving.
+ *
+ *  This used to also include a `HEADING_EXIT_DURATION` beat: the heading
+ *  was a zero-state flourish that slid up and away on first scroll, and
+ *  the whole timeline had to wait for it. The heading is permanent now,
+ *  so that beat is gone and the section is a full `SCROLL_PER_STAGE`
+ *  shorter — the stages start almost as soon as the panel sticks. */
+const CAPTION_START = HOLD_DURATION;
+/** Total timeline duration, tail hold excluded. The last transition ends a
+ *  `HOLD_DURATION` before this, so this lands on the end of the last
+ *  stage's own hold rather than mid-move. */
 const MAIN_DURATION = CAPTION_START + GAP_COUNT;
 /** Total timeline duration, tail hold included — what the ruler fills
  *  across and what `.scrollTrack`'s extra scroll distance is sized to. */
@@ -82,6 +103,32 @@ const TOTAL_DURATION = MAIN_DURATION + TAIL_HOLD_STAGES;
  *  track needs, in px, for the whole timeline above to play out while the
  *  panel is stuck. */
 const EXTRA_SCROLL_PX = SCROLL_PER_STAGE * TOTAL_DURATION;
+
+/**
+ * Where scrolling is allowed to come to rest, as ScrollTrigger `progress`
+ * values (0–1 across `EXTRA_SCROLL_PX`) — the magnetic snap targets.
+ *
+ * One per stage, each at the *centre* of that stage's hold beat, plus the
+ * two ends: 0 (the panel just caught at the top, stage 0 showing) and 1
+ * (the tail hold, last stage fully landed). Aiming at the centre of a hold rather than at
+ * a transition boundary is the whole point — it guarantees the section
+ * settles with a stage completely arrived, never a frame or two into the
+ * next move, and it leaves half a hold of slack either side so ordinary
+ * scroll jitter can't re-trigger the snap.
+ *
+ * `CAPTION_START + index` is the *end* of stage `index`'s hold, so backing
+ * off by half a hold gives its centre. That holds for stage 0 too, whose
+ * hold is the one sitting between the heading's exit and the first
+ * transition.
+ */
+const SNAP_PROGRESS = [
+  0,
+  ...deliverableStages.map(
+    (_stage, index) =>
+      (CAPTION_START + index - HOLD_DURATION / 2) / TOTAL_DURATION,
+  ),
+  1,
+];
 
 /**
  * The deliverables band.
@@ -99,27 +146,36 @@ const EXTRA_SCROLL_PX = SCROLL_PER_STAGE * TOTAL_DURATION;
  * below, so the two stay perfectly in step without GSAP ever touching the
  * panel's positioning itself.
  *
- * At rest (before any scrolling) the intro heading sits above the
- * image/caption row — not beside it — with stage zero's own description
- * already showing next to the image underneath. That's a one-time
- * zero-state look, and it plays out in two strictly sequential moves,
- * never at once: first the heading slides up and fades away for good (see
- * `HEADING_EXIT_DURATION`); only once that's finished does the caption
- * column start its own cycle.
+ * The intro heading sits above the image/caption row — not beside it —
+ * and stays there for the section's whole span: it is a permanent label
+ * for the band, not a zero-state flourish, so it is never animated and
+ * takes no scroll time of its own. (It used to slide up and away on the
+ * first scroll, which cost a whole stage's worth of scroll distance up
+ * front and meant the heading had to be positioned absolutely so its
+ * departure couldn't shift the row. Both are gone: it is a plain in-flow
+ * block now, and the heading plus the row are centred in the panel as one
+ * group.)
  *
- * The caption column itself is a real (not absolutely-stacked) list — one
- * row per stage, every row the same fixed height as `.imageFrame` — so its
- * scroll distance is pure arithmetic (no DOM measuring needed): it drifts
- * upward continuously, at a steady rate, one row-height per stage. The
- * image keeps its own separate, unrelated behaviour: only one stage's
- * photo is ever visible, and each later one reveals with a clip-path wipe,
- * timed to land exactly when the caption column finishes drifting onto
- * that stage's row — so the photo, the caption, and the tab all change as
- * one beat.
+ * All three indicators — the tab, the image and the caption — move as one
+ * on a shared, stepped beat, never independently. Each stage transition is
+ * a single `TRANSITION_DURATION` window in which the caption column steps
+ * up exactly one row, the incoming image wipes in over it, and the tab
+ * flips at the halfway mark; a `HOLD_DURATION` of complete stillness
+ * follows before the next window opens. The caption column is a real (not
+ * absolutely-stacked) list of fixed-height rows, so its travel is pure
+ * arithmetic — one row-height per step, no DOM measuring needed.
+ *
+ * Those hold beats are what the ScrollTrigger `snap` config latches onto
+ * (see `SNAP_PROGRESS`): scrolling is magnetically pulled to the centre of
+ * the nearest hold in the direction of travel, so the section always comes
+ * to rest on a stage that has fully arrived rather than part-way through a
+ * transition. The snap is directional, so a flick past the halfway mark
+ * carries on to the next stage instead of being dragged back.
  *
  * The tab list's active state is recomputed from scratch on every timeline
- * update (`Math.floor` of how many stage-transitions have passed), rather
- * than toggled by a `.call()` at each transition point — a scrub-driven
+ * update (which beat the playhead is inside, and whether it has passed
+ * that beat's midpoint), rather than toggled by a `.call()` at each
+ * transition point — a scrub-driven
  * timeline can jump across several transition points in a single tick
  * (fast or jerky scrolling), and a `.call()`-based toggle can then leave
  * more than one tab marked active. Recomputing the single correct index
@@ -139,7 +195,6 @@ export function DeliverablesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const gaugeRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const captionStackRef = useRef<HTMLDivElement>(null);
@@ -153,44 +208,79 @@ export function DeliverablesSection() {
       const media = gsap.matchMedia();
 
       media.add(pinnedMediaQuery, () => {
+        const root = document.documentElement;
+
+        /**
+         * The sitewide `scroll-behavior: smooth` (reset.css) fights a snap
+         * tween: GSAP writes a new scroll position every frame and the
+         * browser then tries to smooth its way to each one in turn, which
+         * reads as a slow rubbery drift instead of a magnetic pull. It is
+         * suspended for the length of a snap and restored afterwards, so
+         * the smooth behaviour every in-page anchor link relies on stays
+         * intact everywhere else.
+         */
+        const setSmoothScroll = (enabled: boolean) => {
+          root.style.scrollBehavior = enabled ? "" : "auto";
+        };
+
+        // The caption steps below are relative (each `.to` targets the
+        // next row), so the column's zero position has to be stated
+        // explicitly — otherwise a refresh part-way through the section
+        // would record wherever it currently sits as the start of step one.
+        if (captionStackRef.current) {
+          gsap.set(captionStackRef.current, { y: 0 });
+        }
+
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: trackRef.current,
             start: () => `top ${getStickyOffset()}px`,
             end: `+=${EXTRA_SCROLL_PX}`,
-            scrub: 0.8,
+            scrub: 0.6,
             invalidateOnRefresh: true,
+            snap: {
+              snapTo: SNAP_PROGRESS,
+              // Scaled to how far the snap has to travel, so a small nudge
+              // resolves almost instantly while a longer pull still eases.
+              duration: { min: 0.2, max: 0.6 },
+              // Enough of a beat that the snap waits for the gesture to
+              // finish instead of tugging against a still-moving wheel.
+              delay: 0.08,
+              ease: STEP_EASE,
+              // Resolve in the direction of travel: a flick that clears
+              // the halfway mark carries on to the next stage rather than
+              // being dragged back to the one it just left.
+              directional: true,
+              onStart: () => setSmoothScroll(false),
+              onComplete: () => setSmoothScroll(true),
+              onInterrupt: () => setSmoothScroll(true),
+            },
           },
           onUpdate: () => {
             // The single source of truth for which tab is active — see the
             // top comment for why this is recomputed rather than toggled.
-            const activeIndex = Math.max(
+            //
+            // The flip lands at the midpoint of the transition window, so
+            // the tab changes while the image wipe is half drawn and the
+            // caption is half travelled — dead centre of the shared beat,
+            // rather than leading or trailing it.
+            const elapsed = timeline.time() - CAPTION_START;
+            const step = Math.floor(elapsed);
+            const withinStep = elapsed - step;
+            const activeIndex = gsap.utils.clamp(
               0,
-              Math.min(
-                STAGE_COUNT - 1,
-                Math.floor(timeline.time() - CAPTION_START),
-              ),
+              STAGE_COUNT - 1,
+              elapsed < 0
+                ? 0
+                : withinStep >= TRANSITION_DURATION / 2
+                  ? step + 1
+                  : step,
             );
             tabRefs.current.forEach((tab, index) => {
               tab?.classList.toggle(styles.tabActive, index === activeIndex);
             });
           },
         });
-
-        // The heading slides up and away once, right at the start — a
-        // zero-state flourish, not something that repeats per stage.
-        if (headingRef.current) {
-          timeline.to(
-            headingRef.current,
-            {
-              yPercent: -130,
-              autoAlpha: 0,
-              duration: HEADING_EXIT_DURATION,
-              ease: "power1.inOut",
-            },
-            0,
-          );
-        }
 
         // The ruler fills across the entire span, tail hold included — it
         // keeps creeping while the last stage sits held at the end.
@@ -207,33 +297,36 @@ export function DeliverablesSection() {
           );
         }
 
-        // The caption column — one row per stage, stage 0 already showing
-        // — only starts drifting once the heading is gone (`CAPTION_START`),
-        // then moves up by exactly one row height per timeline unit, at a
-        // steady rate, across the rest of the main span (the tail hold
-        // afterward leaves it resting on the last row).
-        if (captionStackRef.current) {
-          timeline.fromTo(
-            captionStackRef.current,
-            { y: 0 },
-            { y: -CAPTION_DRIFT, duration: GAP_COUNT, ease: "none" },
-            CAPTION_START,
-          );
-        }
-
-        // Stage 0 is already showing (its image is the default), so wipes
-        // start from stage 1. Each one *finishes* at `CAPTION_START + index`
-        // — the instant the caption column's continuous drift lands that
-        // stage's row and the tab flips — which means it has to be
-        // scheduled a full `WIPE_DURATION` earlier.
+        // One shared beat per stage transition. Stage 0 is the zero state
+        // (its caption row is already in the window and its image is the
+        // default layer), so the steps run from stage 1: each schedules
+        // the caption's row step and that stage's image wipe at the *same*
+        // position, for the *same* duration, on the *same* ease — the tab
+        // flips at their common midpoint (see `onUpdate` above). Nothing
+        // moves for the `HOLD_DURATION` that follows, which is the still
+        // moment `SNAP_PROGRESS` aims at.
         //
-        // Starting it *at* the landing point instead (what this did before)
-        // is what made the image read as trailing the text: the caption
-        // never rests, so by the time a wipe completed, the column had
-        // already drifted a third of the way toward the next row and the
-        // tab had already moved. The image looked like it was catching up
+        // This replaces a caption column that drifted continuously while
+        // only the image and tab stepped. Because the column never rested,
+        // the three could never agree on when a stage had "arrived": by
+        // the time a wipe finished, the caption had already drifted on
+        // toward the next row, and the image read as forever catching up
         // to a stage the rest of the section had left.
         for (let index = 1; index < STAGE_COUNT; index += 1) {
+          const startsAt = CAPTION_START + index - 1;
+
+          if (captionStackRef.current) {
+            timeline.to(
+              captionStackRef.current,
+              {
+                y: -index * CAPTION_ROW_HEIGHT,
+                duration: TRANSITION_DURATION,
+                ease: STEP_EASE,
+              },
+              startsAt,
+            );
+          }
+
           const imageLayer = layerRefs.current[index];
           if (!imageLayer) continue;
 
@@ -242,15 +335,21 @@ export function DeliverablesSection() {
             { clipPath: "inset(100% 0 0 0)" },
             {
               clipPath: "inset(0% 0 0 0)",
-              duration: WIPE_DURATION,
-              ease: "power1.inOut",
+              duration: TRANSITION_DURATION,
+              ease: STEP_EASE,
             },
-            CAPTION_START + index - WIPE_DURATION,
+            startsAt,
           );
         }
       });
 
-      return () => media.revert();
+      return () => {
+        media.revert();
+        // A snap interrupted by unmount (or by the media query flipping to
+        // the narrow layout mid-snap) would otherwise leave the document
+        // stuck on `scroll-behavior: auto` for the rest of the session.
+        document.documentElement.style.scrollBehavior = "";
+      };
     },
     { scope: trackRef },
   );
@@ -292,7 +391,7 @@ export function DeliverablesSection() {
           <RulerGauge progressRef={gaugeRef} className={styles.gauge} />
 
           <div className={styles.content}>
-            <div className={styles.headingBar} ref={headingRef}>
+            <div className={styles.headingBar}>
               <Text
                 variant="editorialTight"
                 as="h2"
@@ -325,13 +424,36 @@ export function DeliverablesSection() {
                     )}
                     style={{ "--layer-index": index } as CSSProperties}
                   >
+                    {/* Two images, not one: the gradient fills the square
+                        frame edge to edge, and the mockup sits centred on
+                        top of it at its own smaller scale. The gradient is
+                        purely decorative (`alt=""`) — `imageAlt` belongs
+                        to the mockup, which is the only part carrying
+                        information, and the caption column beside it
+                        carries the same content as text regardless. */}
                     <Image
-                      src={stage.image}
-                      alt={stage.imageAlt}
+                      src={stage.background}
+                      alt=""
+                      aria-hidden="true"
                       fill
-                      sizes="280px"
-                      className={styles.layerImage}
+                      sizes="400px"
+                      className={styles.layerBackground}
                     />
+                    {stage.card ? (
+                      <Image
+                        src={stage.card}
+                        alt={stage.imageAlt}
+                        fill
+                        sizes="400px"
+                        className={styles.layerCard}
+                        style={
+                          {
+                            "--card-inset": stage.cardFraming?.inset,
+                            "--card-bias": stage.cardFraming?.bias,
+                          } as CSSProperties
+                        }
+                      />
+                    ) : null}
                   </div>
                 ))}
               </div>

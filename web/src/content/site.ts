@@ -24,12 +24,12 @@ export const primaryNav: readonly NavItem[] = [
 ];
 
 export const site = {
-  name: "TALENTnext",
+  name: "Talentnext",
   logoBlack: "/img/talentnext-logo-black.svg",
   logoWhite: "/img/talentnext-logo-white.svg",
-  title: "TALENTnext — Uncover the TALENT You Already Have",
+  title: "Talentnext — Uncover the Talent You Already Have",
   description:
-    "What you do next may start with what you're already good at. Through a 30-minute conversation with a TALENT Agent, you'll uncover skills you may not recognize in yourself.",
+    "What you do next may start with what you're already good at. Through a 30-minute conversation with a Talent Agent, you'll uncover skills you may not recognize in yourself.",
   ctaLabel: "Get started",
   supportEmail: "support@talentnext.com",
 } as const;
@@ -55,7 +55,7 @@ export const footerColumns: readonly {
     title: "The Process",
     links: [
       { label: "30-Minute Conversation", href: "#how-it-works" },
-      { label: "TALENT Agent Assessment", href: "#how-it-works" },
+      { label: "Talent Agent Assessment", href: "#how-it-works" },
       { label: "Strengths & Skill Gaps", href: "#what-youll-get" },
       { label: "Personalized Roadmap", href: "#what-youll-get" },
     ],
@@ -79,6 +79,6 @@ export const footerSocial: readonly SocialItem[] = [
 export const footerCopy = {
   tagline:
     "Uncover the skills you already have and begin to see what they could mean for your future.",
-  legal: `© ${new Date().getFullYear()} TALENTnext, Inc. All rights reserved.`,
+  legal: `© ${new Date().getFullYear()} Talentnext, Inc. All rights reserved.`,
   credit: "Designed with Architectural Precision",
 } as const;

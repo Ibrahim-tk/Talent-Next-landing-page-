@@ -34,7 +34,7 @@
 .editorialTight {
   font-size: var(--gl-size-editorial-tight);
   line-height: var(--gl-leading-display);
-  font-weight: var(--gl-weight-light);
+  font-weight: var(--gl-weight-regular);
   /* "Tight" here is the measure, not the tracking — like every other
      heading role, this one sits at 0. */
   letter-spacing: var(--gl-tracking-normal);
@@ -143,7 +143,7 @@
   font-size: var(--gl-size-micro);
   font-weight: var(--gl-weight-regular);
   line-height: var(--gl-leading-flat);
-  letter-spacing: var(--gl-tracking-minimal);
+  letter-spacing: var(--gl-tracking-normal);
   color: var(--gl-color-text-metric);
 }
 
@@ -151,7 +151,7 @@
   font-size: var(--gl-size-micro);
   font-weight: var(--gl-weight-regular);
   line-height: var(--gl-leading-flat);
-  letter-spacing: var(--gl-tracking-minimal);
+  letter-spacing: var(--gl-tracking-normal);
   color: var(--gl-color-text-heading);
 }
 
@@ -230,9 +230,10 @@
 
 /* --------------------------------------------------------------------------
    Weight overrides — an escape hatch for stepping off the role's own weight
-   without leaving the role. Light is the system default at 16px and above,
-   so these exist to promote. Reach for one only when the role itself is
-   right and this one piece of copy genuinely needs the extra ink.
+   without leaving the role. Regular is the system default everywhere, so
+   these exist to step off it in either direction. Reach for one only when
+   the role itself is right and this one piece of copy genuinely needs
+   more (or less) ink — the site currently uses none of them.
    -------------------------------------------------------------------------- */
 .weightLight {
   font-weight: var(--gl-weight-light);

@@ -24,6 +24,7 @@ export { DrawSVGPlugin, gsap, ScrollTrigger, SplitText, useGSAP };
 
 export { layout, pinnedMediaQuery } from "../tokens";
 export { prefersReducedMotion, useReducedMotion } from "./useReducedMotion";
+export type { NavRegionTheme } from "./useDarkNavRegion";
 export { useDarkNavRegion } from "./useDarkNavRegion";
 
 /**

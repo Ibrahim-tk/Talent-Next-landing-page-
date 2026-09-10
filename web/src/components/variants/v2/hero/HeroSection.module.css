@@ -1,0 +1,201 @@
+/* ==========================================================================
+   HeroSection — landing page variation 2 (/v2)
+
+   Same copy block as v1, but the section closes on a full-width photograph
+   instead of v1's phone-and-cards asset stage.
+   ========================================================================== */
+
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: var(--gl-space-block-xl) var(--gl-space-11) 0 var(--gl-space-11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The blueprint grid, faded out radially so it reads only behind the copy and
+   never competes with the phone. */
+.blueprint {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-position: center top;
+  pointer-events: none;
+  z-index: var(--gl-z-base);
+  mask-image: var(--gl-mask-blueprint);
+  -webkit-mask-image: var(--gl-mask-blueprint);
+}
+
+.content {
+  position: relative;
+  z-index: var(--gl-z-content);
+  max-width: var(--gl-measure-hero);
+  text-align: center;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* A flex column, rather than relying on natural inline wrapping, is what
+   guarantees each of the three segments sits on its own line and is
+   centered as a unit — `text-wrap: balance` alone can't promise that once
+   the accent word's size is this different from its neighbours. */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--gl-space-9);
+  max-width: 1180px;
+
+  /* One knob for the whole headline. Both settings below are on-scale steps
+     multiplied by this factor, rather than off-scale numbers written out
+     directly: the sizes still declare which rung of the modular scale they
+     came from, and eye-tuning the headline stays a one-line edit. 0.9 is a
+     deliberate off-ratio trim on top of the two-step increase — 1.40625x the
+     original setting in total. */
+  --hero-type-trim: 0.9;
+}
+
+/* "Uncover the" / "You Already Have." — sized as the frame around the accent
+   word rather than the focal point, and stepped up two rungs of the modular
+   scale (h5 → h3 becomes h3 → h1) for the larger headline setting. Two
+   rungs is 1.5625x, the on-scale reading of "1.5x": the scale's ratio is
+   1.25, so a literal 1.5 would land between steps and break the one rule
+   the type system has. The vw term is stepped by the same factor, so the
+   increase holds at every viewport width, not only at the clamp ends — and
+   `--hero-type-trim` above then takes the whole thing back down by eye. */
+.headlineLead {
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    calc(var(--gl-scale-h3) * var(--hero-type-trim)),
+    calc(4.06vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-h1) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+/* "TALENT" — the one word the heading exists to deliver. The system is
+   single-typeface now, so scale alone separates it from the lead lines.
+
+   Taken down exactly one rung of the modular scale from where it was:
+   2xl (was 3xl) at the small end and 5xl/149.01px (was 6xl/186.26px) at the
+   top, with the vw term divided by the scale's own 1.25 ratio to match
+   (14.06 → 11.25) so the reduction holds at every width and not just at the
+   clamp ends. One rung rather than a hand-picked percentage keeps the word
+   on-scale, which is the single rule the type system has — the steps above
+   h1 exist in primitives.css precisely so this word can be sized this way.
+
+   The descendant selector (rather than relying on source order against
+   Highlight's own `.root`) is what guarantees this wins over
+   `font: inherit`. */
+.headline .headlineAccent {
+  display: inline-block;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    calc(var(--gl-scale-2xl) * var(--hero-type-trim)),
+    calc(11.25vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-5xl) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+  line-height: 0.9;
+
+  /* The gaps between the three lines. Still `em` rather than a space token
+     deliberately: the value has to track the accent's own size, which is
+     fluid, or it would read as a hairline nudge at 76px and a chasm at
+     149px.
+
+     This used to be -0.06em, pulling the lines into each other so the three
+     read as one block. It's now a small positive value instead: the three
+     lines still read as one block at this setting, and the negative overlap
+     had them sitting close enough that the accent's cap-height nearly
+     touched the lines above and below it. */
+  margin-block: 0.04em;
+}
+
+/* The gradient plate, painted through the letterforms.
+   `background-clip: text` with a transparent fill is the only way to get an
+   *image* into type; the guard matters because the fallback for an
+   unsupported browser is not "no gradient" but an invisible headline — so
+   the flat accent colour above stands until support is confirmed.
+
+   Only the plate's top-right quadrant is used: `200% 200%` scales the
+   artwork to twice the word's box in both axes and `right top` pins that
+   oversized image by its top-right corner, so the window onto it is exactly
+   the corner quarter. That crop is the hot red sweeping diagonally out to
+   pale pink — a brighter, more directional ramp across six letters than the
+   whole plate gives, which averages down to a flat mid-rose once it is
+   squeezed into a band this wide and short. The quadrant is squeezed too,
+   but the artwork is an out-of-focus gradient, so the aspect change has
+   nothing to distort. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .headline .headlineAccent {
+    background-image: var(--gl-image-accent-plate);
+    background-size: 200% 200%;
+    background-position: right top;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.body {
+  max-width: 720px;
+  margin-bottom: var(--gl-space-14);
+}
+
+/* The button stands on its own — no dashed dock, no microcopy line beneath
+   it — so this wrapper only carries the gap down to the image band. */
+.ctaDock {
+  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+}
+
+/* --------------------------------------------------------------------------
+   Closing image band — rule to rule, flush with the module's bottom edge.
+
+   The breakout is a negative inline margin cancelling `.section`'s own
+   horizontal padding, NOT the `left: 50%` / `100vw` trick the interview and
+   deliverables sections use. Those sit in modules that don't clip; this one
+   is a `clip` GridModule, so a 100vw box would be cut back to the module's
+   width regardless — and GridCanvas's rule is that nothing bleeds past the
+   two vertical rules anyway. `align-self: stretch` is what lets the band
+   ignore the column's `align-items: center`.
+
+   The height is a fixed strip rather than the photo's own 3:2: at this
+   width 3:2 would stand roughly a screen tall and push the whole hero out
+   of view, so the photo is cropped into the band instead. `object-position`
+   sits above centre because the subjects' heads are in the upper half of
+   the frame and a centred crop takes the tops off them.
+   -------------------------------------------------------------------------- */
+.media {
+  position: relative;
+  z-index: var(--gl-z-content);
+  align-self: stretch;
+  margin-inline: calc(var(--gl-space-11) * -1);
+  height: clamp(320px, 46vh, 560px);
+  overflow: hidden;
+}
+
+.mediaImage {
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: var(--gl-space-17);
+  }
+
+  /* A shorter strip on phones — the same clamp floor would eat most of a
+     small viewport once the headline above it has wrapped to four or five
+     lines. */
+  .media {
+    height: clamp(220px, 34vh, 320px);
+  }
+}

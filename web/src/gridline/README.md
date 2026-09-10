@@ -64,14 +64,18 @@ Prefix is `--gl-`, following the short-prefix convention used by Carbon
 
 ### Typeface
 
-One face everywhere: **Helvetica Neue Light**. It is a platform font rather
-than a hosted one, so it is declared as a stack in `primitives.css` and the
-app downloads no webfont at all — the earlier Plus Jakarta Sans / Geist Mono /
-Space Mono / Outfit imports are gone, and the `--gl-font-mono` and
-`--gl-font-accent-mono` aliases survive as token names but resolve to the same
-family. Light is reached with `font-weight: 300`, which maps to the real
-Helvetica Neue Light cut on Apple platforms; Windows and Linux fall through to
-Helvetica/Arial and render Regular, since neither ships a Light cut.
+One face everywhere: **Helvetica Neue**, at Regular (400). It is a platform
+font rather than a hosted one, so it is declared as a stack in
+`primitives.css` and the app downloads no webfont at all — the earlier Plus
+Jakarta Sans / Geist Mono / Space Mono / Outfit imports are gone, and the
+`--gl-font-mono` and `--gl-font-accent-mono` aliases survive as token names
+but resolve to the same family.
+
+Regular is also the only weight the stack can actually guarantee. The system
+previously set Light (300), which mapped to the real Helvetica Neue Light cut
+on Apple platforms but fell through to Helvetica/Arial Regular on Windows and
+Linux, since neither ships a Light cut — so the page never looked the same
+across platforms. At 400 it does.
 
 ### Type scale
 
@@ -120,49 +124,60 @@ Each role in `semantic.css` bundles size, leading, weight and tracking, so a
 ```css
 --gl-type-display-size: var(--gl-size-display);
 --gl-type-display-leading: var(--gl-leading-tight);
---gl-type-display-weight: var(--gl-weight-light);
---gl-type-display-tracking: var(--gl-tracking-tightest);
+--gl-type-display-weight: var(--gl-weight-regular);
+--gl-type-display-tracking: var(--gl-tracking-normal);
 ```
 
-Weight is close to a constant: everything at 16px and above is Light (300).
-Below 16px the system holds at Regular (400) — `bodySm`, `caption`, `kicker`,
-`actionLg`, `actionMd`, `metric`. That is a legibility floor rather than a
-hierarchy device: at 12.8px and 10.24px a 300 weight leaves too little ink to
-survive antialiasing, and those roles are also the ones most likely to be
-uppercase and tracked out, which thins them further.
+Weight is a constant: **every role is Regular (400)**, from the hero headline
+down to the 10.24px kicker. Nothing in the system varies weight, so nothing
+in a component stylesheet should either.
+
+The one deliberate exception is the archetype card's reversed-out drop-cap
+letter, which sits directly on photography and takes Medium (500) so its
+strokes survive whatever is behind them.
 
 ### Making hierarchy work at one weight
 
-With weight held constant, three other things have to carry it, and all three
-are tuned for Light rather than inherited from the semibold system that came
-before:
+With weight held constant, three other things have to carry it:
 
 1. **Size.** The h6 step (20px) is the heading tier's floor and belongs to it
    alone. `bodyLg` sits a full ratio step below at 16px, so the smallest
    heading and the largest body never meet — that gap is what makes the two
    tiers read as different kinds of thing.
-2. **Colour.** Three prose tiers, all darkened for Light and all clearing 7:1
-   on white: near-black (`--gl-color-text-primary` / `-heading`) for headings,
-   `-secondary` at 10.4:1 or `-body` at 7.9:1 for prose, `-muted` at 7.5:1 for
-   captions. A grey that measured fine at semibold reads washed out at 300
-   even though its contrast ratio has not moved, so these are deliberately
-   darker than a heavier system would need.
+2. **Colour.** This is the tier that does the most work, and it follows two
+   rules. **Headings are dark but never black:** the darkest text tone in the
+   system is `#23282f` (`--gl-color-text-primary`, 14.7:1), a cool near-black
+   that still reads as a colour rather than as maximum ink, with
+   `-heading` a step lighter at 11.4:1. **Prose is clearly lighter than the
+   headings:** `-secondary` at 7.8:1 and `-body` at 5.8:1, with `-muted` at
+   5.0:1 for captions. That gap between the heading tones and the prose tones
+   is what the eye reads as hierarchy now that weight is flat. Everything
+   still clears WCAG AA on white.
+
+   The tiers used to sit much closer to black, because at Light (300) a mid
+   grey laid down so little ink that it read as washed out. At Regular that
+   is no longer true, and holding every tier near black flattened the page
+   into one uniform slab of dark text.
 3. **Leading.** Tight at display sizes, generous in body copy.
 
 Negative tracking is the trap here, and the system no longer takes it:
-**every heading tracks at 0**, in the `Text` roles, in the bare `h1`–`h6`
-defaults, and in the hero's own headline spans. Tightening was fighting the
-face — Helvetica Neue Light already has open counters and close sidebearings,
-so pulling the letters together read as cramped rather than as crisp, most
-visibly on the long headline settings this site is built around. An earlier
-ramp ran to -0.035em (tuned for semibold), then to -0.02em; both were
-wrong in kind rather than in degree. The negative steps stay in
-`primitives.css` as an unused part of the ramp so one alias can bring
-tightening back if a setting ever wants it. Positive tracking on uppercase
-marks is untouched, since letter-spacing genuinely helps there.
+**every role tracks at 0** — the `Text` roles, the bare `h1`–`h6` defaults,
+the hero's own headline spans, and the `metric` / `metricLabel` roles that
+were the last holdouts at -0.002em. Tightening was fighting the face:
+Helvetica Neue already has open counters and close sidebearings, so pulling
+the letters together read as cramped rather than as crisp, most visibly on
+the long headline settings this site is built around. An earlier ramp ran to
+-0.035em (tuned for semibold), then to -0.02em; both were wrong in kind
+rather than in degree. The negative steps stay in `primitives.css` as an
+unused part of the ramp so one alias can bring tightening back if a setting
+ever wants it.
+
+The only live `letter-spacing` in the system is the **positive** tracking on
+the small uppercase marks — `kicker`, `actionLg`, `actionMd`, `eyebrow` —
+where all-caps genuinely needs the extra room.
 
 `Text`'s `weight` prop remains the escape hatch when one piece of copy
-genuinely needs more ink.
+genuinely needs to step off Regular. Nothing in the site currently uses it.
 
 ## Usage
 
@@ -199,6 +214,7 @@ import { Button, GridModule, Highlight, SectionHeader, Text } from "@gridline";
 | `ProgressTrack` | Continuous progress; `width` or scroll-driven `scale` mode |
 | `RulerGauge` | Vertical measuring rule with an animatable accent overlay |
 | `StepperTimeline` | Vertical step sequence on a dashed spine |
+| `PlanStack` | Looping stack of plan cards; CSS-only, six phases |
 | `TintedMedia` / `Thumbnail` / `VideoFrame` | Media treatments |
 | `Crosshair` / `CrosshairSet` / `DashedFrame` | Registration marks and framing |
 | `Icon` | The closed glyph set |
@@ -217,6 +233,22 @@ is the single place plugins are registered.
 ```tsx
 import { gsap, pinnedMediaQuery, prefersReducedMotion, useGSAP } from "@gridline/motion";
 ```
+
+Not every loop needs GSAP. `PlanStack` is the counter-example: a six-card
+stack that cycles forever, built entirely from one shared `@keyframes` and a
+per-card negative `animation-delay`. It ships no client JavaScript, animates
+only `transform` and `opacity` so the compositor can run it off the main
+thread, and cannot drift the way a timer can. Reach for a CSS animation when
+the motion is autonomous and repeating; reach for GSAP when it has to be
+driven by scroll or sequenced against other elements.
+
+One catch that comes with looping CSS animations: the blanket
+`prefers-reduced-motion` rule in `reset.css` collapses the duration rather
+than removing the animation, which parks every element on its *last*
+keyframe. For a loop whose last keyframe is the off-screen one, that means
+the element disappears. A looping component must therefore carry its own
+`@media (prefers-reduced-motion: reduce)` block that sets `animation: none`
+and lays the elements out statically.
 
 Rules for scroll choreography:
 

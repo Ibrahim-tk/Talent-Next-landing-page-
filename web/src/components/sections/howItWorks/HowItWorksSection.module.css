@@ -94,13 +94,21 @@
      (see `.analysisMedia`), so it contributes nothing to layout and the
      row can be sized purely around the caption pinned at its bottom. What
      that does mean is that the orb is free to overlap the caption rather
-     than push it down — at 400px its box runs from 15% (60px) to 396px
+     than push it down — at 400px its box runs from 5% (20px) to 322px
      while the caption block occupies the last ~142px, so the glow's soft
-     lower half sits behind the heading. That's the intended look; the
-     overlap is transparent pixels, and `pointer-events: none` on the orb
-     keeps the heading selectable through it. Raise this value if a clean
-     gap between the two is ever wanted instead. */
-  --outcome-row-height: 400px;
+     lower edge sits behind the heading. That's the intended look; the orb
+     paints under the copy (see `.analysisMedia`) and the overlapping
+     pixels are the transparent outer rings of the glow. Raise this value
+     if a clean gap between the two is ever wanted instead.
+
+     It has been raised once already, from 400px to 420px, when the plan
+     stack's cards were given more internal padding: the stack sets its own
+     height, and at 400px a 212px window plus the two-line caption below it
+     came out taller than the row, which pushes the caption over the row's
+     bottom hairline rather than being clipped by it. Both rows move
+     together by design, so the analysis row gains the same 20px — the orb
+     is out of flow and simply sits 1px lower for it. */
+  --outcome-row-height: 420px;
 }
 
 /* `flex: none` + an explicit height rather than the `flex: 1` these rows
@@ -110,9 +118,17 @@
    and the analysis row's taller content would push them out of step. Fixed
    and equal is the point here, so the basis has to come from `height`.
 
-   `position: relative` makes each row the containing block for the orb. */
+   `position: relative` makes each row the containing block for the orb, and
+   `isolation: isolate` makes it a stacking context. The isolation is what
+   lets the orb's negative `z-index` mean "behind this row's text" instead
+   of "behind this row's white background" — a bare `position: relative`
+   with `z-index: auto` starts no stacking context of its own, so the orb
+   would drop past the row's own fill and vanish. Inside an isolated row the
+   paint order is: the row's background, then negative-z descendants (the
+   orb), then the in-flow caption on top. */
 .outcomeRow {
   position: relative;
+  isolation: isolate;
   flex: none;
   height: var(--outcome-row-height);
   display: flex;
@@ -138,9 +154,16 @@
   max-width: 420px;
 }
 
-.stepperWrap {
+/* The plan stack sets its own height (three card slots plus the strip the
+   next card rises through) and its own max width, so this wrapper only has
+   to hand it the column — see the note at the top of PlanStack.module.css
+   for how the loop is built, and the CSS Module ordering note in the
+   Gridline README for why the size lives inside the component and not
+   here. */
+.planWrap {
   width: 100%;
-  max-width: 240px;
+  display: flex;
+  justify-content: center;
 }
 
 .panelHeading {
@@ -148,8 +171,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   Analysis visual — the TALENT Agent orb, 336px (1.4x the 240px measure the
-   Top Strength card used to occupy, and that `.stepperWrap` still does).
+   Analysis visual — the TALENT Agent orb, 302px (240px, the measure the Top
+   Strength card used to occupy, taken up 1.4x and then back down 0.9x — a
+   little wider than the 288px plan stack in the row below it, so the two
+   visuals read as the same size class without being identical).
 
    Taken out of flow and anchored 15% down its row, so its size can no
    longer set that row's height — that's what lets `--outcome-row-height`
@@ -164,17 +189,21 @@
    and shift the orb off centre. No border, radius or background: the glow
    is meant to sit directly on the panel, not inside a frame.
 
-   `pointer-events: none` because it now floats over the row rather than
-   sitting beside its caption: without it, the transparent lower edge of
-   the glow would swallow clicks and text selection on the heading beneath.
+   It paints *behind* the caption (`--gl-z-below`, against the stacking
+   context `.outcomeRow` establishes) rather than over it: the glow's lower
+   half reaches well into the caption's band, and on top it washed the copy
+   out. `pointer-events: none` stays regardless — the orb still covers that
+   band geometrically, and without it those transparent pixels would
+   swallow clicks and text selection on the heading.
    -------------------------------------------------------------------------- */
 .analysisMedia {
   position: absolute;
-  top: 15%;
+  top: 5%;
   left: 0;
   right: 0;
+  z-index: var(--gl-z-below);
   width: 100%;
-  max-width: 336px;
+  max-width: 302px;
   margin: 0 auto;
   aspect-ratio: 1 / 1;
   pointer-events: none;
@@ -211,6 +240,7 @@
   .analysisMedia {
     position: relative;
     top: auto;
+    z-index: auto;
     pointer-events: auto;
   }
 }

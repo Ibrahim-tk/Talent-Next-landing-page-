@@ -7,12 +7,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
  * `data-nav-theme` on `<html>`. `SiteHeader` reads this attribute (see
- * `SiteHeader.module.css`) to invert its own colours; nothing else should
- * read or set it directly.
+ * `SiteHeader.module.css`) to restyle itself; nothing else should read or
+ * set it directly.
  */
 const NAV_THEME_ATTR = "data-nav-theme";
 
-function setNavTheme(theme: "dark" | null) {
+/**
+ * How the nav should look over the region.
+ *
+ * - `dark` — a dark translucent bar. For a dark *surface* underneath, where
+ *   the bar is still meant to read as a bar.
+ * - `overlay` — no bar at all: transparent, no hairline, just a soft scrim
+ *   for legibility. For a full-bleed image that is meant to run behind the
+ *   nav rather than stop under it.
+ */
+export type NavRegionTheme = "dark" | "overlay";
+
+function setNavTheme(theme: NavRegionTheme | null) {
   const root = document.documentElement;
   if (theme) root.setAttribute(NAV_THEME_ATTR, theme);
   else root.removeAttribute(NAV_THEME_ATTR);
@@ -32,15 +43,19 @@ function setNavTheme(theme: "dark" | null) {
  *
  * ```tsx
  * const sectionRef = useRef<HTMLDivElement>(null);
- * useDarkNavRegion(sectionRef);
+ * useDarkNavRegion(sectionRef);            // dark translucent bar
+ * useDarkNavRegion(sectionRef, "overlay"); // no bar; image runs behind it
  * ```
  */
-export function useDarkNavRegion(ref: RefObject<HTMLElement | null>) {
+export function useDarkNavRegion(
+  ref: RefObject<HTMLElement | null>,
+  theme: NavRegionTheme = "dark",
+) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    const enterDark = () => setNavTheme("dark");
+    const enterDark = () => setNavTheme(theme);
     const exitDark = () => setNavTheme(null);
 
     const trigger = ScrollTrigger.create({
@@ -53,9 +68,26 @@ export function useDarkNavRegion(ref: RefObject<HTMLElement | null>) {
       onLeaveBack: exitDark,
     });
 
+    // A ScrollTrigger that is already in range when it is created does not
+    // reliably fire `onEnter` for that initial state — it reports the state
+    // but leaves the callback for a real crossing. That is invisible for a
+    // section further down the page, but a hero region is in range at
+    // scroll zero on every single load, so the nav would keep its default
+    // styling until the visitor scrolled past the hero and back.
+    //
+    // Read straight off the DOM rather than off `trigger.isActive`: this is
+    // the same condition the trigger encodes (`top top` to `bottom top`, so
+    // "the element's top is at or above the viewport top and its bottom is
+    // still below it"), and evaluating it here doesn't depend on how far
+    // ScrollTrigger has got with its own first refresh. `setNavTheme` just
+    // writes an attribute, so doing it twice costs nothing on the loads
+    // where the callback does fire.
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= 0 && rect.bottom > 0) enterDark();
+
     return () => {
       trigger.kill();
       exitDark();
     };
-  }, [ref]);
+  }, [ref, theme]);
 }

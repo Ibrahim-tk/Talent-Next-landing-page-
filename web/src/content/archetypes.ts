@@ -1,7 +1,7 @@
 /**
- * The six TALENT archetypes, one per letter — Top Performer, Athlete,
+ * The six Talent archetypes, one per letter — Top Performer, Athlete,
  * Leader, Entrepreneur, Not Sure, Team Player spell T-A-L-E-N-T. Rendered as
- * the horizontally scrubbed card track in the "TALENT Looks Different for
+ * the horizontally scrubbed card track in the "Talent Looks Different for
  * Everyone" section, per the Figma reference (node 173-6514).
  */
 
@@ -74,7 +74,7 @@ export const archetypes: readonly Archetype[] = [
 ];
 
 export const archetypesCopy = {
-  heading: "TALENT Looks Different for Everyone.",
+  heading: "Talent Looks Different for Everyone.",
   description:
     "Being talented isn't one thing. It can show up in what comes naturally to you, the way you approach challenges, or the role you find yourself taking without even thinking about it.",
   footnote:

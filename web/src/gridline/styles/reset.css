@@ -36,10 +36,10 @@ body {
   background-color: var(--gl-color-surface-canvas);
   color: var(--gl-color-text-primary);
   font-size: var(--gl-type-body-md-size);
-  /* Helvetica Neue Light is the document default, so anything that does
-     not name a weight inherits Light. The small roles that need Regular
-     name it themselves — see the note in semantic.css. */
-  font-weight: var(--gl-weight-light);
+  /* Helvetica Neue Regular is the document default and the system's only
+     weight — see the note on the type-role block in tokens/semantic.css.
+     Anything that does not name a weight inherits it. */
+  font-weight: var(--gl-weight-regular);
   line-height: var(--gl-type-body-md-leading);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
@@ -61,7 +61,7 @@ h4,
 h5,
 h6 {
   font-family: var(--gl-font-sans);
-  font-weight: var(--gl-weight-light);
+  font-weight: var(--gl-weight-regular);
   color: var(--gl-color-text-heading);
   text-wrap: balance;
 }
@@ -106,12 +106,10 @@ h6 {
 
 p {
   font-size: var(--gl-scale-p); /* 16px */
-  font-weight: var(--gl-weight-light);
+  font-weight: var(--gl-weight-regular);
   line-height: var(--gl-leading-body);
 }
 
-/* Regular, not Light: below 16px a 300 weight loses too much to
-   antialiasing to stay comfortably legible. */
 small {
   font-size: var(--gl-scale-small); /* 12.8px */
   font-weight: var(--gl-weight-regular);

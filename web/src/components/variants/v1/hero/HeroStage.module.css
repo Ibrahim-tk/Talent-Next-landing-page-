@@ -1,0 +1,223 @@
+/* ==========================================================================
+   HeroStage
+   The phone, its ambient red glow, and three floating product cards.
+   ========================================================================== */
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: var(--gl-measure-stage);
+  margin: 0 auto;
+  min-height: 540px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: var(--gl-z-content);
+  overflow: visible;
+}
+
+/* --------------------------------------------------------------------------
+   Ambient glow — a blurred PNG doubled at two scales, over a radial
+   gradient. The gradient alone reads too clean; the PNG adds grain.
+   -------------------------------------------------------------------------- */
+.glow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: clamp(800px, 75vw, 1120px);
+  height: 480px;
+  pointer-events: none;
+  z-index: var(--gl-z-base);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  line-height: 0;
+}
+
+.glow::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 380px;
+  background: var(--gl-gradient-hero-glow);
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.glowLayer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom center;
+  pointer-events: none;
+  transform-origin: bottom center;
+}
+
+.glowNear {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.05);
+}
+
+.glowFar {
+  opacity: 0.95;
+  transform: translateX(-50%) scale(1.22);
+  filter: blur(10px);
+}
+
+/* --------------------------------------------------------------------------
+   Phone — held steady while the cards drift, so it anchors the composition
+   -------------------------------------------------------------------------- */
+.phone {
+  position: relative;
+  z-index: var(--gl-z-stage);
+  /* Trimmed ~10% against the enlarged headline — at the old width the phone
+     and the headline were competing for the same focal weight rather than
+     the composition reading top-down. */
+  width: clamp(306px, 27vw, 369px);
+  margin: 0 auto;
+  line-height: 0;
+}
+
+.phoneImage {
+  width: 100%;
+  height: auto;
+  filter: var(--gl-shadow-phone);
+}
+
+/* --------------------------------------------------------------------------
+   Floating cards
+   GSAP animates the outer element (spread on scroll); the inner element runs
+   the ambient CSS float loop. Splitting them keeps the two transforms from
+   fighting over the same `transform` property.
+   -------------------------------------------------------------------------- */
+.card {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+.cardInner {
+  width: 100%;
+  height: 100%;
+}
+
+.cardImage {
+  width: 100%;
+  height: auto;
+}
+
+.slotAi {
+  left: clamp(10px, 6vw, 85px);
+  top: 17%;
+  width: clamp(220px, 20vw, 270px);
+  z-index: var(--gl-z-floating);
+}
+
+.slotAi .cardInner {
+  animation: floatA var(--gl-float-duration-a) ease-in-out infinite;
+}
+
+.slotStrength {
+  right: clamp(10px, 6vw, 80px);
+  top: 7%;
+  width: clamp(240px, 21vw, 290px);
+  z-index: var(--gl-z-floating);
+}
+
+.slotStrength .cardInner {
+  animation: floatB var(--gl-float-duration-b) ease-in-out infinite 0.6s;
+}
+
+.slotScore {
+  right: clamp(25px, 9vw, 135px);
+  bottom: 12%;
+  width: clamp(140px, 12.5vw, 175px);
+  z-index: var(--gl-z-content);
+}
+
+.slotScore .cardInner {
+  animation: floatC var(--gl-float-duration-c) ease-in-out infinite 1.2s;
+}
+
+@keyframes floatA {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes floatB {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes floatC {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .stage {
+    min-height: 480px;
+  }
+  .slotAi {
+    left: 10px;
+    width: 200px;
+  }
+  .slotStrength {
+    right: 10px;
+    width: 220px;
+  }
+  .slotScore {
+    right: 40px;
+    width: 135px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stage {
+    min-height: 400px;
+  }
+  .phone {
+    width: 280px;
+  }
+  .slotAi {
+    left: 0;
+    top: 5%;
+    width: 160px;
+  }
+  .slotStrength {
+    right: 0;
+    top: 2%;
+    width: 170px;
+  }
+  .slotScore {
+    right: 10px;
+    bottom: 5%;
+    width: 115px;
+  }
+}

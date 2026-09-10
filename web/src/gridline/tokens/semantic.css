@@ -40,31 +40,37 @@
   /* ------------------------------------------------------------------------
      Text
      ---------------------------------------------------------------------- */
-  /* Darkened across the board for a Light typeface. A 300 weight puts far
-     less ink on the page than a 400+ one, so a grey that measured as
-     comfortably legible at semibold reads washed out and blurry at Light
-     even though its contrast ratio has not changed. Every prose tier now
-     clears 7:1 on white rather than sitting near the 4.5:1 floor, which is
-     what actually makes Light legible. The three tiers stay distinct, so
-     colour can carry hierarchy that weight no longer does. */
-  --gl-color-text-primary: var(--gl-neutral-900); /* 18.9:1 — headings */
-  --gl-color-text-heading: var(--gl-neutral-850); /* 16.9:1 — headings */
-  /* Darkened one rung each after the Light weight went in site-wide: the
-     old values were tuned when prose still carried some weight of its own,
-     and at Light the mid-greys read as washed out rather than quiet. The
-     tiers keep their spacing, so hierarchy still reads — everything just
-     sits closer to the ink end of the ramp. */
-  --gl-color-text-secondary: var(--gl-neutral-800); /* 16.1:1 — prose */
-  --gl-color-text-body: var(--gl-neutral-775); /* 10.4:1 — prose on panels */
-  --gl-color-text-muted: var(--gl-neutral-750); /* 7.9:1 — captions */
-  --gl-color-text-metric: var(--gl-neutral-750); /* 7.9:1 — small numerics */
+  /* Opened back up now that the whole system sets Regular (400). The tiers
+     were pushed to the ink end of the ramp when the site ran at Light,
+     because a 300 weight lays down so little ink that a mid grey read as
+     washed out; at 400 that is no longer true, and holding every tier near
+     black flattened the page into one uniform slab of dark text.
+
+     Two rules shape the ramp now. Headings are dark but never black — the
+     darkest text tone in the system is #23282f, a cool near-black that
+     still reads as a colour rather than as maximum ink. Prose is lighter
+     than the headings by a clear margin, so the eye separates the two
+     tiers instantly; that separation is what carries hierarchy, since
+     weight no longer varies and tracking is 0 everywhere.
+
+     Everything still clears WCAG AA on white: the lightest tier here
+     (captions, the smallest type in the system) is 5.0:1, and prose sits
+     between 5.8:1 and 7.8:1. */
+  --gl-color-text-primary: var(--gl-neutral-790); /* 14.7:1 — headings */
+  --gl-color-text-heading: var(--gl-neutral-780); /* 11.4:1 — headings */
+  /* The prose tiers, a clear step lighter than either heading tone. */
+  --gl-color-text-secondary: var(--gl-neutral-725); /* 7.8:1 — prose */
+  --gl-color-text-body: var(--gl-neutral-675); /* 5.8:1 — prose on panels */
+  --gl-color-text-muted: var(--gl-neutral-640); /* 5.0:1 — captions */
+  --gl-color-text-metric: var(--gl-neutral-640); /* 5.0:1 — small numerics */
   --gl-color-text-inverse: var(--gl-neutral-0);
   /* Secondary text on a dark surface (deliverables). Not a straight neutral
      swap of --gl-color-text-secondary — that token is tuned for white
-     backgrounds and reads too low-contrast reversed onto black. Raised from
-     0.68 for the same reason the greys above were darkened: reversed-out
-     Light text loses more to the dark ground than a heavier weight does. */
-  --gl-color-text-inverse-secondary: rgba(255, 255, 255, 0.84);
+     backgrounds and reads too low-contrast reversed onto black. Eased back
+     from 0.84 alongside the greys above: Regular reversed out of black
+     holds far better than Light did, so the tier can sit off full white
+     and read as secondary again instead of matching the headline. */
+  --gl-color-text-inverse-secondary: rgba(255, 255, 255, 0.74);
   --gl-color-text-accent: var(--gl-rose-600);
   --gl-color-text-decoration: var(--gl-neutral-500);
   --gl-color-text-success: var(--gl-green-600);
@@ -182,6 +188,17 @@
       transparent 1px
     ),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  /* The same grid for dark surfaces. The lines above are black at 4%, which
+     is invisible over `--gl-color-surface-inverse`, so this flips them to
+     white — at 8% rather than 4%, since a light line on near-black needs a
+     little more presence to read as the same weight. Same cell size, so the
+     two are interchangeable and stay on the same 80px lattice. */
+  --gl-gradient-blueprint-inverse: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   --gl-blueprint-cell: 80px;
   --gl-mask-blueprint: radial-gradient(
     ellipse 65% 55% at 50% 45%,
@@ -194,30 +211,27 @@
      Each role bundles size + leading + weight + tracking so a `Text`
      variant is a single lookup rather than four.
 
-     Every heading role now tracks at 0. Negative tracking is an optical
-     correction for the gaps that open at display sizes, but it was fighting
-     the face: Helvetica Neue Light's counters are already open and its
-     sidebearings already tight, so pulling the letters together read as
-     cramped rather than as crisp — particularly on the long headline
-     settings this site leans on. The negative steps survive in
-     primitives.css as an unused part of the ramp rather than being deleted,
-     so a single alias can be re-pointed if one heading ever wants it back.
-     Positive tracking on the small uppercase marks is untouched.
+     Every role tracks at 0 — headings, prose and metrics alike. Negative
+     tracking is an optical correction for the gaps that open at display
+     sizes, but it was fighting the face: Helvetica Neue's counters are
+     already open and its sidebearings already tight, so pulling the
+     letters together read as cramped rather than as crisp, particularly on
+     the long headline settings this site leans on. The negative steps
+     survive in primitives.css as an unused part of the ramp rather than
+     being deleted, so a single alias can be re-pointed if one heading ever
+     wants it back. The only live letter-spacing in the system is the
+     positive tracking on the small uppercase marks (kicker, actionLg,
+     actionMd, eyebrow), where all-caps genuinely needs the room.
 
-     Weight is close to a constant: everything at 16px and above is
-     Helvetica Neue Light (300). Hierarchy is therefore carried by size (a
-     step on the modular scale), by colour tier, and by leading — never by
-     weight.
+     Weight is a constant: every role is Helvetica Neue Regular (400).
+     Hierarchy is carried by size (a step on the modular scale), by colour
+     tier, and by leading — never by weight. Regular is also the one cut
+     the platform stack has everywhere, so the page renders the same on
+     Windows and Linux as it does on macOS, which was never true at Light.
 
-     Below 16px the system holds at Regular (400). That is a legibility
-     floor, not a hierarchy device: at 12.8px and 10.24px a 300 weight
-     leaves too little ink to survive antialiasing, and the small roles
-     here (bodySm, caption, kicker, actionLg, actionMd) are also the ones
-     most likely to be uppercase and tracked out, which thins them further.
-
-     The colour tiers do the work weight used to. Headings take the two
-     near-black tokens, prose takes secondary or body, and captions take
-     muted — all of them darkened for Light, and all clearing 7:1.
+     The colour tiers do the work weight does not. Headings take the two
+     dark-but-not-black tokens, prose takes secondary or body, and captions
+     take muted — see the Text block above for the ramp and its ratios.
      ---------------------------------------------------------------------- */
 
   /* display — reused as a large section heading (How It Works). The hero
@@ -225,60 +239,60 @@
      font-size/weight directly, overriding whatever is inherited here. */
   --gl-type-display-size: var(--gl-size-display);
   --gl-type-display-leading: var(--gl-leading-tight);
-  --gl-type-display-weight: var(--gl-weight-light);
+  --gl-type-display-weight: var(--gl-weight-regular);
   --gl-type-display-tracking: var(--gl-tracking-normal);
 
-  /* editorial — section statements (archetypes, interview). Light, like
-     every other role at this size: scale carries the emphasis now. */
+  /* editorial — section statements (archetypes, interview). Regular, like
+     every other role: scale carries the emphasis now. */
   --gl-type-editorial-size: var(--gl-size-editorial);
   --gl-type-editorial-leading: var(--gl-leading-display);
-  --gl-type-editorial-weight: var(--gl-weight-light);
+  --gl-type-editorial-weight: var(--gl-weight-regular);
   --gl-type-editorial-tracking: var(--gl-tracking-normal);
 
   /* monoDisplay — the "It Starts with 30 Minutes." banner */
   --gl-type-mono-display-size: var(--gl-size-mono-display);
   --gl-type-mono-display-leading: var(--gl-leading-tight);
-  --gl-type-mono-display-weight: var(--gl-weight-light);
+  --gl-type-mono-display-weight: var(--gl-weight-regular);
   --gl-type-mono-display-tracking: var(--gl-tracking-normal);
 
   /* headingLg — standard section heading */
   --gl-type-heading-lg-size: var(--gl-size-heading-lg);
   --gl-type-heading-lg-leading: var(--gl-leading-snug);
-  --gl-type-heading-lg-weight: var(--gl-weight-light);
+  --gl-type-heading-lg-weight: var(--gl-weight-regular);
   --gl-type-heading-lg-tracking: var(--gl-tracking-normal);
 
   /* headingSm — sequenced step titles */
   --gl-type-heading-sm-size: var(--gl-size-heading-sm);
   --gl-type-heading-sm-leading: var(--gl-leading-title);
-  --gl-type-heading-sm-weight: var(--gl-weight-light);
+  --gl-type-heading-sm-weight: var(--gl-weight-regular);
   --gl-type-heading-sm-tracking: var(--gl-tracking-normal);
 
   /* monoHeading — column headings inside the How It Works matrix */
   --gl-type-mono-heading-size: var(--gl-size-mono-heading);
   --gl-type-mono-heading-leading: var(--gl-leading-heading);
-  --gl-type-mono-heading-weight: var(--gl-weight-light);
+  --gl-type-mono-heading-weight: var(--gl-weight-regular);
   --gl-type-mono-heading-tracking: var(--gl-tracking-normal);
 
   /* headingMd — card titles */
   --gl-type-heading-md-size: var(--gl-size-heading-md);
   --gl-type-heading-md-leading: var(--gl-leading-heading);
-  --gl-type-heading-md-weight: var(--gl-weight-light);
+  --gl-type-heading-md-weight: var(--gl-weight-regular);
   --gl-type-heading-md-tracking: var(--gl-tracking-normal);
 
   /* title — compact card title, already close to body-lg in size */
   --gl-type-title-size: var(--gl-size-title);
   --gl-type-title-leading: var(--gl-leading-title);
-  --gl-type-title-weight: var(--gl-weight-light);
+  --gl-type-title-weight: var(--gl-weight-regular);
   --gl-type-title-tracking: var(--gl-tracking-normal);
 
   /* bodyLg / bodyMd / bodySm / caption */
   --gl-type-body-lg-size: var(--gl-size-body-lg);
   --gl-type-body-lg-leading: var(--gl-leading-relaxed);
-  --gl-type-body-lg-weight: var(--gl-weight-light);
+  --gl-type-body-lg-weight: var(--gl-weight-regular);
 
   --gl-type-body-md-size: var(--gl-size-body-md);
   --gl-type-body-md-leading: var(--gl-leading-body);
-  --gl-type-body-md-weight: var(--gl-weight-light);
+  --gl-type-body-md-weight: var(--gl-weight-regular);
 
   --gl-type-body-sm-size: var(--gl-size-body-sm);
   --gl-type-body-sm-leading: var(--gl-leading-normal);
@@ -290,7 +304,7 @@
 
   /* label — form field labels */
   --gl-type-label-size: var(--gl-size-body-md);
-  --gl-type-label-weight: var(--gl-weight-light);
+  --gl-type-label-weight: var(--gl-weight-regular);
 
   /* kicker — the mono, tracked-out accent eyebrow on deliverable cards */
   --gl-type-kicker-size: var(--gl-size-nano);

@@ -7,9 +7,14 @@
    clearly separate from whatever dark, dense band (Deliverables) precedes
    it, rather than the two running into each other. The dot-matrix plate
    runs the full width of the GridCanvas column — flush on its vertical
-   rules, never past them (there is no viewport-breakout here) — and the
-   video sits on top of it at 80% of that width, centred, so the frame
-   reads as a band of texture behind a card rather than a card of its own.
+   rules, never past them — and the video sits on top of it at 80% of that
+   width, centred, so the frame reads as a band of texture behind a card
+   rather than a card of its own.
+
+   None of the CONTENT ever breaks out to the viewport. The one thing that
+   does is the inverse tone's surface colour, via the `.track` / `.stage`
+   pair borrowed from DeliverablesSection — see that block at the bottom of
+   this file.
    ========================================================================== */
 
 /* The grid-texture box that opens the section — a plain tiled repeat of the
@@ -73,12 +78,95 @@
 }
 
 /* --------------------------------------------------------------------------
+   Inverse tone — the dark treatment, opted into via the section's `tone`
+   prop (currently only by `/v2`).
+
+   The container is DeliverablesSection's, deliberately: that section had
+   already solved a dark band on this canvas, and the answer is two boxes
+   rather than any pseudo-element or margin-filling trick. `.track` breaks
+   out to the full window and carries the surface colour; `.stage` puts the
+   frame measure back so the content still lines up with every other
+   section, and re-draws the two vertical rules against the dark. The dark
+   therefore runs to the edges of the window while the frame is still
+   plainly legible — which is the effect the margin bands tried and missed.
+
+   Both boxes are inert at the default tone: unstyled `div`s that leave the
+   light section laying out exactly as it did before they were added.
+
+   The colour work is separate, and is done by redeclaring semantic tokens
+   rather than by overriding each rule. Custom properties inherit, so
+   pointing `--gl-color-text-primary` and friends at their inverse
+   counterparts here re-colours every `Text` role, every hairline and
+   `SectionHeader`'s own closing rule in one go — no pile of descendant
+   overrides, no specificity fight with `Text`'s role classes, and a `Text`
+   added to this section later is correct without anyone remembering the
+   dark case.
+   -------------------------------------------------------------------------- */
+.toneInverse {
+  --gl-color-text-primary: var(--gl-color-text-inverse);
+  --gl-color-text-secondary: var(--gl-color-text-inverse-secondary);
+  --gl-color-text-heading: var(--gl-color-text-inverse);
+  --gl-color-border-rule: var(--gl-color-border-inverse);
+}
+
+/* `left: 50%` + `-50vw` re-centres a 100vw box on the window however narrow
+   the constrained canvas around it happens to be. `z-index` is explicit for
+   the same reason DeliverablesSection sets it: a box that escapes its
+   parent's width should stack deliberately against its neighbours rather
+   than by document order. */
+.toneInverse .track {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background-color: var(--gl-color-surface-inverse);
+  z-index: var(--gl-z-base);
+}
+
+/* The same measure GridCanvas itself uses, centred the same way, so these
+   two borders land exactly on the sitewide pair the track just painted
+   over — the canvas draws that pair, and the track, being a descendant,
+   covers it for this section's height. GridCanvas's one rule is that the
+   two rules run uninterrupted from header to footer, so they have to be
+   put back here. */
+.toneInverse .stage {
+  width: 100%;
+  max-width: var(--gl-frame-max-width);
+  margin: 0 auto;
+  border-left: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-inverse);
+}
+
+/* Both grids flip to the light-line blueprint. `.gridBox` already drew the
+   blueprint (in black, which is invisible on this surface); `.plate` is
+   swapping the dot-matrix artwork for it entirely — the reason `background`
+   is reset longhand-by-longhand is that the photo needed `cover` +
+   `no-repeat`, and a tiled lattice needs the cell size and `repeat` back. */
+.toneInverse .gridBox,
+.toneInverse .plate {
+  background-image: var(--gl-gradient-blueprint-inverse);
+  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-repeat: repeat;
+  background-position: center top;
+}
+
+/* The letterbox behind the still is a light neutral, which would read as a
+   bright slab on this surface until the image paints over it. */
+.toneInverse .mediaFrame {
+  background-color: var(--gl-color-surface-inverse);
+}
+
+/* --------------------------------------------------------------------------
    Footer row — same padding/height as InterviewSection's own `.footerRow`
    (`--gl-space-17`, a fixed 48px rather than a fluid block space — see that
    file's comment for why). Unlike that one, this row does NOT break out to
-   the viewport: this section's own rule is that nothing here bleeds past
-   the GridCanvas's vertical rules, so it stays a plain full-width block
-   inside the module instead of the `left: 50%` / negative-margin trick.
+   the viewport: no content in this section bleeds past the frame's vertical
+   rules, so it stays a plain full-width block inside the module instead of
+   the `left: 50%` / negative-margin trick. (The inverse tone's `.track`
+   does use that trick, but only to carry a colour behind the content, never
+   to move the content itself.)
    -------------------------------------------------------------------------- */
 .footerRow {
   padding: var(--gl-space-17);
