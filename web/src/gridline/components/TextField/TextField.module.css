@@ -36,6 +36,9 @@
 
 .input {
   width: 100%;
+  /* Air above the box, matching the pill group's own top padding so a text
+     answer and a choice answer sit the same distance under their label. */
+  margin-top: var(--gl-space-4); /* 10px */
   padding: var(--gl-control-padding-field);
   border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   border-radius: var(--gl-radius-none);

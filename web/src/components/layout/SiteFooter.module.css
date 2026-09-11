@@ -12,7 +12,7 @@
    Below the column row, a thicker accent-coloured bar (the same role
    RulerGauge's progress track plays — a bolder, `--gl-color-accent` closing
    mark) separates the columns from the final legal line: copyright + Terms
-   of Use on the left, the credit line on the right.
+   of Use, centred as one group.
    ========================================================================== */
 
 .footer {
@@ -112,7 +112,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Closing bar — accent rule + copyright/credit line
+   Closing bar — accent rule + centred copyright/legal line
    -------------------------------------------------------------------------- */
 .accentBar {
   height: var(--gl-border-width-thick);
@@ -121,7 +121,10 @@
 
 .legalBar {
   display: flex;
-  justify-content: space-between;
+  /* Centred, not split: the credit line that used to hold the right end of
+     this bar is gone, so the copyright and the two legal links read as one
+     centred group rather than sitting off to one side. */
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--gl-space-7);

@@ -101,5 +101,4 @@ export const footerCopy = {
   tagline:
     "Uncover the skills you already have and begin to see what they could mean for your future.",
   legal: `© ${new Date().getFullYear()} Talentnext, Inc. All rights reserved.`,
-  credit: "Designed with Architectural Precision",
 } as const;

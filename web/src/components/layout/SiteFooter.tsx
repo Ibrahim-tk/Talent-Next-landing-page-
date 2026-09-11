@@ -87,9 +87,6 @@ export function SiteFooter() {
             {termsOfUse.label}
           </Link>
         </div>
-        <Text variant="caption" as="span" tone="muted">
-          {footerCopy.credit}
-        </Text>
       </div>
     </footer>
   );

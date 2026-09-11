@@ -11,6 +11,9 @@
   /* Raised from 10px. The options grew a rung of the type scale while this
      stayed put, which left four tall boxes stacked almost edge to edge. */
   gap: var(--gl-space-6);
+  /* A little air above the first option, on top of whatever gap the label
+     or question above the group already sets. */
+  padding-top: var(--gl-space-4); /* 10px */
 }
 
 .columns1 {
@@ -27,12 +30,11 @@
 
 .option {
   padding: var(--gl-space-5) var(--gl-space-9);
-  /* 2px rather than the system hairline. A pill is the largest hit target
-     in the form and the only control the reader picks between, so its
-     outline is drawn rather than implied — and a 2px rest border means the
-     selected state changes only the border's colour, never its width, so
-     the option doesn't shift by a pixel on selection. */
-  border: var(--gl-border-width-thick) solid var(--gl-color-border-rule);
+  /* The system hairline, same as the text inputs below in the same form —
+     at 2px the options read as heavier controls than the boxes they sit
+     above. Selection still changes only the border's colour, never its
+     width, so the option doesn't shift by a pixel when picked. */
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   border-radius: var(--gl-radius-xs);
   /* Its own token, defaulting to body copy. A caller that has scaled the
      body size up for a whole card (IntakeForm does) can step the options
