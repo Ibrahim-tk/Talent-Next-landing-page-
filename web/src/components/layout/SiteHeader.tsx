@@ -47,7 +47,11 @@ export function SiteHeader() {
         </nav>
 
         <div className={styles.actions}>
-          <Button href={homeAnchors.getStarted} size="md">
+          <Button
+            href={homeAnchors.getStarted}
+            size="md"
+            className={styles.headerCta}
+          >
             {site.ctaLabel}
           </Button>
           <button

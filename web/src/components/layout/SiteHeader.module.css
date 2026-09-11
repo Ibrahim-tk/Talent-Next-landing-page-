@@ -297,6 +297,13 @@
     display: none;
   }
 
+  /* The bar keeps only the logo and the hamburger on a phone. At this width
+     the CTA crowded the brand mark and duplicated the one already at the
+     bottom of the drawer, which is now the single place it lives. */
+  .headerCta {
+    display: none;
+  }
+
   .menuButton {
     display: block;
   }
