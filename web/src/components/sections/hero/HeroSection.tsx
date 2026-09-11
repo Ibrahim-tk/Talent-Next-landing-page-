@@ -1,12 +1,12 @@
 import { Button, Crosshair, GridModule, Highlight, Text } from "@gridline";
 import { heroCopy } from "@/content/hero";
 
-import { HeroStage } from "./HeroStage";
+import { HeroImage } from "./HeroImage";
 import styles from "./HeroSection.module.css";
 
 /**
- * The hero. Server-rendered apart from `HeroStage`, which owns the
- * scroll-scrubbed asset cloud and therefore runs on the client.
+ * The hero. Fully server-rendered: the stage is a single photograph ruled
+ * edge to edge, with nothing layered over it and nothing animating on scroll.
  */
 export function HeroSection() {
   return (
@@ -45,7 +45,7 @@ export function HeroSection() {
         </div>
       </div>
 
-      <HeroStage />
+      <HeroImage />
     </GridModule>
   );
 }

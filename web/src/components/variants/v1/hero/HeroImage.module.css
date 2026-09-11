@@ -1,0 +1,36 @@
+/* ==========================================================================
+   HeroImage
+   One photograph, ruled edge to ruled edge, closing the hero module.
+   ========================================================================== */
+
+/* The section pads its content in by `--gl-space-11`; the negative margin
+   pulls this frame back out to the canvas rules so the image reads as
+   grid-to-grid rather than as a centred picture with gutters. Width is set
+   from the margins rather than left as `100%` so the two stay in step. */
+.frame {
+  position: relative;
+  z-index: var(--gl-z-content);
+  width: calc(100% + var(--gl-space-11) * 2);
+  margin-inline: calc(var(--gl-space-11) * -1);
+  line-height: 0;
+}
+
+/* `cover` against a capped height: the plate is a 16:9 photograph, so at
+   full canvas width its natural height would push the fold well past the
+   headline. The crop is anchored to the top edge — the subject's head sits
+   near the top of the frame, so a centred crop trims it. Everything the
+   cap removes comes off the bottom instead. */
+.image {
+  width: 100%;
+  height: auto;
+  max-height: clamp(340px, 56vh, 640px);
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .image {
+    max-height: clamp(260px, 42vh, 420px);
+  }
+}

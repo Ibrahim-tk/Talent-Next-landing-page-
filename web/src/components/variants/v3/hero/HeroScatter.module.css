@@ -1,0 +1,118 @@
+/* ==========================================================================
+   HeroScatter — variation 3's photograph scatter
+
+   Three bands: a margin either side of the centred copy, and a strip along
+   the bottom. The bands are grid areas handed to this component by
+   `HeroSection.module.css`; everything here positions frames inside one.
+   ========================================================================== */
+
+.band {
+  position: relative;
+  /* No frame is in flow — every one is absolutely positioned — so the band
+     would collapse to zero height and take its frames' percentage `top`
+     with it. Stretching to the grid row is what gives those percentages
+     something to be a percentage of. */
+  align-self: stretch;
+  /* Decorative art around a headline. A photograph that eats a click near
+     the call to action is a bug nobody reports and everybody feels. */
+  pointer-events: none;
+}
+
+/* The bottom strip is deliberately shorter than its images are tall. They
+   overflow it, and the module's own `clip` cuts them off at the hero's
+   bottom edge — which is the crop the layout wants: pictures rising into
+   the frame from something continuing below it. */
+.bandBottom {
+  min-height: clamp(88px, 12vh, 148px);
+}
+
+/* --------------------------------------------------------------------------
+   One frame.
+
+   Every positional number is a custom property set inline from the content
+   file (see `heroScatterImages`), so the composition is tuned by editing
+   data rather than by adding a rule per slot here. Eight frames would
+   otherwise be eight near-identical blocks.
+   -------------------------------------------------------------------------- */
+.item {
+  position: absolute;
+  top: var(--scatter-top);
+  width: calc(var(--scatter-width) * var(--scatter-scale, 1));
+  aspect-ratio: var(--scatter-ratio);
+  overflow: hidden;
+  border-radius: var(--gl-radius-md);
+  background-color: var(--gl-color-surface-sunken);
+
+  /* The drift. A CSS animation rather than a GSAP tween because nothing
+     here needs a timeline — each frame moves on its own period, forever,
+     and that is exactly what a keyframe loop is for. It also keeps this
+     component server-rendered.
+
+     The keyframe's last frame matches its resting transform, so the
+     reduced-motion collapse in reset.css — which parks an animation on its
+     final frame — leaves each frame sitting still rather than mid-drift. */
+  animation: scatterFloat var(--scatter-duration) ease-in-out infinite;
+}
+
+@keyframes scatterFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(var(--scatter-distance) * -1));
+  }
+}
+
+/* Which edge `--scatter-x` is measured from. Splitting this by band rather
+   than writing `left`/`right` into the inline style keeps the content file
+   describing one thing — distance from the band's outer edge, negative to
+   push past it — instead of two properties that mean opposite things
+   depending on which array entry you happen to be reading. */
+.band[data-scatter-band="left"] .item,
+.band[data-scatter-band="bottom"] .item {
+  left: var(--scatter-x);
+}
+
+.band[data-scatter-band="right"] .item {
+  right: var(--scatter-x);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+
+   Below the breakpoint the margins go — see the grid in
+   `HeroSection.module.css`, which collapses to a single column at the same
+   width. A phone has no margin to put a photograph in: the copy needs the
+   full measure, and frames squeezed into what is left would either overlap
+   the headline (the one thing this layout exists to prevent) or be too
+   small to read as photographs.
+
+   The bottom strip survives, scaled down. It sits below everything written
+   and spans the full width, so it is the one band a narrow viewport still
+   has room for — and it is what keeps the hero from ending on white space.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .band[data-scatter-band="left"],
+  .band[data-scatter-band="right"] {
+    display: none;
+  }
+
+  .bandBottom {
+    --scatter-scale: 0.66;
+    min-height: clamp(70px, 10vh, 104px);
+  }
+}
+
+@media (max-width: 600px) {
+  .bandBottom {
+    --scatter-scale: 0.5;
+  }
+}

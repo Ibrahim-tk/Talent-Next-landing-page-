@@ -1,177 +1,116 @@
 /* ==========================================================================
    HeroSection — landing page variation 3 (/v3)
 
-   v1's centred copy on the blueprint lattice, with a rail either side for
-   the asset cloud that flies in on load (see `HeroOrbit`).
+   Centred copy inside a scatter of photographs (see `HeroScatter`).
    ========================================================================== */
 
 .section {
   position: relative;
-  overflow: hidden;
-  padding: var(--gl-space-block-xl) var(--gl-space-11)
-    var(--gl-space-block-lg) var(--gl-space-11);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* The blueprint grid, faded out radially so it reads only behind the copy
-   and never competes with the photographs in the rails. */
-.blueprint {
-  position: absolute;
-  inset: 0;
-  background-image: var(--gl-gradient-blueprint);
-  /* Columns as a share of the box, rows in px — see the token block. The
-     box is the full width of the canvas column, so `left top` starts the
-     lattice on the left rule and the 25th column closes on the right one. */
-  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
-  pointer-events: none;
-  z-index: var(--gl-z-base);
-  mask-image: var(--gl-mask-blueprint);
-  -webkit-mask-image: var(--gl-mask-blueprint);
+  /* No bottom padding. The bottom strip's images are meant to be cut by the
+     hero's own edge, and padding under them would move that cut inward and
+     leave a band of canvas below the crop. */
+  padding: var(--gl-space-block-xl) 0 0 0;
 }
 
 /* --------------------------------------------------------------------------
-   Rail — copy — rail.
+   Margin — copy — margin, with the bottom strip spanning all three.
 
-   This grid is what guarantees the photographs never land on the headline.
-   The centre column is the only place copy is rendered and the outer two
-   are the only place art is rendered, so the two cannot meet at any
-   viewport width — there is no z-index ordering to get right and no set of
-   offsets to re-tune when the type reflows.
-
-   The centre column is capped but fluid (`min()`), and that is the part
-   that makes the rails survive a narrowing window. A fixed centre would
-   eat the rails alive as the canvas shrank: at 1100px the margins would be
-   under 60px a side and the cloud would be squeezed into a gutter. Tying
-   the measure to the viewport instead means the copy gives ground at the
-   same rate the frame does, and the rails keep a usable width all the way
-   down to the breakpoint where they are dropped outright.
-
-   `align-items: stretch` is load-bearing for the rails: their items are
-   absolutely positioned at percentage heights, so a rail that only grew to
-   fit its (zero-height) content would give those percentages nothing to
-   measure against.
+   The centre column is capped but fluid (`min()`), and that is what makes
+   the margins survive a narrowing window. A fixed centre would eat them
+   alive as the canvas shrank: at 1100px there would be under 60px a side
+   and the photographs would be slivers. Tying the measure to the viewport
+   means the copy gives ground at the same rate the frame does, and the
+   margins keep a usable width down to the breakpoint where they are
+   dropped outright.
    -------------------------------------------------------------------------- */
-.columns {
-  position: relative;
-  z-index: var(--gl-z-content);
-  width: 100%;
+.grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) min(760px, 58vw) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) min(720px, 54vw) minmax(0, 1fr);
+  grid-template-rows: auto auto;
   align-items: stretch;
-  column-gap: var(--gl-space-11);
-
-  /* A floor for the composition. Without it the row is exactly as tall as
-     the copy, and the rails — whose items are placed at percentages of the
-     row's height — would have barely more vertical range than the headline
-     itself, stacking the cloud into two tight clumps. The floor gives the
-     items somewhere to be distributed. It is a floor and not a height, so a
-     headline that wraps to more lines still grows the hero rather than
-     spilling out of it. */
-  min-height: clamp(520px, 62vh, 720px);
 }
 
 .content {
   grid-column: 2;
-  text-align: center;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  text-align: center;
+  padding-inline: var(--gl-space-11);
+  /* Air above and below the copy so the margins have room for their top and
+     bottom frames without either crowding the type's own line. */
+  padding-block: clamp(2rem, 7vh, 5rem);
 
-  /* The container the headline's `cqw` terms below are measured against.
-     Declared here, on the copy column itself, rather than on `.columns` —
-     the point is to size the type against the box the words are actually
-     in, and `.columns` is the full canvas width, which is the very thing
-     `cqw` is being used to avoid. */
+  /* The container the headline's `cqw` terms are measured against. The copy
+     sits in roughly half the canvas, so sizing the type against the
+     viewport would size it against twice the space it actually has. */
   container-type: inline-size;
 }
 
-/* A flex column, rather than relying on natural inline wrapping, is what
-   guarantees each of the three segments sits on its own line and is
-   centered as a unit — `text-wrap: balance` alone can't promise that once
-   the accent word's size is this different from its neighbours. */
+/* The margins flank the copy and stop where it stops; the strip below has
+   its own row. */
+.grid [data-scatter-band="left"] {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.grid [data-scatter-band="right"] {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.grid [data-scatter-band="bottom"] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* --------------------------------------------------------------------------
+   Headline — three lines, centred, one segment each. A flex column rather
+   than natural inline wrapping, which is the only way to guarantee the
+   break points once the accent word's size differs from its neighbours'.
+   -------------------------------------------------------------------------- */
 .headline {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: var(--gl-space-9);
-
-  /* One knob for the whole headline, at v1's setting. Both settings below
-     are on-scale steps multiplied by this factor, rather than off-scale
-     numbers written out directly: the sizes still declare which rung of the
-     modular scale they came from, and eye-tuning the headline stays a
-     one-line edit. */
-  --hero-type-trim: 0.9;
+  text-align: center;
+  margin-bottom: var(--gl-space-13);
 }
 
-/* "Uncover the" / "You Already Have." — sized as the frame around the accent
-   word rather than the focal point.
-
-   The fluid term is `cqw` here, not v1's `vw`: the copy sits in a grid
-   column roughly 58% of the viewport rather than spanning the canvas, so a
-   viewport-relative term would size the type against space the column does
-   not have and run the longest line, "You Already Have.", straight into the
-   left rail. A container-relative term measures the box the words are
-   actually in. 7vw against the full canvas is about 12cqw against this
-   column, which is where that number comes from. */
+/* "Uncover the" / "You Already Have." — h4 up to h1, sized against the copy
+   column rather than the viewport. */
 .headlineLead {
   font-family: var(--gl-font-sans);
-  font-size: clamp(
-    calc(var(--gl-scale-h3) * var(--hero-type-trim)),
-    calc(7.2cqw * var(--hero-type-trim)),
-    calc(var(--gl-scale-h1) * var(--hero-type-trim))
-  );
+  font-size: clamp(var(--gl-scale-h4), 8cqw, var(--gl-scale-h1));
   font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-normal);
+  line-height: var(--gl-leading-tight);
 }
 
-/* "TALENT" — the one word the heading exists to deliver. The system is
-   single-typeface now, so scale alone separates it from the lead lines.
-
-   20cqw: six capitals in this face measure about 3.8em, so the word fills
-   roughly 76% of the column — large as it can be while still leaving the
-   line visibly inside the copy column rather than touching a rail. The cap
-   is v1's own 5xl ceiling times the trim.
-
-   The descendant selector (rather than relying on source order against
-   Highlight's own `.root`) is what guarantees this wins over
-   `font: inherit`. */
-.headline .headlineAccent {
+/* "TALENT" — two rungs above the lead lines rather than v1's five. The
+   headline shares its frame with eight photographs here; at v1's ratio the
+   accent word would be the only thing in it. */
+.headlineAccent {
   display: inline-block;
   font-family: var(--gl-font-sans);
-  font-size: clamp(
-    calc(var(--gl-scale-2xl) * var(--hero-type-trim)),
-    calc(20cqw * var(--hero-type-trim)),
-    calc(var(--gl-scale-5xl) * var(--hero-type-trim))
-  );
+  font-size: clamp(var(--gl-scale-h2), 11.5cqw, var(--gl-scale-2xl));
   font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-normal);
-  line-height: 0.9;
+  line-height: 0.95;
 
-  /* The gaps between the three lines. `em` rather than a space token
-     deliberately: the value has to track the accent's own size, which is
-     fluid, or it would read as a hairline nudge at 76px and a chasm at
-     134px. */
-  margin-block: 0.04em;
+  /* `em` rather than a space token: the value has to track the accent's own
+     size, which is fluid, or it reads as a hairline nudge at one end of the
+     clamp and a chasm at the other. */
+  margin-block: 0.02em;
 }
 
-/* The gradient plate, painted through the letterforms.
-   `background-clip: text` with a transparent fill is the only way to get an
-   *image* into type; the guard matters because the fallback for an
-   unsupported browser is not "no gradient" but an invisible headline — so
-   the flat accent colour above stands until support is confirmed.
-
-   Only the plate's top-right quadrant is used: `200% 200%` scales the
-   artwork to twice the word's box in both axes and `right top` pins that
-   oversized image by its top-right corner, so the window onto it is exactly
-   the corner quarter. That crop is the hot red sweeping diagonally out to
-   pale pink — a brighter, more directional ramp across six letters than the
-   whole plate gives. */
+/* The gradient plate, painted through the letterforms. The `@supports`
+   guard matters because the fallback for an unsupported browser is not "no
+   gradient" but an invisible word, so the flat accent colour stands until
+   support is confirmed. */
 @supports (background-clip: text) or (-webkit-background-clip: text) {
-  .headline .headlineAccent {
+  .headlineAccent {
     background-image: var(--gl-image-accent-plate);
     background-size: 200% 200%;
     background-position: right top;
@@ -183,51 +122,61 @@
   }
 }
 
+.lede {
+  margin-bottom: var(--gl-space-6);
+}
+
 .body {
-  max-width: 56ch;
-  margin-bottom: var(--gl-space-14);
+  max-width: 54ch;
+  margin-bottom: var(--gl-space-17);
+}
+
+.disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-3);
+  margin-top: var(--gl-space-9);
+  color: var(--gl-color-text-secondary);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.disclosure:hover {
+  color: var(--gl-color-text-primary);
 }
 
 /* --------------------------------------------------------------------------
    Responsive
 
-   At 1023px the rails go (see `HeroOrbit.module.css`, same breakpoint) and
-   the grid collapses to the single centred column v1 has always used. The
-   copy takes the full measure back, and the headline goes back to being
-   sized against the viewport — with no rails beside it, the column and the
-   window are now the same constraint, and `cqw` would just be a slower way
-   of saying `vw`.
+   At 1023px the margins go (see `HeroScatter.module.css`, same breakpoint)
+   and the grid collapses to a single centred column. The copy takes the
+   full measure back and the headline goes back to viewport-relative sizes —
+   with no margins beside it, the column and the window are now the same
+   constraint, and `cqw` would just be a slower way of saying `vw`. The
+   bottom strip stays.
    -------------------------------------------------------------------------- */
 @media (max-width: 1023px) {
-  .columns {
+  .grid {
     grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
   }
 
   .content {
     grid-column: 1;
     max-width: var(--gl-measure-hero);
     margin: 0 auto;
-    /* Back off the container, so the viewport-relative sizes below are the
-       ones that apply. Leaving it declared would not break anything, but it
-       would leave two competing ways to read the same headline's size. */
+    padding-inline: var(--gl-space-gutter-lg);
     container-type: normal;
   }
 
-  .headlineLead {
-    font-size: clamp(
-      calc(var(--gl-scale-h3) * var(--hero-type-trim)),
-      calc(4.06vw * var(--hero-type-trim)),
-      calc(var(--gl-scale-h1) * var(--hero-type-trim))
-    );
+  .grid [data-scatter-band="bottom"] {
+    grid-column: 1;
   }
 
-  .headline .headlineAccent {
-    font-size: clamp(
-      calc(var(--gl-scale-2xl) * var(--hero-type-trim)),
-      calc(11.25vw * var(--hero-type-trim)),
-      calc(var(--gl-scale-5xl) * var(--hero-type-trim))
-    );
+  .headlineLead {
+    font-size: clamp(var(--gl-scale-h4), 5.4vw, var(--gl-scale-h1));
+  }
+
+  .headlineAccent {
+    font-size: clamp(var(--gl-scale-h2), 7.8vw, var(--gl-scale-2xl));
   }
 }
 

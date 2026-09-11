@@ -2,6 +2,7 @@ import { Button, Text } from "@gridline";
 import { heroCopy } from "@/content/variants/v2/hero";
 
 import { HeroBackdrop } from "./HeroBackdrop";
+import { HeroSessionStack } from "./HeroSessionStack";
 import styles from "./HeroSection.module.css";
 
 /**
@@ -23,11 +24,22 @@ import styles from "./HeroSection.module.css";
  * Deliberate, and the reason it is confined to this one variation: the
  * canvas rules are the design system's signature, and a hero is the only
  * place worth spending them.
+ *
+ * `HeroSessionStack` is the one floating artefact on this hero — a deck of
+ * three cards in the bottom-right corner that cycles through the same three
+ * steps the rest of the page sets out. It sits diagonally opposite the copy
+ * stack, clear of the left-aligned column and of the call to action below
+ * it, and is `aria-hidden` like every other decorative card on the site.
+ *
+ * It replaced a single static preview of an "Ask Tal AI anything" prompt.
+ * A text box is a feature; the three cards are what the visitor actually
+ * gets, which is the thing a hero has one screen to say.
  */
 export function HeroSection() {
   return (
     <section id="hero" aria-label="Introduction" className={styles.section}>
       <HeroBackdrop />
+      <HeroSessionStack />
 
       <div className={styles.content}>
         {/* `tone` as well as the colour in the stylesheet: relying on this

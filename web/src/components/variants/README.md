@@ -35,9 +35,21 @@ homepage adopted it, it was promoted into `components/sections/` and the
 copy deleted rather than left to drift — which is the move to repeat if a
 variation's experiment ever graduates again.
 
+## One section only `/v2` renders
+
+`AgentSection` — "Meet the Agent Doing the Listening.", the dark
+atmospheric band about the Talent Agent itself — sits between
+`InterviewSection` and `HowItWorksSection` on `/v2` and appears on no other
+page. Like the two "It Starts with 30 Minutes." layouts above, it is **not a
+private copy**: the component lives in `components/sections/agent/` and its
+words in `content/agent.ts`, exactly where a homepage section lives. The
+only thing that makes it `/v2`'s is that `/v2`'s section list is the one
+that names it. Adopting it elsewhere is adding that one line to that page's
+list; dropping it is deleting the line here.
+
 ## What is shared
 
-Everything else: all six sections below the hero, imported straight from
+Everything else: every other section below the hero, imported straight from
 `components/sections/` and reading the same copy from `src/content/` as the
 live homepage — plus the site header, the site footer, `content/site.ts` and
 the whole `gridline` design system.

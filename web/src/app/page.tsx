@@ -2,6 +2,7 @@ import { GridCanvas } from "@gridline";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { AgentSection } from "@/components/sections/agent/AgentSection";
 import { ArchetypesSection } from "@/components/sections/archetypes/ArchetypesSection";
 import { DeliverablesSection } from "@/components/sections/deliverables/DeliverablesSection";
 import { GetStartedSection } from "@/components/sections/getStarted/GetStartedSection";
@@ -32,6 +33,20 @@ export default function HomePage() {
           <ArchetypesSection />
           <InterviewSection />
           <HowItWorksSection />
+          {/* The Tal band. It started on `/v2` and the homepage has adopted
+              it — the same component reading the same copy, not a second
+              copy of it, so the two pages stay in step.
+
+              It sits between "It Starts with 30 Minutes." and "Know Where
+              You Stand" on both pages, and the position is the argument: the
+              section above has just described the half-hour, the section
+              below describes what comes back, and Tal is the thing standing
+              between the two.
+
+              It is the one section on the page with no heading of its own,
+              no closing line and no blueprint grid, and the only one whose
+              tabs turn by themselves. */}
+          <AgentSection />
           <DeliverablesSection />
           {/* The dark treatment — the same one `/v2` asked for, now the
               homepage's as well. It is this section's own `tone` prop and

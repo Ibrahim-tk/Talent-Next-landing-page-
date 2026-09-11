@@ -20,6 +20,20 @@
   --gl-color-surface-accent-soft: rgba(255, 72, 55, 0.08);
   --gl-color-surface-success: var(--gl-green-50);
 
+  /* The three grounds the Tal band's panels sit on, and the ruled lines drawn
+     across each. One per behaviour, in the order `agentBehaviours` lists them
+     — the band turns itself over on a timer, and the change of ground is what
+     tells the reader a new panel has arrived rather than the same one being
+     rewritten. Nothing outside that band should use these: they are grounds
+     for a white card, not general surfaces, and the `-line` values are far
+     too light to carry type. */
+  --gl-color-surface-plate-green: var(--gl-plate-green-50);
+  --gl-color-surface-plate-amber: var(--gl-plate-amber-50);
+  --gl-color-surface-plate-azure: var(--gl-plate-azure-50);
+  --gl-color-plate-line-green: var(--gl-plate-green-200);
+  --gl-color-plate-line-amber: var(--gl-plate-amber-200);
+  --gl-color-plate-line-azure: var(--gl-plate-azure-200);
+
   /* ------------------------------------------------------------------------
      Border
      --------------------------------------------------------------------
@@ -192,6 +206,7 @@
     var(--gl-rose-300),
     var(--gl-rose-400)
   );
+
 
   /* Hero-v2 accent headline treatment — a slow gradient sweep across the
      accent word's text fill. Same provenance rule as the glow above: rose

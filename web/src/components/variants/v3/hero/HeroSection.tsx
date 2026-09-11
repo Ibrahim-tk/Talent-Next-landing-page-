@@ -1,45 +1,44 @@
-"use client";
+import Link from "next/link";
 
-import { useRef } from "react";
-
-import { Button, Crosshair, GridModule, Highlight, Text } from "@gridline";
+import { GridModule, Highlight, Icon, Text } from "@gridline";
 import { heroCopy } from "@/content/variants/v3/hero";
 
-import { HeroOrbit, useHeroOrbitEntry } from "./HeroOrbit";
+import { HeroScanForm } from "./HeroScanForm";
+import { HeroScatter } from "./HeroScatter";
 import styles from "./HeroSection.module.css";
 
 /**
  * The hero for landing page variation 3, served at `/v3`.
  *
- * The copy is set the way v1 sets it — one centred stack, lead line, accent
- * word, lead line, then the paragraph and the call to action — on the
- * blueprint lattice with the corner crosshairs, inside the canvas rules.
- * The words themselves are identical to every other variation's.
+ * Centred copy — headline, one-line claim, supporting sentence, a capture
+ * field and its small print — inside a scatter of photographs: three down
+ * each margin at staggered heights, two more rising past the bottom edge.
  *
- * What this variation adds is the cloud around it: four photographs at four
- * different sizes and a circular video, which fly in from beyond the two
- * canvas rules on load and settle into the columns either side of the copy.
+ * The words are unchanged from the two-column version this replaced; only
+ * the frame around them moved. The photographs are all already in the repo
+ * (see `heroScatterImages`), cropped by the canvas rules rather than
+ * stopping short of them, so the hero reads as a window onto a wider wall
+ * of pictures with the sentence in the clear middle of it.
  *
- * The composition is a three-column grid — rail, copy, rail — and that is
- * the load-bearing decision in this file. The photographs cannot overlap
- * the headline at any viewport width because they are positioned inside
- * boxes the headline is not in. There is no z-index race, no set of
- * hand-tuned offsets that hold at 1440px and break at 1280px, and no width
- * at which the art has to be nudged out of the type's way: the grid makes
- * the overlap structurally impossible rather than merely unlikely.
+ * The composition is a grid — margin, copy, margin, with a full-width strip
+ * underneath — and that is the load-bearing decision in this file. A
+ * photograph cannot overlap the headline at any viewport width because it
+ * is rendered into an area the copy is not in: the margins are columns
+ * beside it, the strip is a row below everything written. There is no
+ * z-index race, no set of offsets that holds at 1440px and breaks at
+ * 1280px, and no width at which the art has to be nudged out of the type's
+ * way. The grid makes the overlap structurally impossible rather than
+ * merely unlikely.
  *
- * Client-rendered only because the entry timeline needs a ref to the
- * module. The copy is static markup either way.
+ * `clip` on the module is what does the cropping: frames pushed past the
+ * rules by a negative offset are cut there, and the bottom strip's images
+ * are taller than the strip so they are cut by the hero's own bottom edge.
  *
- * This replaced a full-bleed photographic hero that ran behind the nav and
- * cross-faded stills behind bottom-aligned copy. That treatment now lives
- * on `/v2`, which is why it is gone from here rather than kept in both.
+ * Server-rendered apart from `HeroScanForm`, which owns the field's state.
+ * The scatter needs no client at all — it drifts on a CSS animation, so
+ * there is no script the art can fail to wait for.
  */
 export function HeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useHeroOrbitEntry(sectionRef);
-
   return (
     <GridModule
       id="hero"
@@ -47,14 +46,9 @@ export function HeroSection() {
       clip
       aria-label="Introduction"
       className={styles.section}
-      ref={sectionRef}
     >
-      <div className={styles.blueprint} aria-hidden="true" />
-      <Crosshair corner="topLeft" />
-      <Crosshair corner="topRight" />
-
-      <div className={styles.columns}>
-        <HeroOrbit side="left" />
+      <div className={styles.grid}>
+        <HeroScatter band="left" />
 
         <div className={styles.content}>
           <Text variant="display" as="h1" className={styles.headline}>
@@ -69,20 +63,31 @@ export function HeroSection() {
             </span>
           </Text>
 
-          <Text variant="bodyMd" className={styles.body}>
+          <Text
+            variant="bodyLg"
+            weight="medium"
+            tone="primary"
+            className={styles.lede}
+          >
+            {heroCopy.lede}
+          </Text>
+
+          <Text variant="bodyMd" tone="muted" className={styles.body}>
             {heroCopy.body}
           </Text>
 
-          {/* The accent variant rather than the default black square: this
-              is the one action on the page the whole hero exists to
-              deliver, and the accent is already carrying the headline's key
-              word right above it. */}
-          <Button href={heroCopy.ctaHref} variant="accent" size="lg">
-            {heroCopy.ctaLabel}
-          </Button>
+          <HeroScanForm />
+
+          <Link href={heroCopy.disclosure.href} className={styles.disclosure}>
+            <Text variant="bodySm" tone="secondary" as="span">
+              {heroCopy.disclosure.label}
+            </Text>
+            <Icon name="chevronRight" size={14} />
+          </Link>
         </div>
 
-        <HeroOrbit side="right" />
+        <HeroScatter band="right" />
+        <HeroScatter band="bottom" />
       </div>
     </GridModule>
   );

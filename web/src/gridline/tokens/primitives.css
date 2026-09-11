@@ -85,6 +85,42 @@
   --gl-green-600: #16a34a;
 
   /* ------------------------------------------------------------------------
+     Color — Plate tints (three grounds, and the ruled lines drawn on them)
+
+     The one set of hues in the system outside the rose family, and they exist
+     for a single job: the Tal band shows three different things Tal does, one
+     after another on a timer, and three panels that differ only in their
+     contents read as one panel redrawing itself. A change of ground is what
+     makes them read as three places rather than one.
+
+     They are pitched far lighter than a normal 50-step — every ground here is
+     within about four percent of white — because each sits behind a white
+     card and must not compete with it or with the accent. The `-200` step is
+     the ruled line pattern drawn on the ground, and it is the only place any
+     of these hues is legible as a colour at all.
+
+     Three steps and no more: nothing here may carry type or a mark, and none
+     of these values is contrast-safe. A darker step would have to be added
+     before one of these hues could.
+     ---------------------------------------------------------------------- */
+  --gl-plate-green-50: #f2f7e4;
+  --gl-plate-green-200: #d8e7ab;
+  --gl-plate-amber-50: #fbf6e3;
+  --gl-plate-amber-200: #f0e0a9;
+  /* The voice panel's plate. It was an azure pair (#eff4fa / #cadcef) and is
+     now a warm one — the same hue family as the amber plate above, pulled
+     further towards orange and held much further back. Blue was the one cool
+     note on a page that is otherwise entirely warm, and on the voice panel
+     specifically it fought the blob, which is warm by nature.
+
+     The name stays `azure` on purpose for now: renaming a primitive is a
+     rename across the semantic layer and three component stylesheets, and
+     the token's JOB — "the third plate tone" — has not changed. Rename it
+     when something else needs a warm plate and the name starts lying twice. */
+  --gl-plate-azure-50: #fdf6ef;
+  --gl-plate-azure-200: #f2ddc6;
+
+  /* ------------------------------------------------------------------------
      Typeface
      ---------------------------------------------------------------------- */
   /* Helvetica Neue is the single typeface for the whole system — headings,
@@ -282,6 +318,14 @@
   --gl-radius-md: 6px;
   --gl-radius-lg: 8px;
   --gl-radius-xl: 12px;
+  /* The panel radius, and the only step on this ramp that is allowed to
+     read as ROUNDED rather than as merely un-sharp. It exists for one kind
+     of box: a full surface floating on another surface — the off-white card
+     inside the Agent band, and the tinted plate its mocks sit on. Nothing
+     at component scale may take it; a 20px radius on a card the size of a
+     card turns a square system soft, which is exactly the look the ramp
+     above is built to avoid. */
+  --gl-radius-2xl: 20px;
   --gl-radius-full: 9999px;
 
   /* ------------------------------------------------------------------------

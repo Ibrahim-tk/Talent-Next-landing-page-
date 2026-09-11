@@ -36,11 +36,6 @@
   max-width: 720px;
 }
 
-.standfirst {
-  margin: var(--gl-space-9) auto 0;
-  max-width: var(--gl-measure-prose);
-}
-
 /* --------------------------------------------------------------------------
    The two columns. The steps take the smaller share: their copy is capped
    at a comfortable measure and has nowhere useful to spend extra width,

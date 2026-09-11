@@ -24,7 +24,13 @@ export type IconName =
   | "instagram"
   | "play"
   | "info"
-  | "chevronRight";
+  | "chevronRight"
+  | "chevronLeft"
+  | "messages"
+  | "waveform"
+  | "mic"
+  | "ledger"
+  | "trendUp";
 
 export interface IconProps {
   name: IconName;
@@ -108,6 +114,57 @@ const iconPaths: Record<IconName, () => ReactNode> = {
     </>
   ),
   chevronRight: () => <polyline points="9 5 16 12 9 19" />,
+  chevronLeft: () => <polyline points="15 5 8 12 15 19" />,
+  // Two bubbles, the front one overlapping the back — the glyph for a
+  // question that is asked and then asked again. The back bubble is an open
+  // path rather than a closed one so the front bubble's outline is not
+  // crossed by a line it would have to be drawn over.
+  messages: () => (
+    <>
+      <path d="M8 3.5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1" />
+      <path d="M16 8.5H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1v3l4-3h6a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2z" />
+    </>
+  ),
+  // Five bars, symmetrical about the centre and tallest one step in from
+  // each end. A waveform drawn with its peak dead centre reads as a single
+  // spike; the off-centre pair reads as speech.
+  waveform: () => (
+    <>
+      <line x1="4" y1="10" x2="4" y2="14" />
+      <line x1="8" y1="6" x2="8" y2="18" />
+      <line x1="12" y1="9" x2="12" y2="15" />
+      <line x1="16" y1="4" x2="16" y2="20" />
+      <line x1="20" y1="10" x2="20" y2="14" />
+    </>
+  ),
+  // A capsule on a stand. The cradle is a separate arc rather than part of
+  // the stem so the glyph still reads as a microphone at 16px, where a
+  // single closed outline collapses into a lollipop.
+  mic: () => (
+    <>
+      <rect x="9" y="2.5" width="6" height="11" rx="3" />
+      <path d="M5.5 11a6.5 6.5 0 0 0 13 0" />
+      <line x1="12" y1="17.5" x2="12" y2="21.5" />
+    </>
+  ),
+  // A rising line into an arrowhead — the shape a figure takes when it is
+  // going the right way. Drawn as a polyline and a corner rather than a
+  // chart with axes: at 16px an axis is two strokes that read as noise.
+  trendUp: () => (
+    <>
+      <polyline points="3 17 9.5 10.5 13.5 14.5 21 7" />
+      <polyline points="15 7 21 7 21 13" />
+    </>
+  ),
+  // A sheet with its corner turned and two ruled lines — the page, read.
+  ledger: () => (
+    <>
+      <path d="M5 3h9l5 5v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+      <polyline points="14 3 14 8 19 8" />
+      <line x1="8" y1="13" x2="15" y2="13" />
+      <line x1="8" y1="17" x2="12" y2="17" />
+    </>
+  ),
 };
 
 const filledIcons: ReadonlySet<IconName> = new Set([

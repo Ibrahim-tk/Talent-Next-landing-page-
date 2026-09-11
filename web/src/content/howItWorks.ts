@@ -50,9 +50,6 @@ export interface ShowcaseStep {
 }
 
 export const howItWorksStepsCopy = {
-  /** Sits under the heading, above the two columns. */
-  standfirst:
-    "Three steps, one conversation — and a plan that is yours by the end of it.",
   /** The single still on the right. */
   showcase: {
     src: "/bgs/meet.png",

@@ -2,6 +2,7 @@ import { GridCanvas } from "@gridline";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { AgentSection } from "@/components/sections/agent/AgentSection";
 import { ArchetypesSection } from "@/components/sections/archetypes/ArchetypesSection";
 import { DeliverablesSection } from "@/components/sections/deliverables/DeliverablesSection";
 import { GetStartedSection } from "@/components/sections/getStarted/GetStartedSection";
@@ -14,8 +15,13 @@ import { HeroSection } from "@/components/variants/v2/hero/HeroSection";
  * Landing page variation 2, served at `/v2`.
  *
  * The hero comes from `components/variants/v2/hero/` and reads its copy
- * from `content/variants/v2/hero.ts`. It is again the only thing this page
- * varies: the step-list treatment of "It Starts with 30 Minutes." started
+ * from `content/variants/v2/hero.ts`. It is no longer quite the only thing
+ * this page varies: `AgentSection` — the Talent Agent panel — is
+ * rendered here and not on the homepage. It is a shared component in
+ * `components/sections/agent/` reading `content/agent.ts`, not a private
+ * copy under `variants/v2/`, so adding its one line to the homepage's own
+ * list is all it would take to adopt it. The step-list treatment of
+ * "It Starts with 30 Minutes." started
  * here as a private copy under `components/variants/v2/`, the homepage has
  * since adopted it, and it now lives in `sections/howItWorks/` where both
  * pages render the very same component. (`/v1` and `/v3` stay on
@@ -68,6 +74,22 @@ export default function Variant2Page() {
           <ArchetypesSection />
           <InterviewSection />
           <HowItWorksSection />
+          {/* The Tal band. It sits between "It Starts with 30 Minutes." and
+              "Know Where You Stand", and that is the whole reason it is here
+              rather than higher up the page: the section above it has just
+              described the half-hour, the section below it describes what
+              comes back, and Tal is the thing standing between the two. Put
+              earlier — straight after "This isn't a Job Interview." — it was
+              demonstrating an assistant before the reader had any process
+              for it to assist with.
+
+              It is the one section on the page with no heading of its own,
+              no closing line, and no blueprint grid: a three-state
+              demonstration on a pale mesh, flush to the canvas's two
+              vertical rules and never past them. Its tabs also turn by
+              themselves every few seconds, which nothing else on the page
+              does — see the section for the four things that stop them. */}
+          <AgentSection />
           <DeliverablesSection />
           <SeeItInActionSection tone="inverse" />
           <GetStartedSection />

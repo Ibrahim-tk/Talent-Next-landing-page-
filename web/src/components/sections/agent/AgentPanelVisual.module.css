@@ -1,0 +1,1086 @@
+/* ==========================================================================
+   AgentPanelVisual — the three mocks in the Tal panel's right column
+   --------------------------------------------------------------------------
+   NO FRAME. Each mock used to sit in a white card on a rose-tinted plate —
+   two stacked surfaces, the back one wider — which is how a product
+   screenshot is usually staged. That went: the panel's own card is already a
+   white surface floating on a mesh, so a second card inside it was a box
+   inside a box, and what it was framing was mostly type. The mocks now sit
+   directly in the card's white space.
+
+   What holds the three together instead of a border: the blob, and one
+   treatment each for chips, small grey labels and the caret. `.stack` is the
+   only structure left, and all it owns is the gap between a mock's parts.
+
+   Everything here inherits the page's own light text tiers — the panel these
+   sit in redeclares nothing. Nothing in this file needs to know what is
+   behind the card.
+
+   Colour rule: everything ON the surface is the accent and the rose ramp,
+   mixed with `color-mix` — never a hand-picked pink and never a raw hex.
+   The one exception is the plate UNDER it, which takes one of three barely
+   tinted grounds so the three tabs read as three places; those come from
+   `--gl-color-surface-plate-*` and are declared nowhere but here.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   The container — a tinted plate with a ruled field drifting across it and a
+   white surface sitting on top.
+
+   The three mocks are the CONTENT of this; the container is the same shape on
+   all three and belongs to the band rather than to any one tab. That split is
+   what stopped the right-hand column reading as three unrelated pictures once
+   the per-mock framing came off.
+
+   ONE GROUND PER TAB. The plate used to be rose on all three, which meant the
+   band could turn itself over every eight seconds and a reader glancing up
+   saw the same picture with different words in it. Each behaviour now has its
+   own ground — green, amber, azure, in the order `agentBehaviours` lists them
+   — so the change of tab is legible from across the room and before a single
+   word has been read. All three are within a few percent of white: the accent
+   is still rose and still the only saturated thing in the band, and a ground
+   that competed with it would be three brand colours instead of one.
+
+   It carried a ticker of figures along the bottom and a rose "Listening" pill
+   in the top-right corner. Both are gone. The ticker was restating numbers
+   the summary above it types out in full, moving, in mono, at the exact
+   moment the reader is trying to read the summary — two things moving in one
+   card, and the one that mattered was the other one. The pill was a status
+   badge for a state nothing in the card was in.
+
+   `overflow: hidden` clips the ruled field to the plate's radius.
+   -------------------------------------------------------------------------- */
+.plate {
+  /* Green unless a tone says otherwise, so the plate is never left with an
+     undefined ground if a new mock forgets to declare one. */
+  --agent-plate-ground: var(--gl-color-surface-plate-green);
+  --agent-plate-line: var(--gl-color-plate-line-green);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Equal on all four sides. It was wider at the sides than at the top and
+     bottom, on the reasoning that the side margins are where the backdrop is
+     actually SEEN — the surface covers everything between them — so the
+     horizontal padding was not spacing but how much of the drawing there
+     was. That is still true of what the margins contain; it was not a good
+     enough reason to make the inset visibly uneven. A plate is a mount, and
+     an uneven mount reads as a mistake however well argued, so the backdrop
+     takes the narrower margin and the frame is square.
+
+     One value, written once, so the four sides cannot drift apart again. */
+  padding: clamp(1.25rem, 3.4vw, 3.25rem);
+  border-radius: var(--gl-radius-2xl);
+  background-color: var(--agent-plate-ground);
+}
+
+.plate[data-tone="green"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-green);
+  --agent-plate-line: var(--gl-color-plate-line-green);
+}
+
+.plate[data-tone="amber"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-amber);
+  --agent-plate-line: var(--gl-color-plate-line-amber);
+}
+
+.plate[data-tone="azure"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-azure);
+  --agent-plate-line: var(--gl-color-plate-line-azure);
+}
+
+/* The ruled field: a wall of vertical hairlines drifting slowly sideways,
+   seen only in the margins either side of the surface.
+
+   TWO ELEMENTS, and it has to be two. The window carries the mask that fades
+   the field out at the plate's outer edges; the layer inside it carries the
+   lines and the movement. Put the mask on the moving layer and the fade
+   travels with it, which is the one thing a fade like this must not do.
+
+   It is a MARQUEE and not a drift: the layer is translated by exactly one
+   period of its own gradient and then starts over, so the loop has no seam —
+   at -11px every line has arrived at where its neighbour began. The two
+   numbers are therefore locked together: change the 11px gap in the gradient
+   and the keyframe has to change with it or the loop jumps. Slow, because
+   the lines are the room the card sits in rather than anything to watch: a
+   period takes two seconds, which is about five pixels a second.
+   -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   The backdrop — a strip a third of the plate high, centred, running right
+   to left forever behind the surface.
+
+   A THIRD AND CENTRED is the whole idea. It used to fill the plate top to
+   bottom, which put pattern in the margins from edge to edge and left the
+   card sitting in a field rather than in front of one. A band level with the
+   card's middle passes behind it and comes out the other side, which reads
+   as one continuous thing the card happens to be standing on.
+
+   Three kinds, one per tab (`data-kind`), and they differ in the mark alone —
+   the strip, the loop, the mask and the colour are shared, so a fourth kind
+   is a `.artMark` variant and nothing else.
+   -------------------------------------------------------------------------- */
+.plateArt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 33%;
+  transform: translateY(-50%);
+  overflow: hidden;
+  /* A short fade at each outer edge only. Long enough to stop the marks
+     being sliced off square at the plate's corners, short enough that the
+     margins — which is all of this anyone actually sees — stay drawn. */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgba(0, 0, 0, 1) 7%,
+    rgba(0, 0, 0, 1) 93%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgba(0, 0, 0, 1) 7%,
+    rgba(0, 0, 0, 1) 93%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Two identical runs translated by half the track's own width — at -50% the
+   second sits exactly where the first began, so the loop has no seam and
+   adding a mark to `PLATE_ART` cannot break it. Slower than the ticker
+   below: this is a horizon, and a horizon that keeps pace with text reads as
+   a conveyor. */
+.artTrack {
+  display: flex;
+  height: 100%;
+  width: max-content;
+  will-change: transform;
+  animation: agentPlateArt 54s linear infinite;
+}
+
+.artRun {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* Height comes from the component as an inline percentage of the strip;
+   everything about the mark's SHAPE is here. */
+.artMark {
+  flex: none;
+  background-color: var(--agent-plate-line);
+}
+
+/* Fine rules — a page being read off. */
+.plateArt[data-kind="bars"] .artRun {
+  gap: var(--gl-space-5);
+}
+
+.plateArt[data-kind="bars"] .artMark {
+  width: var(--gl-border-width-thick);
+  border-radius: var(--gl-radius-full);
+}
+
+/* Fat rounded columns — the shape every product uses for a voice, and the
+   one the reference draws. Wider than they are spaced, so the run reads as a
+   waveform rather than as a picket fence. */
+.plateArt[data-kind="wave"] .artRun {
+  gap: var(--gl-space-4);
+}
+
+.plateArt[data-kind="wave"] .artMark {
+  width: var(--gl-space-9);
+  border-radius: var(--gl-radius-full);
+}
+
+/* Loose geometry. Square by `aspect-ratio` off the inline height, so every
+   shape stays regular however tall the strip is — a circle that is 46% of a
+   strip and a fixed width apart would be an ellipse at every other viewport. */
+.plateArt[data-kind="shapes"] .artRun {
+  gap: var(--gl-space-11);
+}
+
+.plateArt[data-kind="shapes"] .artMark {
+  aspect-ratio: 1;
+  border-radius: var(--gl-radius-sm);
+}
+
+.plateArt[data-kind="shapes"] .artMark[data-shape="circle"] {
+  border-radius: var(--gl-radius-full);
+}
+
+/* The two outlined marks. Drawn with a border and no fill, so the run has
+   solid and hollow marks in it and does not read as one repeated stamp. */
+.plateArt[data-kind="shapes"] .artMark[data-shape="ring"] {
+  border: var(--gl-border-width-thick) solid var(--agent-plate-line);
+  border-radius: var(--gl-radius-full);
+  background-color: transparent;
+}
+
+/* A triangle from a clip, not from the border trick: `clip-path` keeps the
+   shape tied to the box's own size, where border-width triangles need three
+   more numbers kept in sync with it. */
+.plateArt[data-kind="shapes"] .artMark[data-shape="triangle"] {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+@keyframes agentPlateArt {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* The surface — the mock's own card, and the only hard edge in the column.
+   Above the ruled field.
+
+   ITS HEIGHT IS FIXED, and that is the single most important declaration in
+   this file. The three mocks are naturally different heights — the voice
+   panel with its mic, level and transcript is half again the read panel —
+   and because the tabs turn themselves every eight seconds, a surface that
+   sized to its content would make the whole band grow and shrink on a timer,
+   shoving the rest of the page up and down while nobody was touching it.
+
+   `height`, NOT `min-height`. It was a floor for a long time, on the
+   argument that an unforeseen wrap should grow the card rather than be cut
+   off. That argument died when the card was cut to 0.7 of the height that
+   fitted every panel: two of the three no longer fit by design, and both
+   ways of not fitting are now DRAWN — the chat scrolls inside its own
+   window, and anything else that runs long passes under the white fade at
+   the foot of the card. A floor on top of that gives the worst case a
+   silent third option, which is to quietly grow and take the whole band with
+   it. The three sit at roughly 260 / 453 / 362 unconstrained; a box that
+   yields to the 453 is a box that changes height on an eight-second timer
+   while nobody is touching it, shoving the rest of the page up and down.
+   This is the declaration that makes that impossible rather than unlikely.
+
+   `overflow: hidden` is therefore load-bearing, not housekeeping.
+
+   `justify-content: safe center` is the other half of it, and the `safe` is
+   the important word. A fixed box is only half the answer: the read panel is
+   two hundred pixels shorter than the chat, and left to fall from the top it
+   sits in a box with a hole under it — centred, the slack is split and the
+   same box reads as margin. But centring a panel that is TALLER than its box
+   pushes its first line up past the top edge, where nothing can reach it and
+   no fade explains it. `safe` falls back to `flex-start` in exactly that
+   case, so overflow only ever happens downward, which is the direction the
+   card is drawn to handle.
+
+   The inner panels do the same job one level down: `.summaryText`,
+   `.transcript` and `.draft` each hold their own height, so nothing moves
+   WITHIN a tab either — and the chat's four stages are all shorter than its
+   finished reply, so it grows into the box and never past it. */
+.surface {
+  position: relative;
+  z-index: var(--gl-z-raised);
+  display: flex;
+  flex-direction: column;
+  /* Plain `center` first, so a browser without overflow alignment still
+     gets the centring; `safe center` then wins wherever it is understood. */
+  justify-content: center;
+  justify-content: safe center;
+  gap: var(--gl-space-9);
+  /* 0.7x of the 30.5rem this stood at when it was a floor measured off the
+     tallest panel. A height generous enough for every panel is a height set
+     by the worst case, and the worst case was costing the other two a third
+     of a screen of white. One value, every tab, every width — the mocks
+     adapt to the card rather than the card to the mocks. */
+  height: 21.35rem; /* 342 */
+  overflow: hidden;
+  /* Doubled, deliberately. The mocks are pictures of a product rather than a
+     product, and at half this the type ran to within a few pixels of the
+     card's edge — which is the one thing that reads as a screenshot pasted
+     into a box instead of as a surface with something laid out on it. */
+  padding: clamp(2rem, 3.6vw, 3rem);
+  border-radius: var(--gl-radius-xl);
+  background-color: var(--gl-neutral-0);
+  /* Softer and fainter than the system's `md`, which is tuned for a card on
+     the page's white. This one sits on a tinted plate a few percent darker
+     than itself, so it needs far less shadow to separate — at `md` it read
+     as cut out of the plate rather than laid on it. */
+  box-shadow: 0 14px 44px rgba(15, 23, 42, 0.05);
+}
+
+/* The fade from below. A band of the surface's own white, transparent at the
+   top and solid at the bottom, laid over whatever the panel could not fit.
+
+   This is what lets the card be short. Every panel has a natural height and
+   two of them now exceed the floor; the alternative to a fade is a hard edge,
+   and a sentence sliced off mid-x-height reads as a rendering fault where the
+   same sentence dissolving reads as a page continuing past the frame.
+
+   `pointer-events: none` is not optional — the chat scrolls underneath this,
+   and an overlay that ate the pointer would make it unscrollable.
+
+   Painted in `--gl-neutral-0` and not in a token alias, because it has to
+   match `.surface`'s own fill exactly: a fade that ends on a near-white
+   leaves a visible step against the white beneath it. */
+.surface::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--gl-space-17); /* 48 */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    var(--gl-neutral-0) 78%
+  );
+  pointer-events: none;
+  z-index: var(--gl-z-raised);
+}
+
+/* --------------------------------------------------------------------------
+   Tal's mark — the blob, played as a looping video.
+
+   `mix-blend-mode: multiply` and not a mask: the asset is a blob on a light
+   ground, and multiplying it into the card drops that ground wherever it is
+   white while leaving the blob untouched. A circular clip would cut the
+   corners off an organic shape, and a chroma key would need an alpha channel
+   the file does not have.
+
+   It is safe ONLY because the surface underneath is flat `--gl-neutral-0`.
+   If the card is ever tinted, this is the declaration that has to change.
+   -------------------------------------------------------------------------- */
+.blob {
+  display: block;
+  flex: none;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  /* A video element that has not decoded its first frame paints nothing, so
+     the byline beside it would jump sideways when the blob arrived. Reserving
+     the square up front means the row is laid out before the file is. */
+  background-color: transparent;
+}
+
+/* The byline mark on the read panel. Large enough to carry the top of a
+   column that no longer has a border holding it. */
+.blob[data-size="lg"] {
+  width: clamp(2.25rem, 3.4vw, 2.75rem);
+  height: clamp(2.25rem, 3.4vw, 2.75rem);
+}
+
+/* Beside an answer, where it is a speaker mark and not a subject. */
+.blob[data-size="sm"] {
+  width: var(--gl-space-13); /* 32 */
+  height: var(--gl-space-13);
+}
+
+/* The voice panel, where it IS the subject. Fluid, because it is the largest
+   single object in any of the three panels and the first thing to overrun a
+   short card. Above the glow and the rings, which are drawn behind it. */
+.blob[data-size="xl"] {
+  position: relative;
+  z-index: var(--gl-z-raised);
+  /* Kept in step with `--agent-stage-size` by hand, because the stage is the
+     blob's parent and cannot size itself from a child. If one changes, both
+     change. */
+  width: clamp(9rem, 18vw, 12rem);
+  height: clamp(9rem, 18vw, 12rem);
+}
+
+.mockTitle {
+  margin: 0;
+}
+
+/* The small grey heading above a group inside a mock — "Next move", "Try
+   one", "As you speak". A shared class rather than three, because they are
+   one role appearing in all three mocks. */
+.mockLabel {
+  margin: 0;
+  font-size: var(--gl-size-caption);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-muted);
+}
+
+/* Enter animation shared by everything that swaps inside a mock. Small and
+   quick: the mock's frame does not move, so the change reads as its contents
+   being replaced rather than as the card rebuilding itself. */
+@keyframes agentMockIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1. The read — the summary Tal types back
+
+   A byline and two paragraphs typing themselves out, on nothing. There is no
+   surface and no rule under this: the blob and the type ARE the picture, and
+   a box drawn round them only said "this is a screenshot", which is the one
+   thing the panel is not.
+   -------------------------------------------------------------------------- */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-7);
+  animation: agentMockIn var(--gl-duration-moderate) var(--gl-ease-standard)
+    both;
+}
+
+/* The byline. Dark and set in the same sans as everything else on the site —
+   the summary is Tal talking, and a signature in a second typeface would be
+   a second voice. */
+.summaryHead {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+  margin: 0;
+  font-size: var(--gl-size-caption);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-primary);
+}
+
+/* Holds the tallest of the three summaries, so switching page cannot change
+   the card's height — and with it the height of the whole band. */
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-5);
+  /* Re-measured for 16px type in a card whose padding just doubled: the
+     longest of the three summaries is seven lines at this measure, and this
+     is eight — one line of slack, so a wrap that lands differently from the
+     count above cannot change the card's height mid-cycle. `em`, so it
+     tracks the type if the size above ever changes again. */
+  min-height: 13em;
+}
+
+.summaryBody {
+  margin: 0;
+  /* One step up the scale from the rest of the mock, and the only type in
+     the band that gets it. The summary is the thing the panel exists to show
+     being written — at `body-sm` it was the same size as the labels around
+     it and read as a caption, which is a demonstration of Tal reading your
+     screen that you cannot comfortably read yourself. `body-md` is 16px
+     against the old 12.8. There is no half-step between them on the scale,
+     and inventing one here would put a value in this file that no other type
+     on the site uses. */
+  font-size: var(--gl-size-body-md);
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-body);
+}
+
+/* The un-typed tail. Hidden, never removed: the full sentence is laid out
+   from the first frame, so no line break moves while it types and the card
+   never grows a line under the reader. */
+.summaryGhost {
+  visibility: hidden;
+}
+
+/* A highlighted phrase. Rose-700 rather than the accent itself, which is
+   tuned for solid fills and is light for small type on a tinted ground. */
+.summaryAccent {
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-rose-700);
+  background-color: color-mix(
+    in srgb,
+    var(--gl-color-accent) 6%,
+    transparent
+  );
+  border-radius: var(--gl-radius-sm);
+  padding: 1px 4px;
+  margin: 0 -1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* A chip caught mid-typing is drawn as two halves, squared off where they
+   meet, so the pair occupies exactly the width of the finished chip and the
+   highlight fills in place instead of growing sideways. */
+.summaryAccentOpen {
+  padding-right: 0;
+  margin-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.summaryAccentClose {
+  padding-left: 0;
+  margin-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* The typing caret. Net-zero horizontal footprint — the negative right
+   margin cancels its own width — so it cannot be the thing that pushes a
+   word onto the next line. */
+.summaryCaret {
+  display: inline-block;
+  width: var(--gl-border-width-thick);
+  height: 1.05em;
+  margin-left: 1px;
+  margin-right: -3px;
+  vertical-align: -0.16em;
+  background-color: var(--gl-color-accent);
+  animation: agentCaret 1s steps(2, start) infinite;
+}
+
+/* The finished summary, for assistive tech only. The animated copy above is
+   `aria-hidden`, because half of it is invisible at any given moment. */
+.summaryScreenReader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   2. The answer — one conversation, running on its own.
+
+   A message goes up on the right with the learner's face beside it, Tal
+   thinks for a beat, and the answer builds: a heading, a three-row table of
+   the figures the question was about, a line of reading, and one place to
+   go. Then it clears and the next question arrives.
+
+   QUIET, deliberately. This is a chat panel inside a mock inside a card, and
+   every piece of chrome a real messenger carries — a composer, a send
+   button, timestamps, read receipts, a scrollback — was left out. What is
+   left is the two things a conversation actually is: who said it, and what
+   they said. The one saturated element in the whole panel is a single dark
+   pill on the learner's own message, which is what makes the two voices read
+   as two voices without a second colour anywhere.
+
+   EVERY KEYFRAME BELOW TOUCHES `transform` AND `opacity` AND NOTHING ELSE.
+   That is the rule that keeps this at frame rate: the panel is making an
+   argument about responsiveness, and an animation that lays out or paints on
+   a frame says the opposite of what it is being used to say. The rows
+   stagger on `animation-delay`, not on a timer each, so the whole table is
+   one layout and four composited layers.
+   -------------------------------------------------------------------------- */
+
+/* The chat's own easing: a quint-out, which overshoots nothing but spends
+   almost all of its time decelerating — so a bubble arrives fast and settles
+   slowly, which is what reads as weight. Local rather than a new global
+   token: this is one panel's motion, and the system's two eases are still
+   what everything else in the file uses. */
+.chat {
+  --agent-chat-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-9);
+  /* Fills the surface, and its content stacks from the TOP. This is the one
+     mock that opts out of the surface's centring, and it has to: a chat
+     builds downward from the first message, so a question that was centred
+     while it was alone would slide UP the instant the answer arrived — which
+     is the one piece of movement in the whole sequence that is not saying
+     anything. Anchored, the bubble lands once and stays where it landed. */
+  flex: 1;
+  /* Held mounted through the fade-out, so the exchange leaves the way it
+     arrived rather than disappearing on a frame. */
+  transition:
+    opacity var(--gl-duration-moderate) var(--gl-ease-inout),
+    transform var(--gl-duration-moderate) var(--gl-ease-inout);
+}
+
+.chat[data-stage="clearing"] {
+  opacity: 0;
+  transform: translate3d(0, -6px, 0);
+}
+
+/* --- the question ------------------------------------------------------- */
+
+/* Right-aligned, because the learner's own message is the one thing in the
+   panel that came FROM them — the side it sits on is the whole of how a
+   chat says who is speaking, and it does that without a label. */
+.ask {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gl-space-5);
+  animation: agentChatAsk 460ms var(--agent-chat-ease) both;
+}
+
+.askBubble {
+  margin: 0;
+  padding: var(--gl-space-5) var(--gl-space-7);
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-neutral-790);
+  font-size: var(--gl-size-body-sm);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-neutral-0);
+}
+
+/* The one face in the band. A rounded square rather than a circle — a circle
+   at this size reads as an avatar chip from a UI kit, where the squircle
+   reads as a photograph — and a white ring, so the crop has an edge against
+   the card rather than floating on it. */
+.asker {
+  flex: none;
+  width: var(--gl-space-17); /* 48 */
+  height: var(--gl-space-17);
+  border-radius: var(--gl-radius-xl);
+  object-fit: cover;
+  box-shadow:
+    0 0 0 3px var(--gl-neutral-0),
+    var(--gl-shadow-xs);
+}
+
+@keyframes agentChatAsk {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 8px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* --- the beat before the answer ----------------------------------------- */
+
+/* Three dots on one keyframe at three delays. It runs for about a second and
+   is the only part of the exchange that shows nothing: the panel's claim is
+   that an answer comes back, and an answer that appears the instant the
+   question does has not come back from anywhere. */
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+  margin: 0;
+  animation: agentMockIn var(--gl-duration-fast) var(--gl-ease-standard) both;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+}
+
+.dot {
+  width: var(--gl-space-2); /* 6 */
+  height: var(--gl-space-2);
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-neutral-450);
+  animation: agentChatDot 1.2s var(--gl-ease-inout) infinite;
+}
+
+@keyframes agentChatDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    opacity: 1;
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* --- the answer --------------------------------------------------------- */
+
+.reply {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-6);
+}
+
+/* The blob, a glyph and the heading on one line. The glyph is what tells you
+   what KIND of answer this is before you have read a figure — and it is the
+   only place in the reply where the accent is not spent. */
+.replyHead {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+  margin: 0;
+  font-size: var(--gl-size-body-sm);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-primary);
+  animation: agentChatRise 380ms var(--agent-chat-ease) both;
+}
+
+/* One grid, not three rows that happen to be the same shape: the figures
+   line up down the left whatever length they are, which is the only reason a
+   table beats three sentences here. The left column is a share rather than a
+   fixed width because the figures run from "75%" to "Communication".
+
+   The card itself is the faintest surface in the system with a hairline on
+   it. Anything heavier and the reply reads as a component lifted out of a
+   dashboard, where what it has to read as is Tal showing you something. */
+.table {
+  display: flex;
+  flex-direction: column;
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: var(--gl-radius-xl);
+  background-color: var(--gl-color-surface-sunken);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--gl-space-5);
+  /* Tight. These are four one-line readings, not a data grid to be worked
+     in — the row only has to be tall enough to separate one figure from the
+     next, and at the old 14px it was spending more height on air than on
+     type. */
+  padding: var(--gl-space-3) var(--gl-space-7);
+  animation: agentChatRise 380ms var(--agent-chat-ease) both;
+}
+
+/* Rules BETWEEN the rows and never around them — the card's own border is
+   already the outside edge, and a rule that doubles it reads as a seam. */
+.row + .row {
+  border-top: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.rowValue {
+  font-size: var(--gl-size-body-sm);
+  font-weight: var(--gl-weight-medium);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-primary);
+}
+
+.rowLabel {
+  font-size: var(--gl-size-body-sm);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-muted);
+}
+
+/* The one accent mark in the reply, and the last thing to arrive. Drawn and
+   inert — see the component for why it is a span.
+
+   It follows the table directly now. There was a sentence between the two
+   reading the figures back, and it has gone: the rows already said it, and
+   three lines of prose under three lines of table made the answer look like
+   a report when what it has to look like is a glance. */
+.replyAction {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--gl-space-2);
+  font-size: var(--gl-size-body-sm);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-accent);
+  animation: agentChatRise 380ms var(--agent-chat-ease) both;
+  /* One row's stagger after the last of the three, so the link lands as the
+     end of the same run rather than as a fourth thing arriving late. */
+  animation-delay: 410ms;
+}
+
+@keyframes agentChatRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* The caret. Blinks on a whole-number period so it lands on the same phase
+   as a real one, and it is the only thing in the voice mock that animates
+   without being asked to. */
+.caret {
+  display: inline-block;
+  width: var(--gl-border-width-thick);
+  height: 1em;
+  background-color: var(--gl-color-accent);
+  animation: agentCaret 1s steps(2, start) infinite;
+}
+
+@keyframes agentCaret {
+  to {
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. The voice — the blob, the level, and nothing else
+
+   NO CONTAINERS ANYWHERE IN THIS PANEL. There was a drawn dial — three
+   rings, a white disc lifted off a halo by two shadows, five bars inside it
+   — and under it a sunken panel for the transcript and a bordered, tinted,
+   shadowed card for the draft. All of it has gone. What is left is the blob
+   on the card's own white, a bare row of bars, and type.
+
+   That is not tidying, it is the point. The panel's subject is a voice in a
+   room, and a voice in a room is the one thing that does not come in a box.
+   Every frame drawn around a part of it was saying the opposite of what the
+   picture was for — and a white disc behind the blob in particular was a
+   container drawn around the assistant's own face.
+
+   What replaces the framing is RIPPLE. Two hairline rings leave the blob on
+   a stagger and fade into plain white — `transform` and `opacity` only, so
+   the stage composites and repaints nothing.
+
+   There was a rose radial glow behind all of this, and the rings were pink
+   to match it. Both are gone: the glow read as a red stain under the one
+   warm object on the card, and a pink hairline left on its own would have
+   been the only coloured thing on the stage. The rings are neutral now, and
+   the blob is the only colour here.
+   -------------------------------------------------------------------------- */
+.stage {
+  /* One number. The rings, the blob and the level overlaid on it are all
+     sized off the same diameter, so the stage keeps its proportions at every
+     viewport instead of being three things that happen to agree at one
+     width. */
+  --agent-stage-size: clamp(9rem, 18vw, 12rem);
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  flex: none;
+  width: var(--agent-stage-size);
+  height: var(--agent-stage-size);
+}
+
+.ring {
+  position: absolute;
+  border-radius: var(--gl-radius-full);
+  pointer-events: none;
+}
+
+/* The two travelling rings. Half a period apart, so there is always one ring
+   somewhere out from the blob rather than a gap and then two at once. They
+   exist only while there is something to hear.
+
+   THEY STAY CLOSE. They used to travel out to one and a half times the
+   stage, which put a hairline circle two and a half times the blob's own
+   width out in the middle of the card — at that radius it had stopped
+   reading as something the blob was doing and started reading as a ring
+   drawn around it, which is the containing frame this whole panel was built
+   to get rid of. The travel is now about a fifth of the blob's width: the
+   ring leaves its rim, gets clear of it, and is gone. Proximity is the whole
+   effect — a ripple is close to the thing that made it.
+
+   The duration came down with the distance. Four seconds over that much
+   shorter a path is not a slow ripple, it is a stationary circle. */
+.ring {
+  inset: -4%;
+  /* Neutral, not rose. The rings were pink because they dissolved into a
+     pink glow behind them; that glow is gone — it was a wash of red over a
+     panel whose whole point is to be calm — and a pink hairline left on its
+     own over white is the only coloured thing on the stage, which is worse
+     than the glow was. A grey hairline reads as a ripple and nothing else. */
+  border: var(--gl-border-width-hairline) solid
+    color-mix(in srgb, var(--gl-neutral-400) 70%, transparent);
+  opacity: 0;
+}
+
+.stage[data-listening] .ring {
+  animation: agentVoiceRing 2.6s var(--gl-ease-standard) infinite;
+}
+
+.stage[data-listening] .ring:nth-of-type(3) {
+  animation-delay: 1.3s;
+}
+
+/* Opacity peaks just after the start rather than at it, so a ring fades UP
+   out of the blob and then away — one that is brightest at its smallest
+   reads as being emitted, which is a harder, more mechanical gesture than a
+   voice deserves. */
+@keyframes agentVoiceRing {
+  0% {
+    opacity: 0;
+    /* Just inside the blob's own rim, so the ring appears to separate from
+       the edge rather than to be born in clear air beside it. */
+    transform: scale(0.97);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The level — twenty-one bars, and the only part of the panel that is a
+   simulation rather than a picture.
+
+   Each bar runs ONE shared keyframe, which scales it between a floor and its
+   own authored peak (`--agent-wave-peak`, set per bar in the component). A
+   `var()` inside a keyframe resolves per element, so twenty-one different
+   amplitudes cost one keyframe rather than twenty-one.
+
+   The delays are NEGATIVE. A positive stagger makes the row ripple into life
+   from the left on every mount, which is a progress bar; a negative one
+   starts every bar already mid-cycle, so the level is running the instant it
+   appears — which is what a meter attached to a live microphone does.
+
+   `transform: scaleY` only, off a bottom origin, so the whole row is one
+   composited layer that never lays out and never repaints.
+   -------------------------------------------------------------------------- */
+/* The level, laid on the blob rather than under it. Absolutely positioned
+   and centred on the stage, above the blob in the stacking order — the blob
+   composites with `mix-blend-mode: multiply`, so ink bars over it stay ink
+   and do not pick the blob's colour up.
+
+   Its width is a share of the stage and not a fixed measure: the bars have to
+   sit INSIDE the blob at every viewport, and a fixed-width row would spill
+   past it the moment the stage shrank. */
+.waveOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: var(--gl-z-stage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gl-space-2);
+  /* 0.7x of the 52% / 26% it was. At that size it reached most of the way
+     across the blob and read as a label printed on it; pulled in, the blob
+     is the object and the level is something happening inside it. Both
+     dimensions scale together so the bars keep their aspect. */
+  width: 36.4%;
+  /* Fixed, so the row is the same object whether it is running flat out or
+     sitting flat — a level whose BOX changes height is a layout, not a
+     level. */
+  height: 18.2%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.waveBar {
+  width: var(--gl-border-width-thick);
+  height: 100%;
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-neutral-790);
+  /* Centre, not bottom. The row used to stand on a baseline under the blob
+     and grew upward off it; sitting on the blob there is no baseline to
+     stand on, and bars that grow from the middle out are what a waveform
+     does anyway. */
+  transform-origin: center center;
+  /* The resting state, and where every bar transitions to when the speaking
+     stops. It settles rather than freezing mid-bounce: a meter that stops
+     wherever it happened to be reads as a dropped frame, where one that
+     falls to a line reads as silence. */
+  transform: scaleY(0.08);
+  transition: transform var(--gl-duration-slow) var(--gl-ease-inout);
+}
+
+.waveOverlay[data-listening] .waveBar {
+  animation: agentWaveBar 1.15s var(--gl-ease-inout) infinite;
+}
+
+@keyframes agentWaveBar {
+  0%,
+  100% {
+    transform: scaleY(0.14);
+  }
+  50% {
+    transform: scaleY(var(--agent-wave-peak, 1));
+  }
+}
+
+/* The status line, at the FOOT of the surface and not under the stage —
+   `margin-top: auto` takes whatever slack the flex column has and puts it
+   above, so the label sits on the bottom edge however tall the stage is.
+
+   It has to out-rank the surface's white fade, which is also absolutely
+   positioned at that edge; without the z-index the label would be the one
+   thing on the card the fade actually hid.
+
+   Small caps and tracked out, the one place in this band that treatment is
+   used: it is a status readout, and a status readout set like body copy
+   reads as a sentence someone forgot to finish. */
+.listening {
+  position: relative;
+  z-index: var(--gl-z-decoration);
+  margin: auto 0 0;
+  align-self: center;
+  font-size: var(--gl-size-nano);
+  letter-spacing: var(--gl-tracking-widest);
+  text-transform: uppercase;
+  color: var(--gl-color-text-muted);
+}
+
+/* The mic button's own text. Clipped rather than `display: none`, so the
+   control still has a name in the accessibility tree — the visible label
+   below it is a `p` and names nothing. */
+.tabLabelHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------
+   The transcript still fills and the draft still arrives — those are state
+   changes and a reader who asked for less motion has not asked to be told
+   less. What stops is everything that loops or slides: the plate's ruled
+   field, both carets, Tal's blob, the mic halo, the level meter, and the
+   enter animations.
+
+   The summary is a third case. Its typing is dramatisation rather than
+   state: the component hands over the finished text in one go instead, so
+   the page is still read back — just not a character at a time.
+
+   The enter animations are `both`-filled, so they cannot simply be removed —
+   that would leave their elements stuck at `opacity: 0`. They are set to
+   their end state instead.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .summary,
+  .ask,
+  .reply .replyHead,
+  .reply .row,
+  .reply .replyAction {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The exchange still turns over — three questions are the content — but it
+     cuts rather than fading, because a fade IS the motion that was asked
+     about. */
+  .chat,
+  .chat[data-stage="clearing"] {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The blob is not in this list: it is a `<video>`, and a media query
+     cannot pause one. The component pauses it on its first frame instead —
+     see `TalBlob`. */
+  /* The one ambient loop the container still runs. The strip holds where it
+     is rather than being removed: it is the plate's drawing, and a reader who
+     asked for less motion has not asked for a plain swatch. */
+  .artTrack {
+    animation: none;
+  }
+
+  .caret,
+  .dot,
+  .summaryCaret,
+  .stage[data-listening] .ring,
+  .waveOverlay[data-listening] .waveBar {
+    animation: none;
+  }
+
+  /* Without its keyframe every bar would settle to the flat resting line,
+     which reads as a meter switched off at the exact moment it is listening.
+     Held part-open at its own peak instead, so the row still has the ragged
+     profile of a voice and still says "live" — it simply holds still. */
+  .waveOverlay[data-listening] .waveBar {
+    transform: scaleY(calc(var(--agent-wave-peak, 1) * 0.55));
+    transition: none;
+  }
+}

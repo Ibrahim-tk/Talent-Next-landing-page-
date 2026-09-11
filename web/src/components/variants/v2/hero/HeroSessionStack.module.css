@@ -1,0 +1,170 @@
+/* ==========================================================================
+   HeroSessionStack — the /v2 hero's floating deck
+
+   Three cards stacked in the bottom-right corner, fanned upward so the two
+   behind the front one are visible as edges. Positioning, the ambient
+   float, and the deck's own shuffle live on three separate elements
+   (`.slot` / `.floater` / `.layer`) — the same split `HeroStage` uses for
+   its cards. Each owns one transform, so the drift and the shuffle can
+   never fight over the same property.
+   ========================================================================== */
+
+.slot {
+  position: absolute;
+  right: clamp(20px, 6vw, 84px);
+  bottom: clamp(28px, 7vh, 88px);
+  width: clamp(232px, 20vw, 288px);
+  z-index: var(--gl-z-floating);
+  pointer-events: none;
+  user-select: none;
+}
+
+.floater {
+  animation: sessionStackFloat var(--gl-float-duration-a) ease-in-out infinite;
+}
+
+/* The keyframe's own last frame already matches its resting transform, so
+   the reduced-motion collapse in reset.css (which parks an animation on its
+   final frame) leaves the deck sitting still rather than off in space — no
+   extra `prefers-reduced-motion` override needed here. */
+@keyframes sessionStackFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The deck.
+
+   A fixed height rather than one that tracks the front card: the three
+   cards hold different amounts of content, and a box that resized on every
+   swap would make the whole deck jump — and, because the deck is anchored
+   by its bottom edge, jump the two rear cards' visible edges with it. The
+   height is the tallest card's, so every card has room and the fan stays
+   still while the faces change.
+   -------------------------------------------------------------------------- */
+.stack {
+  position: relative;
+  height: 232px;
+}
+
+/* One card's position in the fan. `--depth-*` are read by the transform
+   below; setting them per depth rather than writing three transforms keeps
+   the easing and the transform shape in one place. */
+.layer {
+  position: absolute;
+  inset: 0;
+  transform: translateY(var(--depth-y)) scale(var(--depth-scale));
+  opacity: var(--depth-opacity);
+  transform-origin: bottom center;
+  transition:
+    transform var(--gl-duration-slow) var(--gl-ease-standard),
+    opacity var(--gl-duration-slow) var(--gl-ease-standard);
+}
+
+/* The front card: full size, no offset. */
+.layer[data-depth="0"] {
+  --depth-y: 0px;
+  --depth-scale: 1;
+  --depth-opacity: 1;
+}
+
+/* The two behind it, fanned *upward*. Up rather than down because the deck
+   is pinned to the bottom-right of the hero — fanning down would push the
+   rear edges toward the bottom of the viewport and off it on a short
+   window, where fanning up sends them into open sky. */
+.layer[data-depth="1"] {
+  --depth-y: -14px;
+  --depth-scale: 0.955;
+  --depth-opacity: 0.9;
+}
+
+.layer[data-depth="2"] {
+  --depth-y: -27px;
+  --depth-scale: 0.91;
+  --depth-opacity: 0.75;
+}
+
+/* A card leaving the front does not slide sideways or fade out — it goes to
+   the back of the deck, which is what the depth transition already
+   describes. The one thing that needs saying is that the rear cards must
+   not show their content through the front one, and `overflow: hidden` on
+   the card plus an opaque surface tone is what settles that. */
+.card {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Card interior
+   -------------------------------------------------------------------------- */
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+  margin-bottom: var(--gl-space-6);
+}
+
+/* The icon plate keeps the system's "actions and marks are square" rule
+   rather than borrowing a round chip — the same primitive `Button` draws
+   everywhere else on the site, at badge size. */
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--gl-radius-none);
+  background-color: var(--gl-color-action-primary-bg);
+  color: var(--gl-color-action-primary-fg);
+}
+
+.heading {
+  margin-bottom: var(--gl-space-5);
+}
+
+.meta {
+  margin-top: var(--gl-space-5);
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-6);
+  margin-top: var(--gl-space-7);
+}
+
+.steps {
+  margin-top: var(--gl-space-7);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — the hero's copy stack loses its own width cap below 900px
+   (see HeroSection.module.css), so the deck is pulled in from the edge and
+   scaled down to keep clear of it, then dropped below 640px, where the
+   viewport is narrow enough that the deck would otherwise sit on top of the
+   call to action rather than beside it.
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .slot {
+    right: clamp(14px, 4vw, 32px);
+    bottom: clamp(20px, 4vh, 40px);
+    width: clamp(196px, 44vw, 224px);
+  }
+
+  .stack {
+    height: 214px;
+  }
+}
+
+@media (max-width: 640px) {
+  .slot {
+    display: none;
+  }
+}

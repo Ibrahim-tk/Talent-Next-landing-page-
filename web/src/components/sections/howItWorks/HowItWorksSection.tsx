@@ -53,9 +53,6 @@ export function HowItWorksSection() {
           <Highlight>{howItWorksCopy.headingAccent}</Highlight>
           {howItWorksCopy.headingAfter}
         </Text>
-        <Text variant="bodyLg" align="center" className={styles.standfirst}>
-          {howItWorksStepsCopy.standfirst}
-        </Text>
       </div>
 
       <div className={styles.grid}>

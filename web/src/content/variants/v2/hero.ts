@@ -3,8 +3,10 @@
  *
  * This variation is a full-bleed photographic hero: one still running edge
  * to edge of the viewport, with the copy set over it at the left. So there
- * is no phone, no glow and no floating card data here — only the words and
- * the photograph.
+ * is no phone and no glow here — only the words and the photograph, plus
+ * one floating artefact in the bottom-right corner: `HeroSessionStack`, a
+ * deck of three cards that cycles through what the product actually
+ * produces. Its copy is `heroSessionCards` below.
  *
  * It differs from v3, which is also photographic, in two ways: v3 rotates
  * through several stills and bottom-aligns its copy across three columns,
@@ -51,3 +53,108 @@ export const heroCopy = {
     height: 2564,
   },
 } as const;
+
+/* ==========================================================================
+   The floating deck
+   ========================================================================== */
+
+/**
+ * What one card in the deck shows below its heading.
+ *
+ * Three shapes rather than one flexible block, because the three cards are
+ * making three different kinds of claim and a single "body text" field
+ * would flatten that. The session is a promise about time, the summary is a
+ * set of measurements, and the plan is a sequence — so each gets the
+ * Gridline primitive that says that: plain type, `MeterRow`, and
+ * `StepperTimeline` respectively.
+ */
+export type HeroSessionBody =
+  | { kind: "note"; text: string; meta: string }
+  | { kind: "meters"; meters: readonly { name: string; value: number }[] }
+  | {
+      kind: "steps";
+      steps: readonly {
+        id: string;
+        label: string;
+        icon: "book" | "star" | "check" | "clock";
+        state: "complete" | "pending";
+      }[];
+    };
+
+export interface HeroSessionCard {
+  id: string;
+  /** Small label above the heading — the step's place in the sequence. */
+  eyebrow: string;
+  icon: "clock" | "star" | "check";
+  heading: string;
+  body: HeroSessionBody;
+}
+
+/**
+ * The deck, in order.
+ *
+ * These are not invented product features. They are the same three steps
+ * "It Starts with 30 Minutes." already sets out further down every page —
+ * talk, see what stands out, get your next steps — restated at card size,
+ * with their headings taken verbatim from `content/howItWorks.ts` so the
+ * hero is previewing the page rather than describing a different product.
+ *
+ * NOTE on the numbers: the meters on the summary card are illustrative. The
+ * site talks about "six Talent traits" but never names them in copy, so
+ * these three are stand-ins chosen to read plausibly at a glance. The card
+ * is `aria-hidden` decoration and no figure here is quoted anywhere else,
+ * but swap in the real trait names and a real sample profile when they
+ * exist rather than letting these harden into canon.
+ */
+export const heroSessionCards: readonly HeroSessionCard[] = [
+  {
+    id: "session",
+    eyebrow: "Step 1",
+    icon: "clock",
+    heading: "Talk About You",
+    body: {
+      kind: "note",
+      text: "One-on-one with a TALENT Agent, talking through experiences from your life.",
+      meta: "30 minutes · nothing to prepare",
+    },
+  },
+  {
+    id: "summary",
+    eyebrow: "Step 2",
+    icon: "star",
+    heading: "See What Stands Out",
+    body: {
+      kind: "meters",
+      meters: [
+        { name: "Communication", value: 82 },
+        { name: "Problem solving", value: 74 },
+        { name: "Adaptability", value: 66 },
+      ],
+    },
+  },
+  {
+    id: "plan",
+    eyebrow: "Step 3",
+    icon: "check",
+    heading: "Get Your Next Steps",
+    body: {
+      kind: "steps",
+      steps: [
+        { id: "foundations", label: "Foundations", icon: "book", state: "complete" },
+        { id: "practice", label: "Practice", icon: "star", state: "complete" },
+        { id: "applied", label: "Applied work", icon: "check", state: "pending" },
+      ],
+    },
+  },
+];
+
+/**
+ * How long each card holds at the front of the deck, in milliseconds.
+ *
+ * Long enough to read three short lines without rushing, and long enough
+ * that the movement registers as a deck shuffling rather than a carousel
+ * demanding attention — this sits beside a headline that is the actual
+ * point of the page.
+ */
+export const heroSessionCycleMs = 4200;
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import {
   Button,
@@ -21,6 +21,7 @@ import {
   goalOptions,
   situationOptions,
 } from "@/content/getStarted";
+import { takeHeroEmail } from "@/lib/heroEmailHandoff";
 
 import styles from "./IntakeForm.module.css";
 
@@ -49,6 +50,22 @@ export function IntakeForm() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const successRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * An address typed into the `/v3` hero's capture field, if the visitor
+   * arrived that way. Read on mount and cleared by the reader, so it is
+   * used once and a refresh does not resurrect it.
+   *
+   * Safe to land in `defaultValue` despite arriving after the first render:
+   * the email input lives on step 4 and is not mounted until the visitor
+   * gets there, which is long after this effect has run. Steps 1–3 are the
+   * reason an uncontrolled default works here at all.
+   */
+  const [heroEmail, setHeroEmail] = useState("");
+
+  useEffect(() => {
+    setHeroEmail(takeHeroEmail());
+  }, []);
 
   const [situation, setSituation] = useState<string>(formDefaults.situation);
   const [goal, setGoal] = useState<string>(formDefaults.goal);
@@ -215,6 +232,7 @@ export function IntakeForm() {
                   type="email"
                   autoComplete="email"
                   label={formLabels.email}
+                  defaultValue={heroEmail}
                   required
                 />
 
