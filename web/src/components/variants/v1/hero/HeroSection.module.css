@@ -17,8 +17,11 @@
   position: absolute;
   inset: 0;
   background-image: var(--gl-gradient-blueprint);
-  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
-  background-position: center top;
+  /* Columns as a share of the box, rows in px — see the token block. The
+     box is the full width of the canvas column, so `left top` starts the
+     lattice on the left rule and the 25th column closes on the right one. */
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
   pointer-events: none;
   z-index: var(--gl-z-base);
   mask-image: var(--gl-mask-blueprint);

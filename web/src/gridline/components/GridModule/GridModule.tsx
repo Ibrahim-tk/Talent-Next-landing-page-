@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from "react";
+import type { ElementType, Ref, ReactNode } from "react";
 
 import { cx } from "../../utils/cx";
 import styles from "./GridModule.module.css";
@@ -18,6 +18,18 @@ export interface GridModuleProps {
   "aria-label"?: string;
   "aria-labelledby"?: string;
   className?: string;
+  /**
+   * Forwarded to the host element. Declared here rather than left to the
+   * `...rest` spread because a caller that needs to measure the module — a
+   * hero whose art has to know where the canvas rules are, say — should not
+   * have to reach for `getElementById` or `closest()` to find a box this
+   * component already owns.
+   *
+   * React 19 passes `ref` as an ordinary prop to function components, so
+   * there is no `forwardRef` wrapper involved; this type is the whole of
+   * the change.
+   */
+  ref?: Ref<HTMLElement>;
   children: ReactNode;
 }
 

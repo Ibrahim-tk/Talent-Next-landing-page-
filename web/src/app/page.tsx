@@ -33,7 +33,11 @@ export default function HomePage() {
           <InterviewSection />
           <HowItWorksSection />
           <DeliverablesSection />
-          <SeeItInActionSection />
+          {/* The dark treatment — the same one `/v2` asked for, now the
+              homepage's as well. It is this section's own `tone` prop and
+              not a second copy of the section, so the two pages stay in
+              step. */}
+          <SeeItInActionSection tone="inverse" />
           <GetStartedSection />
         </main>
 

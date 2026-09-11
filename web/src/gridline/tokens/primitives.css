@@ -48,9 +48,13 @@
   --gl-neutral-25: #fafafb; /* card hover wash */
   --gl-neutral-50: #f8f9fa; /* inset panel / alternating module */
   --gl-neutral-100: #f4f4f6; /* secondary button rest */
-  --gl-neutral-150: #f0f0f3; /* hairline, subtle */
-  --gl-neutral-200: #ececef; /* THE grid rule */
-  --gl-neutral-225: #efefef; /* elevated-card hairline */
+  /* THE grid rule — every hairline and every blueprint grid line on a light
+     surface. #ececef was that value until the rules were asked to sit back
+     a little; this is the same colour mixed 20% toward white
+     (236 + 0.2 x 19 = 240, 239 + 0.2 x 16 = 242), which is what
+     `--gl-neutral-200` below is kept around to document. */
+  --gl-neutral-175: #f0f0f2;
+  --gl-neutral-200: #ececef; /* the grid rule's pre-lightening value */
   --gl-neutral-250: #e5e7eb; /* meter track, ruler tick */
   --gl-neutral-300: #e2e8f0; /* progress track */
   --gl-neutral-400: #d1d5db; /* ruler tick (major), inert marker */
@@ -66,6 +70,7 @@
   --gl-neutral-775: #3f3f46;
   --gl-neutral-780: #333a45; /* heading, second tier — 11.4:1 */
   --gl-neutral-790: #23282f; /* heading ink — dark, never black — 14.7:1 */
+  --gl-neutral-795: #1e1e1e; /* hairline on the dark surfaces */
   --gl-neutral-800: #18181b;
   --gl-neutral-850: #111827; /* heading, cool black */
   --gl-neutral-900: #111111; /* text, primary */

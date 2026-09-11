@@ -13,6 +13,28 @@ from `@/content/variants/v2/hero` and its own sibling files, so an edit to one
 variation's hero cannot reach the homepage or the other two. CSS modules hash
 per file, so duplicated class names never collide either.
 
+## Two versions of "It Starts with 30 Minutes."
+
+This section is the one place where the four pages do not all render the
+same component — but note that **neither version is a private copy**. Both
+live in `components/sections/` and both read their words from the same
+`howItWorksCopy`, so they are alternative *layouts* of identical content:
+
+| | component | rendered by |
+| --- | --- | --- |
+| Step list beside one still | `sections/howItWorks/` | `/` and `/v2` |
+| Three-panel matrix | `sections/howItWorksMatrix/` | `/v1` and `/v3` |
+
+Changing a step's wording in `content/howItWorks.ts` therefore reaches all
+four pages; only the arrangement differs. Changing a *layout* reaches the
+two pages that render it.
+
+The step-list version began as a private copy under `variants/v2/`, which
+is the escape hatch described under "Making changes" below. When the
+homepage adopted it, it was promoted into `components/sections/` and the
+copy deleted rather than left to drift — which is the move to repeat if a
+variation's experiment ever graduates again.
+
 ## What is shared
 
 Everything else: all six sections below the hero, imported straight from

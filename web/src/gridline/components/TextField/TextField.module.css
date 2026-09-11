@@ -17,8 +17,21 @@
    `labelVariant` past the `label` role); see `FieldProps`. A question gets a
    heading's air beneath it instead of the label gap above, at any size: at
    10px it sat almost on top of its own options. */
-.labelQuestion {
-  margin-bottom: var(--gl-space-11);
+/* Doubled selector, like the weight rule below. `Text`'s `.root` zeroes all
+   margins at one-class specificity and its stylesheet wins the tie, so a
+   single `.labelQuestion` here never landed. */
+.labelQuestion.labelQuestion {
+  margin-bottom: var(--gl-space-3); /* 8px */
+}
+
+/* Weight is deliberately *not* set here. A question earns its prominence
+   from size (`labelVariant`) and from the air beneath it, not from weight —
+   the system is regular-weight throughout, and a bold question read as a
+   different typeface sitting in an otherwise even form. Doubled selector so
+   that, should a weight ever belong here, it reliably beats whichever
+   `Text` role class the caller picked via `labelVariant`. */
+.labelQuestion.labelQuestion {
+  font-weight: var(--gl-weight-regular);
 }
 
 .input {

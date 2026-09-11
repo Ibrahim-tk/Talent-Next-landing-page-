@@ -1,0 +1,108 @@
+/* ==========================================================================
+   LegalNav — the left rail
+   --------------------------------------------------------------------------
+   Docs-site navigation rather than a Gridline marketing module: no ruled
+   cells, no full-width hairlines. The only rule it draws is the vertical
+   track the section links hang off, and the only fill is the one behind the
+   open document.
+
+   Everything sits one type step below the prose it indexes
+   (`--gl-size-body-sm`), the same role the footer's link columns use, so
+   the rail reads as navigation beside the document rather than as a second
+   column of content.
+   ========================================================================== */
+
+.root {
+  display: block;
+}
+
+.groupTitle {
+  padding: 0 var(--gl-space-7);
+  margin-bottom: var(--gl-space-9);
+  color: var(--gl-color-text-muted);
+}
+
+.docList,
+.sectionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Document entries — the top level
+   -------------------------------------------------------------------------- */
+.docLink {
+  display: block;
+  padding: var(--gl-space-5) var(--gl-space-7);
+  font-size: var(--gl-size-body-md);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-secondary);
+  transition:
+    color var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.docLink:hover {
+  color: var(--gl-color-text-primary);
+  background-color: var(--gl-color-surface-hover);
+}
+
+/* The open document. A quiet fill plus an accent bar on the leading edge —
+   the fill alone is too soft to find at a glance on white, and the bar
+   alone reads as a hover state. Colour is not carrying this on its own:
+   the entry is also the only one in the list that expands. */
+.docLinkCurrent,
+.docLinkCurrent:hover {
+  color: var(--gl-color-text-primary);
+  background-color: var(--gl-color-surface-sunken);
+  box-shadow: inset var(--gl-border-width-thick) 0 0 var(--gl-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Section entries — nested under the open document
+   --------------------------------------------------------------------------
+   The vertical track is drawn once, on the list, rather than as a
+   transparent border on every link. Drawn per-link it breaks at each gap
+   and each active item's own border; on the list it is one unbroken line
+   the active marker slides along, which is the whole point of the device.
+   -------------------------------------------------------------------------- */
+.sectionList {
+  margin: var(--gl-space-3) 0 var(--gl-space-5);
+  padding-left: var(--gl-space-7);
+  border-left: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  margin-left: var(--gl-space-7);
+}
+
+.sectionLink {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--gl-space-4);
+  padding: var(--gl-space-3) var(--gl-space-6);
+  font-size: var(--gl-size-body-sm);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-muted);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+/* The Terms number nothing, so those entries carry a single span. It is
+   spanned across both tracks rather than left in the first one, which
+   collapses the empty number gutter instead of indenting the label past
+   it. */
+.sectionLink > span:only-child {
+  grid-column: 1 / -1;
+}
+
+.sectionLink:hover {
+  color: var(--gl-color-text-primary);
+}
+
+.sectionLinkActive,
+.sectionLinkActive:hover {
+  color: var(--gl-color-text-accent);
+}
+
+.sectionNumber {
+  font-variant-numeric: tabular-nums;
+}

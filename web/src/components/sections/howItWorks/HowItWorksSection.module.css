@@ -1,30 +1,29 @@
 /* ==========================================================================
-   HowItWorksSection — "It Starts with 30 Minutes."
+   HowItWorksSection — variation 2
    --------------------------------------------------------------------------
-   A centred banner heading (same shape as InterviewSection's own) over a
-   two-column matrix: a tall session panel on the left, and two stacked
-   outcome rows on the right. All three cells are white — the hairline grid
-   alone divides them, with no tonal shift between the columns. Three cells of
-   comparable weight, not one oversized hero image plus two smaller ones —
-   the left column's image has a capped height (object-fit: cover, same
-   technique as InterviewSection's own media panel) rather than stretching
-   to fill its column, so it stays modestly sized regardless of how tall the
-   right column's content runs.
+   Heading band across the top, then two columns: all three steps written
+   out down the left, one product still on the right. The section's outer
+   chrome — the two-row blueprint spacer, the ruled header row, the
+   full-bleed footer bar — is deliberately the same as the shared section's,
+   so `/v2` still reads as the same page with one band rethought rather than
+   as a different site.
 
-   Alignment is deliberately asymmetric within each cell: the left panel's
-   image + caption sit as one block pinned to the bottom of the column
-   (`justify-content: flex-end` on .sessionPanel). Each right-side row splits
-   that block apart instead — the visual gets its own flexible box centred
-   both ways (`.outcomeVisual { flex: 1; align-items/justify-content: center }`)
-   so it floats in the upper area of the cell, while the caption is left
-   outside that flexible box, which pushes it to sit flush at the bottom.
-
-   Type is a plain three-step stack, Apple-style — one clear jump per level
-   rather than a pile of near-identical sizes: `display` for the section
-   statement, `headingMd` for the left panel's own title, the smaller
-   `title` role (see ArchetypeCard) for the two right-side row titles, and
-   `bodyLg` for every line of copy underneath.
+   Nothing in this file animates. The one thing that might look like it
+   does — the blueprint lattice behind the still — is a static background,
+   and the white fade over it is a static gradient.
    ========================================================================== */
+
+/* Identical to the shared section's own spacer, and to
+   SeeItInActionSection's: two whole rows of the sitewide lattice, pinned
+   `left top` so the cells sit on the canvas's vertical rules. */
+.gridBox {
+  height: calc(2 * var(--gl-blueprint-cell));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
 
 .headerRow {
   padding: var(--gl-space-block-md) var(--gl-space-gutter-lg);
@@ -37,217 +36,144 @@
   max-width: 720px;
 }
 
+.standfirst {
+  margin: var(--gl-space-9) auto 0;
+  max-width: var(--gl-measure-prose);
+}
+
+/* --------------------------------------------------------------------------
+   The two columns. The steps take the smaller share: their copy is capped
+   at a comfortable measure and has nowhere useful to spend extra width,
+   whereas every pixel the stage gains goes into the product art.
+   -------------------------------------------------------------------------- */
 .grid {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr);
   align-items: stretch;
 }
 
 /* --------------------------------------------------------------------------
-   Left panel — the conversation
+   Left — the three steps
    -------------------------------------------------------------------------- */
-.sessionPanel {
+.stepsCell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
   border-right: var(--gl-border-width-hairline) solid
     var(--gl-color-border-rule);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(2rem, 4vw, 3rem) clamp(2.25rem, 4.5vw, 3.75rem);
 }
 
-.sessionMedia {
-  position: relative;
-  flex: none;
-  height: clamp(260px, 28vw, 380px);
-  overflow: hidden;
-  border-radius: var(--gl-radius-lg);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-media);
-  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.sessionImage {
-  object-fit: cover;
+/* A hairline between steps but not above the first or below the last, so
+   the list is divided without being boxed. */
+.step + .step {
+  margin-top: var(--gl-space-13);
+  padding-top: var(--gl-space-13);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
-.sessionText {
+/* Grid rather than flex so the copy's second line aligns under its own
+   heading instead of running back beneath the step number. */
+.step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--gl-space-7);
+  align-items: baseline;
+}
+
+.index {
+  color: var(--gl-color-text-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.stepHeading {
+  margin-bottom: var(--gl-space-5);
+}
+
+.copy {
   max-width: 420px;
 }
 
 /* --------------------------------------------------------------------------
-   Right panels — outcomes, stacked. White (`--gl-color-surface-raised`)
-   rather than the sunken grey these rows used to carry, so both columns of
-   the matrix sit on one continuous white surface and the only thing
-   separating the three cells is the hairline grid itself. The rows still
-   paint their fill explicitly instead of leaving it transparent: that keeps
-   the white a deliberate choice here, rather than whatever the section
-   happens to inherit.
+   Right — one still
+   --------------------------------------------------------------------------
+   The stage's three layers are stacked in a single grid cell rather than
+   with absolute positioning, so the tallest of them — the frame — sets the
+   stage's height and the lattice and the fade size themselves to it.
    -------------------------------------------------------------------------- */
-.outcomes {
+.stageCell {
   display: flex;
-  flex-direction: column;
-  /* One place to tune both rows. 400px is deliberately the height these
-     rows already had between them before they were pinned — the analysis
-     row ran ~460px and the next-steps row ~326px, so an equal split of
-     that same column keeps the section's overall height where it was.
-
-     The orb does NOT factor into this number: it's absolutely positioned
-     (see `.analysisMedia`), so it contributes nothing to layout and the
-     row can be sized purely around the caption pinned at its bottom. What
-     that does mean is that the orb is free to overlap the caption rather
-     than push it down — at 400px its box runs from 5% (20px) to 322px
-     while the caption block occupies the last ~142px, so the glow's soft
-     lower edge sits behind the heading. That's the intended look; the orb
-     paints under the copy (see `.analysisMedia`) and the overlapping
-     pixels are the transparent outer rings of the glow. Raise this value
-     if a clean gap between the two is ever wanted instead.
-
-     It has been raised once already, from 400px to 420px, when the plan
-     stack's cards were given more internal padding: the stack sets its own
-     height, and at 400px a 212px window plus the two-line caption below it
-     came out taller than the row, which pushes the caption over the row's
-     bottom hairline rather than being clipped by it. Both rows move
-     together by design, so the analysis row gains the same 20px — the orb
-     is out of flow and simply sits 1px lower for it. */
-  --outcome-row-height: 420px;
+  min-width: 0;
 }
 
-/* `flex: none` + an explicit height rather than the `flex: 1` these rows
-   used to share: in a column flex container `flex: 1` also sets
-   `flex-basis: 0%`, which wins over `height` on the main axis — the rows
-   would go back to splitting whatever height the grid row happened to be,
-   and the analysis row's taller content would push them out of step. Fixed
-   and equal is the point here, so the basis has to come from `height`.
-
-   `position: relative` makes each row the containing block for the orb, and
-   `isolation: isolate` makes it a stacking context. The isolation is what
-   lets the orb's negative `z-index` mean "behind this row's text" instead
-   of "behind this row's white background" — a bare `position: relative`
-   with `z-index: auto` starts no stacking context of its own, so the orb
-   would drop past the row's own fill and vanish. Inside an isolated row the
-   paint order is: the row's background, then negative-z descendants (the
-   orb), then the in-flow caption on top. */
-.outcomeRow {
+.stage {
   position: relative;
-  isolation: isolate;
-  flex: none;
-  height: var(--outcome-row-height);
-  display: flex;
-  flex-direction: column;
-  background-color: var(--gl-color-surface-raised);
-  padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 3.75rem);
-}
-
-.outcomeRow:not(:last-child) {
-  border-bottom: var(--gl-border-width-hairline) solid
-    var(--gl-color-border-rule);
-}
-
-.outcomeVisual {
+  display: grid;
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: clamp(1.5rem, 3vw, 2rem);
+  align-content: center;
+  padding: clamp(1.5rem, 3.5vw, 3rem);
 }
 
-.outcomeText {
-  max-width: 420px;
-}
-
-/* The plan stack sets its own height (three card slots plus the strip the
-   next card rises through) and its own max width, so this wrapper only has
-   to hand it the column — see the note at the top of PlanStack.module.css
-   for how the loop is built, and the CSS Module ordering note in the
-   Gridline README for why the size lives inside the component and not
-   here. */
-.planWrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.panelHeading {
-  margin-bottom: var(--gl-space-4);
-}
-
-/* --------------------------------------------------------------------------
-   Analysis visual — the TALENT Agent orb, 302px (240px, the measure the Top
-   Strength card used to occupy, taken up 1.4x and then back down 0.9x — a
-   little wider than the 288px plan stack in the row below it, so the two
-   visuals read as the same size class without being identical).
-
-   Taken out of flow and anchored 15% down its row, so its size can no
-   longer set that row's height — that's what lets `--outcome-row-height`
-   stay fixed and keep both outcome rows equal. `left`/`right: 0` plus auto
-   side margins centre it inside the row's padding box; the auto margins
-   only have an effect because `max-width` keeps it narrower than that box.
-
-   Square, because the source is: `aspect-ratio` gives the `fill` image a
-   box to fill without an explicit height. `contain` rather than `cover` —
-   the artwork is a radial glow that fades to transparent on a square
-   canvas, so cropping it to a non-square box would clip the glow unevenly
-   and shift the orb off centre. No border, radius or background: the glow
-   is meant to sit directly on the panel, not inside a frame.
-
-   It paints *behind* the caption (`--gl-z-below`, against the stacking
-   context `.outcomeRow` establishes) rather than over it: the glow's lower
-   half reaches well into the caption's band, and on top it washed the copy
-   out. `pointer-events: none` stays regardless — the orb still covers that
-   band geometrically, and without it those transparent pixels would
-   swallow clicks and text selection on the heading.
-   -------------------------------------------------------------------------- */
-.analysisMedia {
-  position: absolute;
-  top: 5%;
-  left: 0;
-  right: 0;
-  z-index: var(--gl-z-below);
-  width: 100%;
-  max-width: 302px;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;
+/* The blueprint lattice, on the sitewide cell so it lines up with the
+   spacer panels elsewhere on the page, and masked to a soft ellipse so it
+   is densest behind the art and gone by the edges — the same treatment the
+   hero gives its own backdrop. */
+.stageGrid {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  margin: calc(-1 * clamp(1.5rem, 3.5vw, 3rem));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
+  -webkit-mask-image: var(--gl-mask-blueprint);
+  mask-image: var(--gl-mask-blueprint);
   pointer-events: none;
 }
 
-.analysisImage {
-  object-fit: contain;
+.frame {
+  grid-area: 1 / 1;
+  position: relative;
+  margin: 0;
+  /* The artwork's own ratio, handed in from the content file so the box is
+     derived from the image rather than the image squeezed into the box.
+     It was hardcoded here for a while, which meant swapping the still
+     silently cropped it until someone remembered to edit two files. */
+  aspect-ratio: var(--v2-showcase-ratio);
+  overflow: hidden;
+  border-radius: var(--gl-radius-xl);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  background-color: var(--gl-color-surface-raised);
+  box-shadow: var(--gl-shadow-md);
 }
 
-@media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+.image {
+  object-fit: cover;
+  object-position: center;
+}
 
-  .sessionPanel {
-    border-right: none;
-    border-bottom: var(--gl-border-width-hairline) solid
-      var(--gl-color-border-rule);
-  }
-
-  .sessionMedia {
-    height: 240px;
-  }
-
-  /* Stacked in one column down here, so the fixed height and the
-     out-of-flow orb both stop being useful: there's no second column left
-     to match, and each row can simply size to its own content. Putting the
-     orb back in flow is what keeps it from overlapping the caption once
-     the copy wraps to the many more lines a narrow column produces. */
-  .outcomeRow {
-    height: auto;
-  }
-
-  .analysisMedia {
-    position: relative;
-    top: auto;
-    z-index: auto;
-    pointer-events: auto;
-  }
+.fade {
+  grid-area: 1 / 1;
+  align-self: end;
+  height: clamp(48px, 8vw, 96px);
+  margin: 0 calc(-1 * clamp(1.5rem, 3.5vw, 3rem))
+    calc(-1 * clamp(1.5rem, 3.5vw, 3rem));
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--gl-color-surface-canvas) 92%
+  );
+  pointer-events: none;
 }
 
 /* --------------------------------------------------------------------------
-   Footer row — full-bleed width only, NOT full-screen height, same pattern
-   as InterviewSection's own closing bar. Left empty until there's copy.
+   Footer row — full-bleed width only, NOT full-screen height, the same
+   pattern the shared section and InterviewSection both use.
    -------------------------------------------------------------------------- */
 .footerRow {
   position: relative;
@@ -256,4 +182,16 @@
   margin-left: -50vw;
   padding: var(--gl-space-17);
   border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stepsCell {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
 }

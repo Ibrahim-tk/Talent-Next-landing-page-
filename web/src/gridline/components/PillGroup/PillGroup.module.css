@@ -8,7 +8,9 @@
 
 .group {
   display: grid;
-  gap: var(--gl-space-4);
+  /* Raised from 10px. The options grew a rung of the type scale while this
+     stayed put, which left four tall boxes stacked almost edge to edge. */
+  gap: var(--gl-space-6);
 }
 
 .columns1 {
@@ -25,12 +27,25 @@
 
 .option {
   padding: var(--gl-space-5) var(--gl-space-9);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  /* 2px rather than the system hairline. A pill is the largest hit target
+     in the form and the only control the reader picks between, so its
+     outline is drawn rather than implied — and a 2px rest border means the
+     selected state changes only the border's colour, never its width, so
+     the option doesn't shift by a pixel on selection. */
+  border: var(--gl-border-width-thick) solid var(--gl-color-border-rule);
   border-radius: var(--gl-radius-xs);
-  font-size: var(--gl-size-body-md);
+  /* Its own token, defaulting to body copy. A caller that has scaled the
+     body size up for a whole card (IntakeForm does) can step the options
+     back down without touching the inputs beside them. */
+  font-size: var(--gl-pill-option-size, var(--gl-size-body-md));
   font-weight: var(--gl-weight-regular);
   line-height: var(--gl-leading-normal);
-  color: var(--gl-color-text-primary);
+  /* The muted role — the quietest text the system defines. An unpicked
+     option is an offer, not an answer, so it blends into the card and lets
+     the question above it and the one choice the reader has actually made
+     carry the step. `.selected` below takes the text to the accent, which
+     is most of what marks the selection apart from its neighbours. */
+  color: var(--gl-color-text-muted);
   background-color: var(--gl-color-surface-raised);
   text-align: left;
   cursor: pointer;
@@ -57,7 +72,11 @@
 .selected:hover {
   border-color: var(--gl-color-accent);
   background-color: var(--gl-color-surface-accent-soft);
-  color: var(--gl-color-text-primary);
+  /* The label goes accent too, not just the border and the tint. Against
+     muted neighbours the picked option then reads as the one coloured thing
+     in the stack — colour, not weight, carries the selection, which keeps
+     the form regular-weight throughout. */
+  color: var(--gl-color-accent);
 }
 
 @media (max-width: 768px) {

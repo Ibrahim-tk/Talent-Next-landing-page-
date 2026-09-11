@@ -1,0 +1,165 @@
+/* ==========================================================================
+   LegalPage
+   --------------------------------------------------------------------------
+   Three columns: section rail, article, subsection rail. Both rails stick
+   under the site header while the article scrolls past them.
+
+   `align-items` is left at its `stretch` default deliberately, and it is
+   load-bearing twice over: it is what makes each rail cell as tall as the
+   article beside it, which is both what lets its divider run the full
+   height and what gives the sticky box inside a tall enough containing
+   block to stay stuck against for the whole scroll. `align-items: start`
+   here would collapse the cells to the height of their lists and the
+   sticky would release almost immediately.
+   ========================================================================== */
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(200px, 268px) minmax(0, 1fr);
+}
+
+.shellWithRail {
+  grid-template-columns: minmax(200px, 268px) minmax(0, 1fr) minmax(
+      180px,
+      240px
+    );
+}
+
+/* --------------------------------------------------------------------------
+   Rails
+   -------------------------------------------------------------------------- */
+.navCell {
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.railCell {
+  border-left: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.navInner,
+.railInner {
+  position: sticky;
+  /* Clear of the sticky site header — the same offset `scroll-padding-top`
+     on `html` already applies to in-page jumps. */
+  top: var(--gl-header-height);
+  max-height: calc(100vh - var(--gl-header-height));
+  overflow-y: auto;
+  /* A rail that has scrolled to its end should stop, not hand the gesture
+     on to the page underneath it. */
+  overscroll-behavior: contain;
+}
+
+.navInner {
+  padding: var(--gl-space-block-md) var(--gl-space-7) var(--gl-space-block-md)
+    var(--gl-space-9);
+}
+
+.railInner {
+  padding: var(--gl-space-block-md) var(--gl-space-9);
+}
+
+/* --------------------------------------------------------------------------
+   Article
+   -------------------------------------------------------------------------- */
+.articleCell {
+  min-width: 0;
+  padding: var(--gl-space-block-md) var(--gl-space-gutter-lg)
+    var(--gl-space-block-xl) var(--gl-space-gutter-lg);
+}
+
+/* Breadcrumb, title and date share the prose column's own measure so the
+   whole article — masthead included — sits on one left edge and one right
+   edge. The cell itself stretches to fill its grid track; the slack ends up
+   between the text and the right rail, which is what gives that rail its
+   air rather than having it crowd the paragraph endings. */
+.breadcrumb,
+.title,
+.meta {
+  max-width: var(--gl-measure-prose);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-4);
+  margin-bottom: var(--gl-space-13);
+}
+
+.crumbLink,
+.crumbCurrent {
+  font-size: var(--gl-size-micro);
+  letter-spacing: var(--gl-tracking-wide);
+  text-transform: uppercase;
+  line-height: var(--gl-leading-flat);
+}
+
+.crumbLink {
+  color: var(--gl-color-text-muted);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.crumbLink:hover {
+  color: var(--gl-color-text-primary);
+}
+
+.crumbSeparator {
+  flex: none;
+  color: var(--gl-color-border-interactive);
+}
+
+.crumbCurrent {
+  color: var(--gl-color-text-primary);
+}
+
+.title {
+  text-align: left;
+  margin-bottom: var(--gl-space-7);
+}
+
+.meta {
+  margin-bottom: var(--gl-space-11);
+}
+
+/* --------------------------------------------------------------------------
+   Below the width the three columns need, the subsection rail is the first
+   to go: its entries are all reachable from the document itself, and the
+   section rail is the more useful of the two. Below that again the section
+   rail stops being a rail and becomes a band of jump links above the text —
+   still present, because these documents are long, but no longer sticky
+   and no longer eating a third of a narrow screen.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .shellWithRail {
+    grid-template-columns: minmax(200px, 268px) minmax(0, 1fr);
+  }
+
+  .railCell {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .shell,
+  .shellWithRail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .navCell {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
+
+  .navInner {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    padding: var(--gl-space-block-sm) var(--gl-space-gutter-md);
+  }
+
+  .articleCell {
+    padding-left: var(--gl-space-gutter-md);
+    padding-right: var(--gl-space-gutter-md);
+  }
+}

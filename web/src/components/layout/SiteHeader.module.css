@@ -34,11 +34,23 @@
 }
 
 /* Toggled by useDarkNavRegion (see @gridline/motion) while a dark-surface
-   section — currently the deliverables band — is the active pinned/visible
-   content, so the translucent white nav doesn't wash out against it. */
+   section is the active pinned/visible content, so the translucent white
+   nav doesn't wash out against it. Two sections claim it, back to back:
+   the deliverables band and "See It in Action" at its inverse tone. */
 :global(html[data-nav-theme="dark"]) .header {
   background-color: rgba(17, 17, 17, 0.85);
   border-bottom-color: var(--gl-color-border-inverse);
+
+  /* The CTA has to invert with the bar. The default is `--gl-neutral-1000`
+     on white; left alone it would be a near-black plate on a near-black
+     bar — the button doesn't just lose contrast, it disappears. Redefining
+     the action tokens in the header's scope is the same move the overlay
+     theme below makes, and for the same reason: the token layer settles it
+     by inheritance, with no rule competing against Button's own stylesheet
+     (see gridline/README.md, "CSS Module ordering"). */
+  --gl-color-action-primary-bg: var(--gl-color-text-inverse);
+  --gl-color-action-primary-bg-hover: rgba(255, 255, 255, 0.86);
+  --gl-color-action-primary-fg: var(--gl-color-text-primary);
 }
 
 :global(html[data-nav-theme="dark"]) .navLink {
@@ -105,6 +117,96 @@
 
 :global(html[data-nav-theme="overlay"]) .menuButton {
   color: var(--gl-color-text-inverse);
+}
+
+/* --------------------------------------------------------------------------
+   Blur theme — set by `useDarkNavRegion(ref, "blur")` while a full-bleed
+   image hero runs behind the nav (currently variation 2's).
+
+   The bar carries no colour of its own at all. What makes it visible is the
+   blur: the photograph continues underneath, unbroken and undimmed, but the
+   strip the nav occupies is smeared out of focus, so the bar reads as a pane
+   of clear glass laid on the picture rather than as a plate sitting on top
+   of it. A hairline closes it off at the bottom, which is the only drawn
+   edge it has — and the only thing separating this from the `overlay` theme
+   above, where the nav has no presence of its own whatsoever.
+
+   Because there is no tint, the white links have nothing behind them but
+   the photograph, blurred — and a blur does not darken, it only smears, so
+   a bright frame stays bright underneath. The contrast this bar needs is
+   therefore not its own: it comes from the top-weighted ramp in
+   `HeroBackdrop`'s scrim, which is sized to carry white type against the
+   brightest thing in the picture. The two are one decision. Weaken that
+   ramp and this bar has to get a low-alpha `background-color` back, which
+   is the single line that trades the "fully transparent" reading for
+   unconditional contrast.
+
+   `@supports` is the whole point of the split: with no plate underneath it,
+   a browser that cannot blur would render this bar as literally nothing —
+   white type loose on a photograph, no bar at all. So the fallback is a
+   solid-enough dark bar, and transparency is claimed only once the browser
+   can actually deliver the glass that justifies it.
+   -------------------------------------------------------------------------- */
+:global(html[data-nav-theme="blur"]) .header {
+  background-color: rgba(17, 17, 17, 0.72);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+
+  /* The near-black CTA vanishes on a dark bar — same inversion the two
+     themes above make, settled in the token layer so no rule has to
+     compete with Button's own stylesheet (see gridline/README.md,
+     "CSS Module ordering"). */
+  --gl-color-action-primary-bg: var(--gl-color-text-inverse);
+  --gl-color-action-primary-bg-hover: rgba(255, 255, 255, 0.86);
+  --gl-color-action-primary-fg: var(--gl-color-text-primary);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  :global(html[data-nav-theme="blur"]) .header {
+    /* Fully transparent: the blur is the entire treatment. `saturate` is
+       there because a heavy blur averages colour toward grey, and with no
+       plate to hide behind that greying is the one thing that would give
+       the glass away as a filter rather than as the picture itself. Pushing
+       saturation back up keeps the strip looking like the photograph,
+       softened. 24px is wide enough that no individual feature survives
+       inside the bar, which is what stops a face or a highlight drifting
+       through the nav links as the section scrolls. */
+    background-color: transparent;
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+  }
+}
+
+:global(html[data-nav-theme="blur"]) .navLink {
+  color: var(--gl-color-text-inverse-secondary);
+}
+
+:global(html[data-nav-theme="blur"]) .navLink:hover {
+  color: var(--gl-color-text-inverse);
+}
+
+/* The wordmark asset is solid black; inverting it is the simplest way to a
+   white mark without shipping a second logo file. */
+:global(html[data-nav-theme="blur"]) .brandMark {
+  filter: invert(1);
+}
+
+:global(html[data-nav-theme="blur"]) .menuButton {
+  color: var(--gl-color-text-inverse);
+}
+
+/* The drawer opens *below* the glass bar, over the photograph, so it needs
+   the same treatment — left alone it would drop a sheet of canvas white
+   under a transparent nav. */
+:global(html[data-nav-theme="blur"]) .drawer {
+  background-color: rgba(17, 17, 17, 0.92);
+  border-top-color: rgba(255, 255, 255, 0.14);
+}
+
+:global(html[data-nav-theme="blur"]) .drawerLink {
+  color: var(--gl-color-text-inverse);
+  border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 
 .inner {

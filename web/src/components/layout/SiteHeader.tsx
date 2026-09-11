@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button, Icon, cx } from "@gridline";
-import { primaryNav, site } from "@/content/site";
+import { homeAnchors, primaryNav, site } from "@/content/site";
 
 import styles from "./SiteHeader.module.css";
 
@@ -24,7 +24,7 @@ export function SiteHeader() {
     <header className={styles.header} id="navbar">
       <div className={styles.inner}>
         <Link
-          href="#hero"
+          href={homeAnchors.hero}
           className={styles.brand}
           aria-label={`${site.name} home`}
         >
@@ -47,7 +47,7 @@ export function SiteHeader() {
         </nav>
 
         <div className={styles.actions}>
-          <Button href="#get-started" size="md">
+          <Button href={homeAnchors.getStarted} size="md">
             {site.ctaLabel}
           </Button>
           <button
@@ -81,7 +81,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <Button
-          href="#get-started"
+          href={homeAnchors.getStarted}
           size="lg"
           fullWidth
           className={styles.drawerCta}

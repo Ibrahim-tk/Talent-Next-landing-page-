@@ -1,0 +1,104 @@
+/* ==========================================================================
+   HeroOrbit — variation 3's asset cloud
+
+   Two rails of photographs flanking the centred copy. The rails are grid
+   columns handed to this component by `HeroSection.module.css`; everything
+   here positions items inside one.
+   ========================================================================== */
+
+.rail {
+  position: relative;
+  /* The rail has no content of its own in flow — every item is absolutely
+     positioned against it — so it would collapse to zero height and take
+     its items' `top: <percentage>` with it. Stretching to the row's height
+     is what gives those percentages something to be a percentage of. */
+  align-self: stretch;
+  /* Nothing in the cloud is interactive: it is decorative art behind a
+     headline, and a photograph that eats a click near the CTA is a bug
+     nobody reports and everybody feels. */
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   One item.
+
+   Every positional number is a custom property set inline from the content
+   file (see `heroOrbitItems`), so the composition is tuned by editing data
+   rather than by adding a class per slot to this stylesheet. Five items
+   would otherwise be five near-identical rules.
+
+   `opacity: 0` is the resting state on purpose, and it is the one thing
+   here that depends on JavaScript: the entry timeline fades each item in,
+   and the reduced-motion branch sets opacity directly. If the script never
+   runs, the cloud never appears — which is the right failure for decorative
+   art. The hero's sentence, its CTA and the blueprint grid are all still
+   there, because none of them is in this file.
+   -------------------------------------------------------------------------- */
+.item {
+  position: absolute;
+  top: var(--orbit-top);
+  width: var(--orbit-width);
+  aspect-ratio: var(--orbit-ratio);
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
+  border-radius: var(--gl-radius-md);
+  background-color: var(--gl-color-surface-sunken);
+  box-shadow: var(--gl-shadow-lg);
+  /* The resting tilt. GSAP overwrites `transform` wholesale the moment the
+     entry timeline starts, so this is what holds the angle for the frame
+     before it does — and what holds it for a reduced-motion viewer, whose
+     items are only ever faded in. */
+  transform: rotate(var(--orbit-rotation));
+  will-change: transform, opacity;
+}
+
+/* Which edge the inset is measured from. Splitting this by rail rather than
+   writing `left`/`right` into the inline style keeps the content file
+   describing *distance from the outer edge* — one number that means the
+   same thing on both sides — instead of two properties that mean opposite
+   things depending on which array entry you are reading. */
+[data-orbit-rail="left"] .item {
+  left: var(--orbit-inset);
+}
+
+[data-orbit-rail="right"] .item {
+  right: var(--orbit-inset);
+}
+
+/* The circular video. `border-radius: 50%` rather than a mask so the shape
+   survives the `overflow: hidden` above with no second clipping layer, and
+   no shadow — a drop shadow on a circle among tilted rectangles reads as a
+   button, which is exactly what this must not look like. */
+.itemVideo {
+  border-radius: 50%;
+  box-shadow: none;
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+
+   Below the breakpoint the rails are gone entirely — see the grid in
+   `HeroSection.module.css`, which collapses to a single column at the same
+   width. A phone has no margin to fly anything into: the copy needs the
+   full measure, and photographs squeezed into whatever is left would either
+   overlap the headline (the one thing this layout exists to prevent) or be
+   too small to read as photographs.
+
+   `display: none` rather than `visibility: hidden` is deliberate — the
+   entry hook tests `offsetParent` to decide what is actually laid out, and
+   only `display: none` answers that question honestly.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .rail {
+    display: none;
+  }
+}

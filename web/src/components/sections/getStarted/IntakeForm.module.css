@@ -1,8 +1,8 @@
 /* ==========================================================================
    IntakeForm — the two-panel intake questionnaire
    --------------------------------------------------------------------------
-   A dark "intro" column (heading + step progress) beside a light "step"
-   column (the active question). The two panels are grid siblings inside one
+   A dark "intro" column (the heading) beside a light "step" column (the
+   step meter and the active question). The two panels are grid siblings inside one
    SurfaceCard, so they always share a row height — whichever panel has more
    content sets it, and the other stretches to match.
 
@@ -14,46 +14,41 @@
    blurred `backdrop-filter`; it now reads as flat black instead, which
    makes the card a solid two-tone window rather than a frosted one.
 
-   The border is set here rather than via SurfaceCard's own `border="rule"`
-   — that token (`--gl-color-border-rule`) is a light neutral tuned for a
-   white background, so it read as a stark white outline against the image.
-   A low-opacity white instead stays a soft, subtle line against both the
-   image and the white step panel.
+   The card's own outline is `--gl-color-border-inverse`, the system's dark
+   hairline, because the card sits on a dark image — that is the whole of
+   the rule: two border colours, picked by the surface underneath. It was a
+   25% white for a while, chosen to stay soft against both the image and
+   the white step panel, but a bespoke third value here is exactly what the
+   two-colour rule exists to prevent.
    ========================================================================== */
 
 .shell {
   display: grid;
   grid-template-columns: 5fr 7fr;
-  border: var(--gl-border-width-hairline) solid rgba(255, 255, 255, 0.25);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-inverse);
 
-  /* Two scoped token overrides, not global edits: custom properties
-     inherit, so redeclaring them here re-tints everything the card renders
-     — pills, inputs, buttons — without touching the rest of the site.
+  /* One scoped token override, not a global edit: custom properties
+     inherit, so redeclaring this here re-tints everything the card renders
+     without touching the rest of the site.
 
-     1. The card was carrying two different blacks: `.introPanel` sits on
-        `--gl-color-surface-inverse` (#111111) while the Next/Send button
-        defaults to `--gl-color-action-primary-bg` (#000000, pure black).
-        Side by side in one card that reads as a mistake rather than a
-        contrast, so the button is pointed at the same near-black the panel
-        uses. The hover step stays as it is — it was already #262626, on the
-        same ramp.
-     2. The hairlines were `--gl-neutral-200`, a cool grey, sitting in a
-        warm, red-lit scene. Mixing a little of the accent into that grey
-        keeps the same quiet weight while putting the rules in the same
-        family as everything around them. `color-mix` from the accent token
-        (rather than a hand-picked hex) so a re-themed accent re-tints these
-        too — the same provenance rule the accent media tint follows. */
+     The card was carrying two different blacks: `.introPanel` sits on
+     `--gl-color-surface-inverse` (#111111) while the Next/Send button
+     defaults to `--gl-color-action-primary-bg` (#000000, pure black). Side
+     by side in one card that reads as a mistake rather than a contrast, so
+     the button is pointed at the same near-black the panel uses. The hover
+     step stays as it is — it was already #262626, on the same ramp.
+
+     A second override used to sit here, warming `--gl-color-border-rule`
+     with 14% of the accent so the hairlines inside this card sat better in
+     a red-lit scene. It has been removed: the card's internal rules are on
+     the white step panel, so they take the one light border colour the
+     system has, like every other light hairline on the site. */
   --gl-color-action-primary-bg: var(--gl-color-surface-inverse);
-  --gl-color-border-rule: color-mix(
-    in srgb,
-    var(--gl-color-accent) 14%,
-    var(--gl-neutral-200)
-  );
 }
 
 /* --------------------------------------------------------------------------
-   Intro panel — a flat, opaque black column holding nothing but the heading
-   and the progress bar. `--gl-color-surface-inverse` is the same near-black
+   Intro panel — a flat, opaque black column holding nothing but the
+   heading. `--gl-color-surface-inverse` is the same near-black
    (#111111) every other dark surface in the system uses, so this column
    matches the Deliverables band rather than introducing a second black.
 
@@ -68,7 +63,11 @@
   min-height: 320px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* Was `space-between`, which pinned the heading to the top and the step
+     meter to the bottom. The meter now lives above the question it reports
+     on (see IntakeForm.tsx), so the heading is this panel's only child and
+     simply starts at the top. */
+  justify-content: flex-start;
   gap: var(--gl-space-9);
   /* Was a flat 24px all round. Both panels now carry 48px top/bottom and
      56px left/right — the extra on the sides is deliberate, so the copy and
@@ -84,13 +83,14 @@
    page-level one. */
 .introPanel .introHeading {
   max-width: 22ch;
-  /* Up one rung of the modular scale from where it was (h6 → h5 at the
-     small end, h5 → h4 at the top), with the vw term multiplied by the
-     scale's own 1.25 ratio to match so the step holds at every width and
-     not just at the clamp ends. It is still set below `headingLg`'s own
-     default — this is a form panel's heading, not a page's — just no longer
-     the same size as the copy it sits above. */
-  font-size: clamp(var(--gl-scale-h5), 3vw, var(--gl-scale-h4));
+  /* Two rungs up the modular scale from where this started (h6 → h5 became
+     h5 → h4, and now h4 → h3), the vw term multiplied by the scale's own
+     1.25 ratio at each step so the jump holds at every width and not just
+     at the clamp ends. With the step meter moved out of this panel the
+     heading is the only thing left in it, and at the old size it sat small
+     in a tall black column; it now carries the column on its own and is
+     set above `headingLg`'s default rather than below it. */
+  font-size: clamp(var(--gl-scale-h4), 4.7vw, var(--gl-scale-h3));
   font-weight: var(--gl-weight-regular);
 }
 
@@ -108,10 +108,40 @@
      height: it's the taller of the two panels, so the grid row stretches
      `.introPanel` to match. Note it counts the padding too (border-box),
      so the 48/56 padding above eats into it — the content box grows by
-     less than the 140px this went up by. */
-  min-height: 560px;
+     less than the 140px this went up by. Raised again to 620 when the
+     question gaps widened: step 3 (two questions) outgrew 560 and would
+     otherwise have been the one step that stretched the card. */
+  min-height: 620px;
   padding: var(--gl-space-17) var(--gl-space-19);
   background-color: var(--gl-color-surface-raised);
+
+  /* One scoped token override, same provenance rule as `.shell`'s: the
+     options and the inputs both size themselves from `--gl-size-body-md`,
+     so redeclaring it here sizes the whole form side without touching body
+     copy anywhere else on the site.
+
+     18px is deliberately *off* the 1.25 modular scale, which offers only
+     16 (p) and 20 (h6) either side of it. A full rung up put the options at
+     the same size as the question that names them; a rung back down left
+     them at plain body size in a card where everything else had grown.
+     The half step is the one that reads right, and it stays contained to
+     this card — the scale itself is untouched. */
+  --gl-size-body-md: 1.125rem; /* 18px */
+
+  /* The pills alone come back to plain body size. At 18 they sat level with
+     the inputs and only a hair under the question naming them, which made
+     the stack read as four statements rather than four offers; 16 puts a
+     clear step between the question and the choices under it. */
+  --gl-pill-option-size: 1rem; /* 16px */
+}
+
+/* The step meter, now the first thing in the form. The gap under it is a
+   step wider than the one `.labelQuestion` puts under a question (40 vs 36)
+   so the three bands of the step read in the right order: the meter is a
+   header standing on its own, and the question and its options below it are
+   one group. */
+.progress {
+  margin-bottom: var(--gl-space-15);
 }
 
 .form {
@@ -120,8 +150,13 @@
   height: 100%;
 }
 
+/* Between two questions in one step (step 3's call time + free-text note).
+   Raised from 20px, which was narrower than the gap *inside* a question —
+   the note read as another option of the question above it rather than as a
+   question of its own. At 56 it clears the 36 a question puts above its own
+   controls by a comfortable margin. */
 .fieldGroup + .fieldGroup {
-  margin-top: var(--gl-space-9);
+  margin-top: var(--gl-space-19);
 }
 
 .fieldStack {
@@ -185,7 +220,7 @@
      side-by-side intro panel's height — hold enough room for the tallest
      step without carrying the full desktop figure down. */
   .stepPanel {
-    min-height: 480px;
+    min-height: 540px;
   }
 }
 

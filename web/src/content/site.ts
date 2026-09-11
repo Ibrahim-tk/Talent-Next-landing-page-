@@ -16,12 +16,26 @@ export interface SocialItem {
   icon: IconName;
 }
 
+/**
+ * Every in-page anchor in the header and footer is written root-relative
+ * (`/#how-it-works`, not `#how-it-works`). The two legal routes render the
+ * same header and footer as the landing page, and a bare hash there would
+ * resolve against `/privacy` — where none of those sections exist — leaving
+ * the nav dead. Root-relative hrefs scroll on the landing page and navigate
+ * back to it from anywhere else.
+ */
 export const primaryNav: readonly NavItem[] = [
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "What You’ll Get", href: "#what-youll-get" },
-  { label: "See It in Action", href: "#see-it-in-action" },
-  { label: "Get Started", href: "#get-started" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "What You’ll Get", href: "/#what-youll-get" },
+  { label: "See It in Action", href: "/#see-it-in-action" },
+  { label: "Get Started", href: "/#get-started" },
 ];
+
+/** Landing-page anchors the header's own controls point at. */
+export const homeAnchors = {
+  hero: "/#hero",
+  getStarted: "/#get-started",
+} as const;
 
 export const site = {
   name: "Talentnext",
@@ -35,12 +49,19 @@ export const site = {
 } as const;
 
 /**
- * Referenced both from the "Legal & Support" column below and from the
- * footer's closing legal bar, so the two never drift onto different hrefs.
+ * The two legal routes. Both are referenced from the "Legal & Support"
+ * column below *and* from the footer's closing legal bar, so the label and
+ * href each live in exactly one place and the two appearances cannot drift
+ * onto different destinations.
  */
+export const privacyNotice: NavItem = {
+  label: "Privacy Notice",
+  href: "/privacy",
+};
+
 export const termsOfUse: NavItem = {
   label: "Terms of Use",
-  href: "#get-started",
+  href: "/terms",
 };
 
 export const footerColumns: readonly {
@@ -54,16 +75,16 @@ export const footerColumns: readonly {
   {
     title: "The Process",
     links: [
-      { label: "30-Minute Conversation", href: "#how-it-works" },
-      { label: "Talent Agent Assessment", href: "#how-it-works" },
-      { label: "Strengths & Skill Gaps", href: "#what-youll-get" },
-      { label: "Personalized Roadmap", href: "#what-youll-get" },
+      { label: "30-Minute Conversation", href: "/#how-it-works" },
+      { label: "Talent Agent Assessment", href: "/#how-it-works" },
+      { label: "Strengths & Skill Gaps", href: "/#what-youll-get" },
+      { label: "Personalized Roadmap", href: "/#what-youll-get" },
     ],
   },
   {
     title: "Legal & Support",
     links: [
-      { label: "Privacy Policy", href: "#get-started" },
+      privacyNotice,
       termsOfUse,
       { label: site.supportEmail, href: `mailto:${site.supportEmail}` },
     ],

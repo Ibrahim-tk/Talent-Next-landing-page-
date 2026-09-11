@@ -20,12 +20,21 @@
 /* The grid-texture box that opens the section — a plain tiled repeat of the
    same blueprint pattern the hero masks radially behind its headline;
    here it's left unmasked and simply capped with a hairline, so it reads
-   as its own small "graph paper" panel rather than an atmospheric fade. */
+   as its own small "graph paper" panel rather than an atmospheric fade.
+
+   Its columns are a share of its width and it is pinned `left top`, which
+   is what puts the lattice on the canvas's two vertical rules rather than
+   centring it and cropping a part-cell against each. */
 .gridBox {
-  height: clamp(120px, 18vh, 200px);
+  /* Two whole rows rather than a fluid clamp, so the panel closes on a grid
+     line instead of cropping the third row of cells in half. The lattice is
+     tied to the frame width, so this height tracks the viewport on its own.
+     It ran three rows until the panel was judged too tall for what is only
+     a texture above the headline. */
+  height: calc(2 * var(--gl-blueprint-cell));
   background-image: var(--gl-gradient-blueprint);
-  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
-  background-position: center top;
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-rule);
 }
@@ -42,15 +51,27 @@
    child of its own for it. It spans the full width of the canvas column;
    `cover` (not `100% 100%`) keeps the dot pattern's own proportions intact
    at that width and crops the surplus height instead of stretching the dots
-   into ellipses. The height isn't set at all — the video is an in-flow
-   child, so the plate sizes to it plus the padding below, which is what
-   keeps a proportionate band of texture showing at every width. */
+   into ellipses. The height still isn't set directly — the video is an
+   in-flow child and the plate sizes to it plus the padding — but that
+   padding is now derived so the total comes to a whole number of grid
+   rows; see the rule below. */
 .plate {
   position: relative;
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: clamp(2.5rem, 6vw, 6rem) 0;
+  /* The padding is solved for rather than chosen, so the plate comes out a
+     whole 14 rows tall and its bottom edge lands on a grid line instead of
+     slicing a row of cells in half (only the inverse tone draws the grid
+     here, but the height is the same either way, so it is set once).
+
+     The video is the only in-flow child: 80% of this box's width at 16:9,
+     so exactly 45% of the width tall. Fourteen rows less that, halved, is
+     what is left for each of the two paddings. It works out at ~78px at
+     the frame's ceiling — near the ~88px the old
+     `clamp(2.5rem, 6vw, 6rem)` gave — and scales down with the frame,
+     because both terms here do. */
+  padding: calc((14 * var(--gl-blueprint-cell) - 45%) / 2) 0;
   background-image: url("/assets/videomask.png");
   background-size: cover;
   background-repeat: no-repeat;
@@ -79,7 +100,7 @@
 
 /* --------------------------------------------------------------------------
    Inverse tone — the dark treatment, opted into via the section's `tone`
-   prop (currently only by `/v2`).
+   prop (by the homepage and `/v2`; `/v1` and `/v3` stay light).
 
    The container is DeliverablesSection's, deliberately: that section had
    already solved a dark band on this canvas, and the answer is two boxes
@@ -147,9 +168,9 @@
 .toneInverse .gridBox,
 .toneInverse .plate {
   background-image: var(--gl-gradient-blueprint-inverse);
-  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
   background-repeat: repeat;
-  background-position: center top;
+  background-position: left top;
 }
 
 /* The letterbox behind the still is a light neutral, which would read as a

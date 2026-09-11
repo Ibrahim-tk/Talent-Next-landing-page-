@@ -1,0 +1,101 @@
+/* ==========================================================================
+   HeroBackdrop — variation 2's full-bleed photographic hero background
+
+   The breakout lives on `.section` in HeroSection.module.css, not here:
+   the whole hero is the 100vw box in this variation, so this only has to
+   fill it. (v3 does the opposite — its section stays in the column and only
+   the backdrop escapes it.)
+   ========================================================================== */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Above the section's own background, below the copy. A negative z-index
+     would drop it behind that background and paint nothing at all. */
+  z-index: var(--gl-z-base);
+
+  /* The photograph is the only thing painting this area, and it can't be
+     relied on to have finished by first paint. A dark ground underneath
+     means the white copy over it is legible from the first frame rather
+     than sitting on canvas white until the image arrives. */
+  background-color: var(--gl-color-surface-inverse);
+}
+
+.image {
+  object-fit: cover;
+  /* The frame is 3:2 and the hero box is far wider than that, so the crop
+     is vertical: roughly the middle 82% of the picture survives at desktop
+     proportions. Biased above centre because the standing figure runs
+     almost the full height of the frame — at 35% her head keeps clear air
+     above it and the crop takes her feet instead, which is the right half
+     to lose. A centred crop cuts the top of her head, and she is the whole
+     point of the photograph. */
+  object-position: center 35%;
+}
+
+/* --------------------------------------------------------------------------
+   Scrim — a flat darkening pass, a left-weighted ramp, and a top ramp.
+
+   Three layers because each answers a different problem. The flat pass is
+   what makes the photograph recede far enough for white type to sit on it
+   at all. The left-weighted ramp is where the copy actually is, so that is
+   where the contrast has to be unconditional rather than dependent on what
+   the picture happens to be doing — and it falls off to nothing on the
+   right, which is what keeps this from reading as a dark rectangle with a
+   photo hiding somewhere inside it.
+
+   The top ramp is doing the most work of the three, and it is not optional.
+   The nav over this section is fully transparent — the glass bar is nothing
+   but a blur, with no plate of its own (see SiteHeader.module.css) — so the
+   only thing standing between the white nav links and whatever the
+   photograph is doing up there is this gradient. In this frame that is a
+   sunlit glass curtain wall, which is exactly the bright-backdrop case a
+   transparent bar cannot survive on its own. The ramp is therefore set to
+   carry white type against the brightest thing in the picture, and it fades
+   out by the time the headline starts so the photograph is still a
+   photograph below it.
+
+   Which means: if the top ramp is ever weakened, the nav's transparency has
+   to be reconsidered in the same edit. They are one decision.
+   -------------------------------------------------------------------------- */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gl-z-stage);
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.58) 34%,
+      rgba(0, 0, 0, 0.2) 64%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.62) 0%,
+      rgba(0, 0, 0, 0.34) 11%,
+      rgba(0, 0, 0, 0.12) 26%,
+      rgba(0, 0, 0, 0) 52%
+    ),
+    rgba(0, 0, 0, 0.26);
+}
+
+/* On a phone the copy spans the full width rather than sitting in the left
+   half, so a left-to-right ramp would leave the end of every line on the
+   bright side of it. The horizontal weighting is dropped and the flat pass
+   deepens to carry the whole column on its own. The top ramp stays — the
+   nav is transparent at every width. */
+@media (max-width: 768px) {
+  .scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.62) 0%,
+        rgba(0, 0, 0, 0.34) 14%,
+        rgba(0, 0, 0, 0.3) 40%,
+        rgba(0, 0, 0, 0.3) 100%
+      ),
+      rgba(0, 0, 0, 0.34);
+  }
+}

@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ArchetypesSection } from "@/components/sections/archetypes/ArchetypesSection";
 import { DeliverablesSection } from "@/components/sections/deliverables/DeliverablesSection";
 import { GetStartedSection } from "@/components/sections/getStarted/GetStartedSection";
-import { HowItWorksSection } from "@/components/sections/howItWorks/HowItWorksSection";
+import { HowItWorksMatrixSection } from "@/components/sections/howItWorksMatrix/HowItWorksMatrixSection";
 import { InterviewSection } from "@/components/sections/interview/InterviewSection";
 import { SeeItInActionSection } from "@/components/sections/seeItInAction/SeeItInActionSection";
 import { HeroSection } from "@/components/variants/v3/hero/HeroSection";
@@ -18,6 +18,13 @@ import { HeroSection } from "@/components/variants/v3/hero/HeroSection";
  * `content/variants/v3/hero.ts`; everything below it is the exact same
  * component the live homepage renders, imported from
  * `components/sections/` and reading the same copy from `src/content/`.
+ *
+ * One shared section is picked rather than inherited: this page renders
+ * `HowItWorksMatrixSection`, the three-panel matrix, where the homepage and
+ * `/v2` render `sections/howItWorks/` — the same three steps laid out as
+ * one list beside a single still. Both are shared components reading the
+ * same copy from `howItWorksCopy`; neither is a private copy, and a change
+ * to the words reaches all four pages.
  *
  * That is deliberate, and it replaced an earlier arrangement where each
  * variation owned a private copy of all seven sections. The copies had
@@ -49,7 +56,7 @@ export default function Variant3Page() {
           <HeroSection />
           <ArchetypesSection />
           <InterviewSection />
-          <HowItWorksSection />
+          <HowItWorksMatrixSection />
           <DeliverablesSection />
           <SeeItInActionSection />
           <GetStartedSection />

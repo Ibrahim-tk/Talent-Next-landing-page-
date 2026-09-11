@@ -1,69 +1,67 @@
-import Image from "next/image";
-
-import { Button, Crosshair, GridModule, Highlight, Text } from "@gridline";
+import { Button, Text } from "@gridline";
 import { heroCopy } from "@/content/variants/v2/hero";
 
+import { HeroBackdrop } from "./HeroBackdrop";
 import styles from "./HeroSection.module.css";
 
 /**
  * The hero for landing page variation 2, served at `/v2`.
  *
- * Where v1 ends on the scroll-scrubbed asset cloud (`HeroStage` — the
- * phone, its glow, and three drifting product cards), this variation ends
- * on a single photograph running the full width of the canvas. That makes
- * the whole section server-rendered: there is no scroll-driven motion left
- * in it, so nothing here needs to run on the client.
+ * A full-bleed photographic hero: one still running edge to edge of the
+ * viewport and up behind the nav, with the copy set over it as a single
+ * left-aligned stack.
+ *
+ * This is the one section on the page that steps outside the design
+ * system's frame entirely. Everywhere else — including the rest of this
+ * page — content is a `GridModule` inside the `GridCanvas` column, bounded
+ * by the two constant vertical rules. Here there is no `GridModule`, no
+ * blueprint lattice, no corner crosshairs and no hairline: the section is a
+ * plain element that breaks out to the full viewport width (see
+ * `.section`), so the picture genuinely runs end to end rather than
+ * stopping at the rules. The frame resumes at the section below it.
+ *
+ * Deliberate, and the reason it is confined to this one variation: the
+ * canvas rules are the design system's signature, and a hero is the only
+ * place worth spending them.
  */
 export function HeroSection() {
   return (
-    <GridModule
-      id="hero"
-      rule="bottom"
-      clip
-      aria-label="Introduction"
-      className={styles.section}
-    >
-      <div className={styles.blueprint} aria-hidden="true" />
-      <Crosshair corner="topLeft" />
-      <Crosshair corner="topRight" />
+    <section id="hero" aria-label="Introduction" className={styles.section}>
+      <HeroBackdrop />
 
       <div className={styles.content}>
-        <Text variant="display" as="h1" className={styles.headline}>
+        {/* `tone` as well as the colour in the stylesheet: relying on this
+            module's own rule to beat Text's variant class means relying on
+            CSS Module ordering, which the design system explicitly says not
+            to do (gridline/README.md). */}
+        <Text
+          variant="display"
+          as="h1"
+          tone="inverse"
+          className={styles.headline}
+        >
           <span className={styles.headlineLead}>{heroCopy.headlineBefore}</span>
-          <Highlight className={styles.headlineAccent}>
+          <span className={styles.headlineAccent}>
             {heroCopy.headlineAccent}
-          </Highlight>
+          </span>
           <span className={styles.headlineLead}>{heroCopy.headlineAfter}</span>
         </Text>
 
-        <Text variant="bodyMd" className={styles.body}>
+        <Text
+          variant="bodyMd"
+          tone="inverseSecondary"
+          className={styles.body}
+        >
           {heroCopy.body}
         </Text>
 
-        <div className={styles.ctaDock}>
-          {/* The accent variant rather than the default black square: this is
-              the one action on the page the whole hero exists to deliver, and
-              the accent is already carrying the headline's key word right
-              above it. */}
-          <Button href={heroCopy.ctaHref} variant="accent" size="lg">
-            {heroCopy.ctaLabel}
-          </Button>
-        </div>
+        {/* The accent variant rather than the default black square: this is
+            the one action on the page the whole hero exists to deliver, and
+            black would disappear into the photograph behind it. */}
+        <Button href={heroCopy.ctaHref} variant="accent" size="lg">
+          {heroCopy.ctaLabel}
+        </Button>
       </div>
-
-      {/* The closing band. `fill` + `cover` rather than an intrinsically
-          sized image: the band's height is set by the layout (a wide strip,
-          not the photo's own 3:2) and the photo is cropped into it. */}
-      <div className={styles.media}>
-        <Image
-          src={heroCopy.image.src}
-          alt={heroCopy.image.alt}
-          fill
-          sizes="100vw"
-          priority
-          className={styles.mediaImage}
-        />
-      </div>
-    </GridModule>
+    </section>
   );
 }

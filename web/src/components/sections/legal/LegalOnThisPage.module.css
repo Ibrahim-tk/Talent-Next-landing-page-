@@ -1,0 +1,54 @@
+/* ==========================================================================
+   LegalOnThisPage — the right rail
+   --------------------------------------------------------------------------
+   Lighter than the left rail in every respect: no fill, no track, no
+   indent. Its one border — the hairline dividing it from the document —
+   belongs to the page shell's column, not to this component, so the divider
+   runs the full height of the article rather than stopping where the list
+   ends.
+   ========================================================================== */
+
+.root {
+  display: block;
+}
+
+.title {
+  margin-bottom: var(--gl-space-9);
+  color: var(--gl-color-text-muted);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Grid rather than flex so a wrapped label's second line aligns under the
+   first instead of running back beneath its number. */
+.link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--gl-space-4);
+  padding: var(--gl-space-3) 0;
+  font-size: var(--gl-size-body-sm);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-muted);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.link > span:only-child {
+  grid-column: 1 / -1;
+}
+
+.link:hover {
+  color: var(--gl-color-text-primary);
+}
+
+.linkActive,
+.linkActive:hover {
+  color: var(--gl-color-text-accent);
+}
+
+.number {
+  font-variant-numeric: tabular-nums;
+}

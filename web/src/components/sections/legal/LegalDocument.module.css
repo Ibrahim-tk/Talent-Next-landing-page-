@@ -1,0 +1,182 @@
+/* ==========================================================================
+   LegalDocument
+   --------------------------------------------------------------------------
+   A single measured prose column. Vertical rhythm is owned here rather than
+   by the blocks themselves: each block type sets only a top margin, and the
+   first-child reset below keeps the column from opening with a gap. That way
+   the spacing between, say, a paragraph and the heading after it is one rule
+   in one place, not a pair of competing margins.
+   ========================================================================== */
+
+.column {
+  /* Left-aligned on the same measure as the article's own title and
+     breadcrumb above it, not centred in the cell: the document sits in the
+     middle column of a docs layout, and prose floated to the centre of that
+     column would drift away from the rail that indexes it. Padding belongs
+     to the article cell in LegalPage, so the column sets none of its own. */
+  max-width: var(--gl-measure-prose);
+}
+
+.column > *:first-child {
+  margin-top: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Headings
+   -------------------------------------------------------------------------- */
+
+/* No rule above a section. The canvas's ruled-module idiom is the wrong
+   device inside a document: a hairline every few paragraphs chops one
+   continuous read into a stack of bands. Separation is carried by the size
+   jump to the heading role and by the space above it instead. */
+.sectionHead {
+  margin-top: var(--gl-space-21);
+}
+
+.sectionNumber {
+  margin-bottom: var(--gl-space-4);
+}
+
+.sectionHeading {
+  text-wrap: balance;
+}
+
+.subsectionHead {
+  margin-top: var(--gl-space-17);
+}
+
+.subsectionHeading {
+  text-wrap: balance;
+}
+
+/* The subsection's own number sits in the accent, inline with its heading,
+   so "7.2 Cookies" reads as one line and the cross-references in the body
+   copy ("see Section 7.2") have something to land on. */
+.subsectionNumber {
+  color: var(--gl-color-text-accent);
+  margin-right: var(--gl-space-3);
+}
+
+/* An unnumbered run-in heading, set in the `eyebrow` role — the same small
+   uppercase label the footer's column titles use. A legal outline runs four
+   levels deep and the scale only has three heading steps above the prose, so
+   this fourth level separates itself by case and tracking rather than by
+   size. Reaching for a heavier weight instead is not an option: Helvetica
+   Neue Regular is the system's only weight. */
+.runInHeading {
+  margin-top: var(--gl-space-15);
+  margin-bottom: calc(-1 * var(--gl-space-3));
+}
+
+/* --------------------------------------------------------------------------
+   Prose
+   -------------------------------------------------------------------------- */
+.paragraph {
+  margin-top: var(--gl-space-9);
+}
+
+/* A defined term ("**Notice**"). `<strong>` would otherwise come through at
+   the browser's bold default, which this system does not ship — the emphasis
+   is carried by stepping the colour up to the heading tone instead. */
+.term {
+  font-weight: var(--gl-weight-regular);
+  color: var(--gl-color-text-primary);
+}
+
+.link {
+  color: var(--gl-color-text-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.link:hover {
+  color: var(--gl-color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Lists
+   -------------------------------------------------------------------------- */
+.list {
+  margin-top: var(--gl-space-9);
+  padding-left: var(--gl-space-11);
+  list-style: disc;
+}
+
+.orderedList {
+  list-style: decimal;
+}
+
+.listItem {
+  font-size: var(--gl-type-body-md-size);
+  line-height: var(--gl-type-body-md-leading);
+  color: var(--gl-color-text-body);
+  padding-left: var(--gl-space-3);
+}
+
+.listItem + .listItem {
+  margin-top: var(--gl-space-5);
+}
+
+.listItem::marker {
+  color: var(--gl-color-border-interactive);
+}
+
+.nestedList {
+  margin-top: var(--gl-space-5);
+  list-style: circle;
+}
+
+/* --------------------------------------------------------------------------
+   Notice — a labelled call-out box
+   --------------------------------------------------------------------------
+   A bordered box with a tinted header strip naming it ("Note",
+   "Important") over a white body. The label is a real line of text rather
+   than colour alone, so the box says what it is without relying on a
+   reader distinguishing one quiet grey from another.
+   -------------------------------------------------------------------------- */
+.notice {
+  margin-top: var(--gl-space-13);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.noticeHead {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-4);
+  padding: var(--gl-space-6) var(--gl-space-11);
+  background-color: var(--gl-color-surface-sunken);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+}
+
+.noticeIcon {
+  flex: none;
+  color: var(--gl-color-text-accent);
+}
+
+.noticeLabel {
+  color: var(--gl-color-text-primary);
+}
+
+.noticeText {
+  padding: var(--gl-space-11);
+}
+
+/* --------------------------------------------------------------------------
+   Contact block
+   -------------------------------------------------------------------------- */
+.contact {
+  margin-top: var(--gl-space-13);
+  padding: var(--gl-space-12);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.contactHeading {
+  margin-bottom: var(--gl-space-7);
+}
+
+.contactLine + .contactLine {
+  margin-top: var(--gl-space-2);
+}

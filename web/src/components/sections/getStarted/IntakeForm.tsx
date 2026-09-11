@@ -33,8 +33,8 @@ const stepProgress = [25, 50, 75, 100] as const;
  * The four-step intake questionnaire.
  *
  * Laid out as two panels sharing one card: a flat black intro panel
- * (heading + step progress, no image layer of its own) beside the active
- * step's fields, painted fully opaque white. Real React
+ * (the heading alone, no image layer of its own) beside the active step's
+ * fields — step meter included — painted fully opaque white. Real React
  * state drives which step is mounted, so the browser's own validation can
  * run on submit.
  *
@@ -91,12 +91,6 @@ export function IntakeForm() {
         >
           {getStartedCopy.heading}
         </Text>
-        <ProgressTrack
-          value={progress}
-          tone="accent"
-          size="sm"
-          label={`Step ${step} of ${STEP_COUNT}`}
-        />
       </div>
 
       <div className={styles.stepPanel}>
@@ -112,9 +106,25 @@ export function IntakeForm() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className={styles.form}>
+            {/* The step meter sits directly above the question it belongs
+                to rather than in the intro panel's bottom corner, where it
+                was a long way from the thing whose progress it reports. */}
+            <ProgressTrack
+              value={progress}
+              tone="accent"
+              size="sm"
+              label={`Step ${step} of ${STEP_COUNT}`}
+              className={styles.progress}
+            />
+
             {step === 1 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.situation} question required>
+                <Field
+                  label={formLabels.situation}
+                  labelVariant="title"
+                  question
+                  required
+                >
                   <PillGroup
                     label={formLabels.situation}
                     options={situationOptions}
@@ -128,7 +138,12 @@ export function IntakeForm() {
 
             {step === 2 ? (
               <div className={styles.fieldGroup}>
-                <Field label={formLabels.goal} question required>
+                <Field
+                  label={formLabels.goal}
+                  labelVariant="title"
+                  question
+                  required
+                >
                   <PillGroup
                     label={formLabels.goal}
                     options={goalOptions}
@@ -143,7 +158,12 @@ export function IntakeForm() {
             {step === 3 ? (
               <>
                 <div className={styles.fieldGroup}>
-                  <Field label={formLabels.callTime} question required>
+                  <Field
+                    label={formLabels.callTime}
+                    labelVariant="title"
+                    question
+                    required
+                  >
                     <PillGroup
                       label={formLabels.callTime}
                       options={callTimeOptions}
@@ -160,6 +180,7 @@ export function IntakeForm() {
                     name="whats_next"
                     type="text"
                     label={formLabels.whatsNext}
+                    labelVariant="title"
                     question
                     placeholder={formLabels.whatsNextPlaceholder}
                   />

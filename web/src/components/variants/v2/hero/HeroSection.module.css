@@ -1,201 +1,209 @@
 /* ==========================================================================
    HeroSection — landing page variation 2 (/v2)
 
-   Same copy block as v1, but the section closes on a full-width photograph
-   instead of v1's phone-and-cards asset stage.
+   A full-bleed photographic hero. The picture is `HeroBackdrop`; everything
+   here is the section's own breakout from the frame, plus the copy laid
+   over the photograph at the left.
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   The breakout.
+
+   This section is not a `GridModule` and is not bounded by the GridCanvas
+   column: it is the one place on the page that crosses the canvas's two
+   vertical rules, because the hero is meant to read as a photograph filling
+   the window rather than a picture inside a frame.
+
+   `width: 100vw` + `margin-left: calc(50% - 50vw)` is the same margin-only
+   breakout `SiteHeader` uses, rather than the `left: 50%` variant v3's
+   backdrop uses. Both re-centre a 100vw box on the viewport; the margin-only
+   form is preferred here because it works on a plain in-flow element with no
+   `position` of its own to lean on, and `body` already carries
+   `overflow-x: hidden` (gridline/styles/reset.css) so the 100vw box can't
+   introduce a horizontal scrollbar.
+
+   No `overflow: hidden` is needed: `HeroBackdrop` clips its own image, and
+   nothing else here leaves the box.
+   -------------------------------------------------------------------------- */
 .section {
   position: relative;
-  overflow: hidden;
-  padding: var(--gl-space-block-xl) var(--gl-space-11) 0 var(--gl-space-11);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+
+  /* The picture starts at the very top of the page, behind the nav. The
+     header is `position: sticky` and therefore still takes its own height
+     out of the flow, so the hero is pulled back up by exactly that much;
+     the sticky bar then floats over the image instead of sitting above it.
+     `HeroBackdrop` puts the nav into its frosted "blur" theme for as long
+     as this section is on screen, which is the other half of the effect —
+     without it a white bar would still cap the photograph.
+
+     The hairline is part of that height and has to be in the sum: the
+     header is `--gl-header-height` of content *plus* its own bottom border,
+     so cancelling the token alone leaves the hero starting at y=1 with a
+     one-pixel seam of canvas white above the photograph — and, worse, puts
+     the section a pixel out of range of the check that hands the nav its
+     theme on first paint (see `useDarkNavRegion`).
+
+     The same height then goes back onto the top padding, so the copy is
+     measured from below the nav rather than from behind it. */
+  margin-top: calc(
+    (var(--gl-header-height) + var(--gl-border-width-hairline)) * -1
+  );
+
+  /* Exactly one screenful, uncapped — the hero starts at the top of the
+     document, behind the nav, and ends at the fold. `svh` is the
+     small-viewport unit, so a mobile browser measures against its collapsed
+     chrome and the hero doesn't jump as the address bar hides; `vh` stays
+     as the fallback for anything that lacks it. */
+  min-height: 100vh;
+  min-height: 100svh;
+
+  /* One gutter value for the whole section. Wider than the frame's own
+     gutter on purpose: with the canvas rules gone there is no longer a line
+     telling the eye where the page starts, so the copy's left edge has to
+     do that job by itself, and it needs room to. */
+  --hero-gutter: clamp(1.5rem, 6vw, 7rem);
+
+  padding: calc(var(--gl-header-height) + clamp(3rem, 8vh, 6rem))
+    var(--hero-gutter) clamp(3rem, 8vh, 6rem);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-/* The blueprint grid, faded out radially so it reads only behind the copy and
-   never competes with the phone. */
-.blueprint {
-  position: absolute;
-  inset: 0;
-  background-image: var(--gl-gradient-blueprint);
-  background-size: var(--gl-blueprint-cell) var(--gl-blueprint-cell);
-  background-position: center top;
-  pointer-events: none;
-  z-index: var(--gl-z-base);
-  mask-image: var(--gl-mask-blueprint);
-  -webkit-mask-image: var(--gl-mask-blueprint);
-}
+/* --------------------------------------------------------------------------
+   The copy stack — one left-aligned column, vertically centred in the frame.
 
+   Capped rather than left to run the full 100vw: the section is now as wide
+   as the window, and a headline that grew with it would have nothing but
+   photograph left to sit on. The cap is sized to the headline itself — six
+   capitals at the accent's ceiling measure roughly 635px in this face — so
+   "TALENT" sets on one line at every width with a little room to spare, and
+   the block reads as occupying the left of the frame rather than crossing
+   it. Below 44rem of available width the cap simply stops binding, which is
+   why there is no mobile override for it.
+   -------------------------------------------------------------------------- */
 .content {
   position: relative;
   z-index: var(--gl-z-content);
-  max-width: var(--gl-measure-hero);
-  text-align: center;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 44rem;
 }
 
 /* A flex column, rather than relying on natural inline wrapping, is what
-   guarantees each of the three segments sits on its own line and is
-   centered as a unit — `text-wrap: balance` alone can't promise that once
-   the accent word's size is this different from its neighbours. */
+   guarantees each of the three segments sits on its own line — `text-wrap`
+   alone can't promise that once the accent word's size is this different
+   from its neighbours. `align-items: flex-start` then makes each line start
+   on the same left edge, which is the whole point of the left-aligned
+   setting: the three lines read as one block held by a single margin. */
 .headline {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-bottom: var(--gl-space-9);
-  max-width: 1180px;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: var(--gl-space-21);
+  color: var(--gl-color-text-inverse);
 
-  /* One knob for the whole headline. Both settings below are on-scale steps
-     multiplied by this factor, rather than off-scale numbers written out
-     directly: the sizes still declare which rung of the modular scale they
-     came from, and eye-tuning the headline stays a one-line edit. 0.9 is a
-     deliberate off-ratio trim on top of the two-step increase — 1.40625x the
-     original setting in total. */
-  --hero-type-trim: 0.9;
+  /* One knob for the whole headline, the same pattern v1 and v3 use. Both
+     settings below are on-scale steps multiplied by this factor, rather
+     than off-scale numbers written out directly: the sizes still declare
+     which rung of the modular scale they came from, and eye-tuning the
+     headline stays a one-line edit. */
+  --hero-type-trim: 1.12;
 }
 
 /* "Uncover the" / "You Already Have." — sized as the frame around the accent
-   word rather than the focal point, and stepped up two rungs of the modular
-   scale (h5 → h3 becomes h3 → h1) for the larger headline setting. Two
-   rungs is 1.5625x, the on-scale reading of "1.5x": the scale's ratio is
-   1.25, so a literal 1.5 would land between steps and break the one rule
-   the type system has. The vw term is stepped by the same factor, so the
-   increase holds at every viewport width, not only at the clamp ends — and
-   `--hero-type-trim` above then takes the whole thing back down by eye. */
+   word rather than the focal point. The h4 → h1 pair, with the fluid middle
+   term stepped by the same trim as the ceiling so the setting holds at every
+   viewport width and not only at the clamp ends.
+
+   Grey rather than white: on a photograph, three lines of solid white read
+   as one undifferentiated slab. Dropping the lead lines to the secondary
+   inverse tone is what lets the accent word be the thing the eye lands on,
+   and it is the same job the gradient plate does on the other two heroes. */
 .headlineLead {
   font-family: var(--gl-font-sans);
   font-size: clamp(
-    calc(var(--gl-scale-h3) * var(--hero-type-trim)),
-    calc(4.06vw * var(--hero-type-trim)),
+    var(--gl-scale-h4),
+    calc(3.9vw * var(--hero-type-trim)),
     calc(var(--gl-scale-h1) * var(--hero-type-trim))
   );
   font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-normal);
+  color: var(--gl-color-text-inverse-secondary);
 }
 
 /* "TALENT" — the one word the heading exists to deliver. The system is
-   single-typeface now, so scale alone separates it from the lead lines.
+   single-typeface now, so scale and tone alone separate it from the lead
+   lines: it is the only part of the headline at full white, and it is set
+   roughly two and a half times their size.
 
-   Taken down exactly one rung of the modular scale from where it was:
-   2xl (was 3xl) at the small end and 5xl/149.01px (was 6xl/186.26px) at the
-   top, with the vw term divided by the scale's own 1.25 ratio to match
-   (14.06 → 11.25) so the reduction holds at every width and not just at the
-   clamp ends. One rung rather than a hand-picked percentage keeps the word
-   on-scale, which is the single rule the type system has — the steps above
-   h1 exist in primitives.css precisely so this word can be sized this way.
-
-   The descendant selector (rather than relying on source order against
-   Highlight's own `.root`) is what guarantees this wins over
-   `font: inherit`. */
-.headline .headlineAccent {
+   Flat white rather than the gradient plate v1 and v3 paint through these
+   letterforms. The plate is a red-to-pink ramp designed to be read against
+   the canvas; over a photograph its pale end loses contrast exactly where
+   the picture is brightest, and the word stops being the anchor the rest of
+   the composition is hung on. White is unconditional. */
+.headlineAccent {
   display: inline-block;
   font-family: var(--gl-font-sans);
   font-size: clamp(
-    calc(var(--gl-scale-2xl) * var(--hero-type-trim)),
-    calc(11.25vw * var(--hero-type-trim)),
+    var(--gl-scale-2xl),
+    calc(9.4vw * var(--hero-type-trim)),
     calc(var(--gl-scale-5xl) * var(--hero-type-trim))
   );
   font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-normal);
-  line-height: 0.9;
+  line-height: 0.92;
+  color: var(--gl-color-text-inverse);
 
-  /* The gaps between the three lines. Still `em` rather than a space token
+  /* The gaps between the three lines. `em` rather than a space token
      deliberately: the value has to track the accent's own size, which is
      fluid, or it would read as a hairline nudge at 76px and a chasm at
-     149px.
-
-     This used to be -0.06em, pulling the lines into each other so the three
-     read as one block. It's now a small positive value instead: the three
-     lines still read as one block at this setting, and the negative overlap
-     had them sitting close enough that the accent's cap-height nearly
-     touched the lines above and below it. */
+     167px. */
   margin-block: 0.04em;
 }
 
-/* The gradient plate, painted through the letterforms.
-   `background-clip: text` with a transparent fill is the only way to get an
-   *image* into type; the guard matters because the fallback for an
-   unsupported browser is not "no gradient" but an invisible headline — so
-   the flat accent colour above stands until support is confirmed.
-
-   Only the plate's top-right quadrant is used: `200% 200%` scales the
-   artwork to twice the word's box in both axes and `right top` pins that
-   oversized image by its top-right corner, so the window onto it is exactly
-   the corner quarter. That crop is the hot red sweeping diagonally out to
-   pale pink — a brighter, more directional ramp across six letters than the
-   whole plate gives, which averages down to a flat mid-rose once it is
-   squeezed into a band this wide and short. The quadrant is squeezed too,
-   but the artwork is an out-of-focus gradient, so the aspect change has
-   nothing to distort. */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .headline .headlineAccent {
-    background-image: var(--gl-image-accent-plate);
-    background-size: 200% 200%;
-    background-position: right top;
-    background-repeat: no-repeat;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
-}
-
 .body {
-  max-width: 720px;
-  margin-bottom: var(--gl-space-14);
-}
-
-/* The button stands on its own — no dashed dock, no microcopy line beneath
-   it — so this wrapper only carries the gap down to the image band. */
-.ctaDock {
-  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+  /* Shorter than the headline's own cap. Left to fill the column the
+     paragraph would set at roughly 88 characters a line, which is past the
+     width at which a reader reliably finds the start of the next one — and
+     this is the paragraph that actually has to be read. 62ch keeps the
+     block visibly related to the headline above it without going there. */
+  max-width: 62ch;
+  margin-bottom: var(--gl-space-19);
 }
 
 /* --------------------------------------------------------------------------
-   Closing image band — rule to rule, flush with the module's bottom edge.
-
-   The breakout is a negative inline margin cancelling `.section`'s own
-   horizontal padding, NOT the `left: 50%` / `100vw` trick the interview and
-   deliverables sections use. Those sit in modules that don't clip; this one
-   is a `clip` GridModule, so a 100vw box would be cut back to the module's
-   width regardless — and GridCanvas's rule is that nothing bleeds past the
-   two vertical rules anyway. `align-self: stretch` is what lets the band
-   ignore the column's `align-items: center`.
-
-   The height is a fixed strip rather than the photo's own 3:2: at this
-   width 3:2 would stand roughly a screen tall and push the whole hero out
-   of view, so the photo is cropped into the band instead. `object-position`
-   sits above centre because the subjects' heads are in the upper half of
-   the frame and a centred crop takes the tops off them.
+   Responsive
    -------------------------------------------------------------------------- */
-.media {
-  position: relative;
-  z-index: var(--gl-z-content);
-  align-self: stretch;
-  margin-inline: calc(var(--gl-space-11) * -1);
-  height: clamp(320px, 46vh, 560px);
-  overflow: hidden;
-}
 
-.mediaImage {
-  object-fit: cover;
-  object-position: center 38%;
-}
-
-@media (max-width: 768px) {
-  .section {
-    padding-top: var(--gl-space-17);
+/* Below the desktop layout the headline needs a steeper fluid term to stay
+   legible as the viewport narrows, and the body's measure stops earning its
+   keep — a 62-character cap is already wider than a phone, so all it can do
+   is nothing. Both are set against the viewport here rather than the
+   column, because at this width they are the same constraint. */
+@media (max-width: 900px) {
+  .headlineLead {
+    font-size: clamp(
+      var(--gl-scale-h5),
+      calc(5.6vw * var(--hero-type-trim)),
+      calc(var(--gl-scale-h2) * var(--hero-type-trim))
+    );
   }
 
-  /* A shorter strip on phones — the same clamp floor would eat most of a
-     small viewport once the headline above it has wrapped to four or five
-     lines. */
-  .media {
-    height: clamp(220px, 34vh, 320px);
+  .headlineAccent {
+    font-size: clamp(
+      var(--gl-scale-h2),
+      calc(13.5vw * var(--hero-type-trim)),
+      calc(var(--gl-scale-3xl) * var(--hero-type-trim))
+    );
+  }
+
+  .body {
+    max-width: none;
   }
 }

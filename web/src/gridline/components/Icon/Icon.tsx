@@ -22,7 +22,9 @@ export type IconName =
   | "linkedin"
   | "x"
   | "instagram"
-  | "play";
+  | "play"
+  | "info"
+  | "chevronRight";
 
 export interface IconProps {
   name: IconName;
@@ -98,6 +100,14 @@ const iconPaths: Record<IconName, () => ReactNode> = {
   // centroid, not its bounding box, sits in the middle of the glyph — a
   // dead-centre triangle reads as leaning left.
   play: () => <polygon points="9 6.5 18 12 9 17.5" />,
+  info: () => (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <line x1="12" y1="11" x2="12" y2="16" />
+      <line x1="12" y1="8" x2="12" y2="8" />
+    </>
+  ),
+  chevronRight: () => <polyline points="9 5 16 12 9 19" />,
 };
 
 const filledIcons: ReadonlySet<IconName> = new Set([

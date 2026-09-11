@@ -14,12 +14,28 @@ import { HeroSection } from "@/components/variants/v2/hero/HeroSection";
  * Landing page variation 2, served at `/v2`.
  *
  * The hero comes from `components/variants/v2/hero/` and reads its copy
- * from `content/variants/v2/hero.ts`. Everything below it is the exact same
- * component the live homepage renders, imported from `components/sections/`
- * and reading the same copy from `src/content/` — the one other difference
- * is that "See It in Action" is asked for its dark treatment here, via that
- * section's own `tone` prop. That is a prop and not a forked copy of the
- * section on purpose; see the note below.
+ * from `content/variants/v2/hero.ts`. It is again the only thing this page
+ * varies: the step-list treatment of "It Starts with 30 Minutes." started
+ * here as a private copy under `components/variants/v2/`, the homepage has
+ * since adopted it, and it now lives in `sections/howItWorks/` where both
+ * pages render the very same component. (`/v1` and `/v3` stay on
+ * `sections/howItWorksMatrix/`, the older three-panel layout — also shared,
+ * also reading the same copy.)
+ *
+ * Everything else is the exact same component the live homepage renders,
+ * imported from `components/sections/` and reading the same copy from
+ * `src/content/`. The dark treatment of "See It in Action" started on this
+ * page and the homepage has since adopted it; the tone is still passed
+ * explicitly on both rather than baked into the section, so either can be
+ * taken back to the light plate on its own.
+ *
+ * The hero is also the one section on this page that is not inside the
+ * GridCanvas frame. It is a full-bleed photograph that breaks out to the
+ * full viewport width and runs up behind the sticky nav, which it puts
+ * into its frosted "blur" theme for as long as it is on screen. It still
+ * renders inside `GridCanvas` — everything on the page does — but it
+ * deliberately crosses the canvas's two vertical rules rather than
+ * stopping at them. The frame resumes at `ArchetypesSection` below it.
  *
  * That is deliberate, and it replaced an earlier arrangement where each
  * variation owned a private copy of all seven sections. The copies had

@@ -6,6 +6,8 @@ import {
   footerColumns,
   footerCopy,
   footerSocial,
+  homeAnchors,
+  privacyNotice,
   site,
   termsOfUse,
 } from "@/content/site";
@@ -17,7 +19,7 @@ export function SiteFooter() {
     <footer className={styles.footer} id="footer" aria-label="Site footer">
       <div className={styles.row}>
         <div className={cx(styles.cell, styles.brandCell)}>
-          <Link href="#hero" aria-label={`${site.name} home`}>
+          <Link href={homeAnchors.hero} aria-label={`${site.name} home`}>
             <Image
               src={site.logoBlack}
               alt={site.name}
@@ -76,6 +78,10 @@ export function SiteFooter() {
           <Text variant="caption" as="span" tone="muted">
             {footerCopy.legal}
           </Text>
+          <span className={styles.legalDot} aria-hidden="true" />
+          <Link href={privacyNotice.href} className={styles.legalLink}>
+            {privacyNotice.label}
+          </Link>
           <span className={styles.legalDot} aria-hidden="true" />
           <Link href={termsOfUse.href} className={styles.legalLink}>
             {termsOfUse.label}
