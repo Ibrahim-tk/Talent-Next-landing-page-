@@ -306,22 +306,29 @@
      a near-white field from looking like a hole. Both are cool and weak:
      the card should look lifted, not cut out.
 
-     Every offset and radius here is 0.8x what it was, alphas untouched. The
-     pair was reading as a card hovering well off the mesh; pulled in, it
-     sits ON it. Scaled together on purpose — the two shadows are one light,
-     and shortening only the cast one would put the light somewhere else. */
-  /* Wide and faint. Both were roughly twice this strong and half as soft,
-     which on a ground already only a few percent off white read as a drop
-     shadow drawn round the card rather than as the card being off the page.
-     The rule the pair follows now: the further a shadow is thrown the softer
-     AND the fainter it gets, so the blur is up by half and the alpha is down
-     by nearly half in both.
+     Wide and faint, and the rule the pair follows is that the further a
+     shadow is thrown the softer AND the fainter it gets — which is why the
+     cast one is three times the blur of the contact one at not quite twice
+     the alpha.
+
+     PULLED DOWN IN TWO DIMENSIONS, over three passes. The geometry went to
+     0.8x and then to 0.7x of that, so every offset and radius is 0.56x what
+     it started at; the alphas then went to 0.7x on top, which is the lever
+     that actually changes how much shadow you SEE — shortening a soft
+     shadow mostly moves the darkness around, where thinning it removes it.
+     What is left is about as faint as a shadow can be and still be doing its
+     job, which on a ground this pale is to stop a white card reading as a
+     hole rather than to lift it off the page.
+
+     Both shadows are scaled together at every pass, on purpose: they are one
+     light, and changing only the cast one would put the light source
+     somewhere else.
 
      The tint stays cool — `15, 23, 42` is a blue-black, not a neutral one.
      A grey shadow on a warm white goes muddy; a cool one stays a shadow. */
   box-shadow:
-    0 -2px 28px rgba(15, 23, 42, 0.03),
-    0 24px 72px rgba(15, 23, 42, 0.05);
+    0 -1.4px 19.6px rgba(15, 23, 42, 0.021),
+    0 16.8px 50.4px rgba(15, 23, 42, 0.035);
 }
 
 /* Both columns remount on every tab switch (see the component's note on
