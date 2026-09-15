@@ -20,19 +20,31 @@
   --gl-color-surface-accent-soft: rgba(255, 72, 55, 0.08);
   --gl-color-surface-success: var(--gl-green-50);
 
-  /* The three grounds the Tal band's panels sit on, and the ruled lines drawn
+  /* The three grounds the Tal band's panels sit on, and the marks drawn
      across each. One per behaviour, in the order `agentBehaviours` lists them
      — the band turns itself over on a timer, and the change of ground is what
      tells the reader a new panel has arrived rather than the same one being
      rewritten. Nothing outside that band should use these: they are grounds
      for a white card, not general surfaces, and the `-line` values are far
-     too light to carry type. */
-  --gl-color-surface-plate-green: var(--gl-plate-green-50);
-  --gl-color-surface-plate-amber: var(--gl-plate-amber-50);
-  --gl-color-surface-plate-azure: var(--gl-plate-azure-50);
-  --gl-color-plate-line-green: var(--gl-plate-green-200);
-  --gl-color-plate-line-amber: var(--gl-plate-amber-200);
-  --gl-color-plate-line-azure: var(--gl-plate-azure-200);
+     too light to carry type.
+
+     A plate is a small mesh rather than a fill, so a tone is three colours
+     plus its line: `-plate-*` is the base wash, `-plate-*-pool-a` the first
+     pool and `-plate-*-pool-b` the second. All three tones are the accent's
+     own red at different temperatures; they are told apart by where the mesh
+     puts its weight as much as by colour. */
+  --gl-color-surface-plate-read: var(--gl-plate-read-50);
+  --gl-color-surface-plate-read-pool-a: var(--gl-plate-read-100);
+  --gl-color-surface-plate-read-pool-b: var(--gl-plate-read-150);
+  --gl-color-surface-plate-ask: var(--gl-plate-ask-50);
+  --gl-color-surface-plate-ask-pool-a: var(--gl-plate-ask-100);
+  --gl-color-surface-plate-ask-pool-b: var(--gl-plate-ask-150);
+  --gl-color-surface-plate-voice: var(--gl-plate-voice-50);
+  --gl-color-surface-plate-voice-pool-a: var(--gl-plate-voice-100);
+  --gl-color-surface-plate-voice-pool-b: var(--gl-plate-voice-150);
+  --gl-color-plate-line-read: var(--gl-plate-read-200);
+  --gl-color-plate-line-ask: var(--gl-plate-ask-200);
+  --gl-color-plate-line-voice: var(--gl-plate-voice-200);
 
   /* ------------------------------------------------------------------------
      Border
@@ -83,6 +95,21 @@
      markers), which is not a border at all. */
   --gl-color-border-interactive: var(--gl-neutral-450);
   --gl-color-border-selected: var(--gl-neutral-1000);
+
+  /* The scrollbar. Also outside the two-colour rule, and for the same kind
+     of reason: this is chrome, not a border — a thumb drawn in the hairline
+     colour on a white page is a thumb you cannot find, and a grab handle
+     that cannot be seen is worse than no styling at all.
+
+     Two steps, rest and hover, because the thumb is the one piece of chrome
+     on the page that is grabbed rather than clicked: it has to be quiet
+     while the reader is reading and unmistakable the moment they reach for
+     it. The rest step is the inert-data grey, a full step above the rule;
+     the hover step is the same grey the form controls use for their own
+     hover border, so the whole system darkens by the same amount when
+     pointed at. */
+  --gl-color-scroll-thumb: var(--gl-neutral-400);
+  --gl-color-scroll-thumb-hover: var(--gl-neutral-450);
 
   /* ------------------------------------------------------------------------
      Text

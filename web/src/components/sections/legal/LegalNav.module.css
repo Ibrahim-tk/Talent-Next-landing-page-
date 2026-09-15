@@ -1,15 +1,16 @@
 /* ==========================================================================
    LegalNav — the left rail
    --------------------------------------------------------------------------
-   Docs-site navigation rather than a Gridline marketing module: no ruled
-   cells, no full-width hairlines. The only rule it draws is the vertical
-   track the section links hang off, and the only fill is the one behind the
-   open document.
+   Docs-site navigation rather than a Gridline marketing module, and drawn
+   with no rules at all: no ruled cells, no hairline track down the section
+   list, no fill or leading bar behind the open document.
 
-   Everything sits one type step below the prose it indexes
-   (`--gl-size-body-sm`), the same role the footer's link columns use, so
-   the rail reads as navigation beside the document rather than as a second
-   column of content.
+   The three levels are set apart typographically instead. The document sits
+   at body size in medium weight, its sections a step down at `body-sm` in
+   the secondary tone, its subsections a step down again in the muted one —
+   so the list reads as an outline from weight and colour alone. Every entry
+   hangs off the same left edge; the numbers are the only indent, and they
+   sit in their own gutter so wrapped labels stay aligned.
    ========================================================================== */
 
 .root {
@@ -17,13 +18,13 @@
 }
 
 .groupTitle {
-  padding: 0 var(--gl-space-7);
-  margin-bottom: var(--gl-space-9);
+  margin-bottom: var(--gl-space-7);
   color: var(--gl-color-text-muted);
 }
 
 .docList,
-.sectionList {
+.sectionList,
+.subList {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -34,75 +35,141 @@
    -------------------------------------------------------------------------- */
 .docLink {
   display: block;
-  padding: var(--gl-space-5) var(--gl-space-7);
+  padding: var(--gl-space-4) 0;
   font-size: var(--gl-size-body-md);
+  font-weight: var(--gl-weight-medium);
   line-height: var(--gl-leading-normal);
   color: var(--gl-color-text-secondary);
-  transition:
-    color var(--gl-duration-fast) var(--gl-ease-standard),
-    background-color var(--gl-duration-fast) var(--gl-ease-standard);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
 }
 
 .docLink:hover {
-  color: var(--gl-color-text-primary);
-  background-color: var(--gl-color-surface-hover);
+  color: var(--gl-color-accent);
 }
 
-/* The open document. A quiet fill plus an accent bar on the leading edge —
-   the fill alone is too soft to find at a glance on white, and the bar
-   alone reads as a hover state. Colour is not carrying this on its own:
-   the entry is also the only one in the list that expands. */
-.docLinkCurrent,
-.docLinkCurrent:hover {
+/* The open document. Nothing is painted behind it — it is the heaviest and
+   darkest thing in the rail, and the only entry that expands. */
+.docLinkCurrent {
   color: var(--gl-color-text-primary);
-  background-color: var(--gl-color-surface-sunken);
-  box-shadow: inset var(--gl-border-width-thick) 0 0 var(--gl-color-accent);
+  font-weight: var(--gl-weight-semibold);
+}
+
+.docLinkCurrent:hover {
+  color: var(--gl-color-accent);
 }
 
 /* --------------------------------------------------------------------------
    Section entries — nested under the open document
-   --------------------------------------------------------------------------
-   The vertical track is drawn once, on the list, rather than as a
-   transparent border on every link. Drawn per-link it breaks at each gap
-   and each active item's own border; on the list it is one unbroken line
-   the active marker slides along, which is the whole point of the device.
    -------------------------------------------------------------------------- */
 .sectionList {
-  margin: var(--gl-space-3) 0 var(--gl-space-5);
-  padding-left: var(--gl-space-7);
-  border-left: var(--gl-border-width-hairline) solid
-    var(--gl-color-border-rule);
-  margin-left: var(--gl-space-7);
+  margin: var(--gl-space-2) 0 var(--gl-space-7);
+}
+
+/* The link takes the whole row and the chevron sits at its end, so the
+   target for the section itself stays the full width of the label rather
+   than stopping where the toggle begins. */
+.sectionRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gl-space-3);
+}
+
+/* Grid rather than flex so a wrapped label's second line aligns under the
+   first instead of running back beneath its number. */
+.sectionLink,
+.subLink {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--gl-space-5);
+  min-width: 0;
+  flex: 1;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
 }
 
 .sectionLink {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--gl-space-4);
-  padding: var(--gl-space-3) var(--gl-space-6);
+  padding: var(--gl-space-3) 0;
   font-size: var(--gl-size-body-sm);
   line-height: var(--gl-leading-normal);
-  color: var(--gl-color-text-muted);
-  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+  color: var(--gl-color-text-secondary);
 }
 
 /* The Terms number nothing, so those entries carry a single span. It is
    spanned across both tracks rather than left in the first one, which
    collapses the empty number gutter instead of indenting the label past
    it. */
-.sectionLink > span:only-child {
+.sectionLink > span:only-child,
+.subLink > span:only-child {
   grid-column: 1 / -1;
 }
 
-.sectionLink:hover {
-  color: var(--gl-color-text-primary);
+.sectionLink:hover,
+.subLink:hover {
+  color: var(--gl-color-accent);
 }
 
+/* Reading position: the accent tone plus a weight step, so the marker is
+   not colour alone. */
 .sectionLinkActive,
-.sectionLinkActive:hover {
+.subLinkActive {
   color: var(--gl-color-text-accent);
+  font-weight: var(--gl-weight-medium);
+}
+
+.sectionLinkActive:hover,
+.subLinkActive:hover {
+  color: var(--gl-color-accent);
 }
 
 .sectionNumber {
   font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Subsection disclosure
+   -------------------------------------------------------------------------- */
+.disclosure {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Matches the section link's own first line, so the chevron sits on the
+     label rather than on the middle of a wrapped entry. */
+  padding: var(--gl-space-3) 0;
+  color: var(--gl-color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.disclosure:hover {
+  color: var(--gl-color-accent);
+}
+
+.chevron {
+  transition: transform var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.subList {
+  /* The one indent in the rail, and it is small: enough to read as nested
+     under the section above without starting a second left edge. */
+  padding-left: var(--gl-space-7);
+  margin-bottom: var(--gl-space-3);
+}
+
+.subLink {
+  padding: var(--gl-space-2) 0;
+  font-size: var(--gl-size-body-sm);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
 }

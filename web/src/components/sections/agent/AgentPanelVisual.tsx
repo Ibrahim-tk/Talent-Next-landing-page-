@@ -136,7 +136,7 @@ function DigestMock() {
   }, [page, reduced]);
 
   return (
-    <MockStack tone="green" art="bars">
+    <MockStack tone="read" art="bars">
       {/* No box, no label and no chips — the byline and the summary sit
           straight on the card's white, and the blob is what holds the top of
           the column now that nothing else does. */}
@@ -435,7 +435,7 @@ function AskMock() {
   const answered = stage === "replying" || stage === "clearing";
 
   return (
-    <MockStack tone="amber" art="shapes">
+    <MockStack tone="ask" art="hatch">
       <div className={styles.chat} data-stage={stage}>
         {/* The question, and the only face in the band. Keyed on the turn so
             the bubble replays its entrance when the conversation moves on —
@@ -570,7 +570,7 @@ const OVERLAY_PEAKS: readonly number[] = WAVE_PEAKS.slice(5, 16);
  */
 function VoiceMock() {
   return (
-    <MockStack tone="azure" art="wave">
+    <MockStack tone="voice" art="chevron">
       {/* The stage: the blob at twice the size it was, the room lit behind
           it, and the level laid ON it rather than under it.
 
@@ -634,50 +634,63 @@ function VoiceMock() {
  * Which backdrop runs behind a mock. One per tab, and they are not
  * interchangeable — each is a picture of what its panel is doing.
  *
- * `bars`   fine vertical rules of varying height: a page being read off
- * `shapes` loose outlined geometry: structure, without claiming a structure
- * `wave`   fat rounded columns: the shape every product uses for a voice
+ * `bars`    fine vertical rules of varying height: a page being read off
+ * `hatch`   an even diagonal ruling: worked ground, nothing being claimed
+ * `chevron` the same ruling folded at the centre line: a voice, as a field
+ *
+ * All three are drawn at the same weight of mark on purpose. They were not:
+ * `bars` was a hairline, the voice panel a twenty-pixel slab and the ask
+ * panel a run of tiles, so the three backdrops read as three different
+ * levels of finish behind what is meant to be one component. Everything here
+ * is now a fine mark — the kinds differ in what is drawn, not in how heavily.
+ *
+ * Only `bars` is a marquee in the laid-end-to-end sense. The other two are
+ * continuous rulings across the whole strip that scroll the same way; see
+ * `RuledField`.
  */
-type PlateArtKind = "bars" | "shapes" | "wave";
+type PlateArtKind = "bars" | "hatch" | "chevron";
 
 interface PlateMark {
   /** Height as a percentage of the strip, which is itself a third of the
       plate — so these are proportions, never pixels. */
   h: number;
-  /** `shapes` only. Ignored by the other two kinds. */
-  shape?: "circle" | "square" | "triangle" | "ring";
 }
 
 /**
- * The three backdrops, written out rather than generated.
+ * How many identical copies of a run the marquee lays end to end, and the
+ * single source of truth for it — the stylesheet reads this off the element
+ * as `--agent-art-runs` rather than repeating the number.
  *
- * Deliberately NOT random, despite the brief asking for "random vector
- * graphics". A run that is generated at render time is a different run on
- * the server and in the browser, which is a hydration mismatch; one
- * generated once at module scope is stable but unreadable, and nobody can
- * tune a silhouette they cannot see in the source. These are hand-set so the
- * rhythm reads as irregular without ever repeating on a short beat — the run
- * is duplicated and translated by half its width, so what the eye must not
- * catch is the seam, and an authored sequence is the only way to be sure the
- * first and last marks do not rhyme.
+ * It was two, and two was not enough. The track is `max-content`, so it is
+ * only as wide as the marks in it: a run of hairline rules comes to a few
+ * hundred pixels, which on a plate several times that wide left the whole
+ * right-hand margin empty while the left-hand one was drawn. The backdrop
+ * looked like it had been applied to one side of the card.
+ *
+ * Eight is chosen with room to spare, because the failure is silent: nothing
+ * errors, the marquee just stops halfway across at some viewport nobody
+ * tested. The marks are empty spans, so the extra copies cost nothing.
  */
-const PLATE_ART: Record<PlateArtKind, readonly PlateMark[]> = {
+const PLATE_ART_RUNS = 8;
+
+/**
+ * The one remaining marquee backdrop.
+ *
+ * Written out rather than generated. Deliberately NOT random, despite the
+ * brief asking for "random vector graphics": a run generated at render time
+ * is a different run on the server and in the browser, which is a hydration
+ * mismatch, and one generated once at module scope is stable but unreadable
+ * — nobody can tune a silhouette they cannot see in the source. These are
+ * hand-set so the rhythm reads as irregular without ever repeating on a
+ * short beat. The run is laid end to end, so what the eye must not catch is
+ * the seam, and an authored sequence is the only way to be sure the first
+ * and last marks do not rhyme.
+ */
+const PLATE_ART: Record<"bars", readonly PlateMark[]> = {
   bars: [
     { h: 38 }, { h: 72 }, { h: 54 }, { h: 90 }, { h: 46 }, { h: 66 },
     { h: 100 }, { h: 58 }, { h: 34 }, { h: 78 }, { h: 62 }, { h: 44 },
     { h: 86 }, { h: 50 }, { h: 70 }, { h: 40 }, { h: 94 }, { h: 56 },
-  ],
-  shapes: [
-    { h: 46, shape: "circle" }, { h: 68, shape: "square" },
-    { h: 34, shape: "triangle" }, { h: 80, shape: "ring" },
-    { h: 52, shape: "square" }, { h: 40, shape: "circle" },
-    { h: 72, shape: "triangle" }, { h: 58, shape: "ring" },
-    { h: 44, shape: "square" }, { h: 64, shape: "circle" },
-  ],
-  wave: [
-    { h: 34 }, { h: 62 }, { h: 96 }, { h: 70 }, { h: 44 }, { h: 84 },
-    { h: 52 }, { h: 100 }, { h: 40 }, { h: 76 }, { h: 58 }, { h: 90 },
-    { h: 48 }, { h: 66 },
   ],
 };
 
@@ -695,27 +708,66 @@ const PLATE_ART: Record<PlateArtKind, readonly PlateMark[]> = {
  * first began, and because the distance is a percentage, editing `PLATE_ART`
  * cannot break it.
  *
+ * `hatch` and `chevron` do not go through any of that — they hand off to
+ * `RuledField` below, which draws one continuous ruling rather than laying
+ * marks end to end.
+ *
  * Decorative throughout, so `aria-hidden` and never labelled.
  */
 function PlateArt({ kind }: { kind: PlateArtKind }) {
+  if (kind === "hatch" || kind === "chevron") {
+    return <RuledField kind={kind} />;
+  }
+
   const marks = PLATE_ART[kind];
 
   return (
     <div className={styles.plateArt} data-kind={kind} aria-hidden="true">
-      <div className={styles.artTrack}>
-        {[0, 1].map((copy) => (
+      <div
+        className={styles.artTrack}
+        style={{ "--agent-art-runs": PLATE_ART_RUNS } as CSSProperties}
+      >
+        {Array.from({ length: PLATE_ART_RUNS }, (_, copy) => (
           <div className={styles.artRun} key={copy}>
             {marks.map((mark, index) => (
               <span
                 key={index}
                 className={styles.artMark}
-                data-shape={mark.shape}
                 style={{ height: `${mark.h}%` }}
               />
             ))}
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/**
+ * The two ruled backdrops — `hatch` on the ask panel, `chevron` on the
+ * voice panel. One component, because they differ only in which
+ * `background-image` the stylesheet hands them.
+ *
+ * NOT the marquee, and not by preference: a marquee lays discrete marks end
+ * to end, and a ruling is one continuous drawing across the whole strip that
+ * would pick up a joint at every mark if it were cut into flex children.
+ * A single `repeating-linear-gradient` is exactly even by construction at
+ * any size, which is the property that matters — the run `hatch` replaces
+ * was the logo's chevron at three counts, and three glyph widths against one
+ * constant gap gave a pitch no amount of tuning could settle.
+ *
+ * One element, one period of overhang, translating by exactly one period, so
+ * the loop lands the ruling back on itself with no seam. See the stylesheet
+ * for why that period is the perpendicular pitch times root two rather than
+ * the pitch itself, and for how the chevron's apexes are made to land on the
+ * strip's centre line at any height.
+ *
+ * Decorative, so `aria-hidden` and never labelled.
+ */
+function RuledField({ kind }: { kind: "hatch" | "chevron" }) {
+  return (
+    <div className={styles.plateArt} data-kind={kind} aria-hidden="true">
+      <span className={styles.ruledField} />
     </div>
   );
 }
@@ -728,7 +780,7 @@ interface MockStackProps {
    * new panel has arrived before reading a word of it. Three panels that
    * differ only in their contents read as one panel rewriting itself.
    */
-  tone: "green" | "amber" | "azure";
+  tone: "read" | "ask" | "voice";
   /** Which backdrop runs behind this panel. */
   art: PlateArtKind;
   /** A small grey heading above the mock. The voice mock draws its own. */

@@ -85,40 +85,78 @@
   --gl-green-600: #16a34a;
 
   /* ------------------------------------------------------------------------
-     Color — Plate tints (three grounds, and the ruled lines drawn on them)
+     Color — Plate tints (three grounds, and the ruled marks drawn on them)
 
-     The one set of hues in the system outside the rose family, and they exist
-     for a single job: the Tal band shows three different things Tal does, one
-     after another on a timer, and three panels that differ only in their
-     contents read as one panel redrawing itself. A change of ground is what
-     makes them read as three places rather than one.
+     The Tal band shows three things Tal does, one after another on a timer,
+     and three panels that differ only in their contents read as one panel
+     redrawing itself. A change of ground is what makes them read as three
+     places rather than one.
 
-     They are pitched far lighter than a normal 50-step — every ground here is
-     within about four percent of white — because each sits behind a white
-     card and must not compete with it or with the accent. The `-200` step is
-     the ruled line pattern drawn on the ground, and it is the only place any
-     of these hues is legible as a colour at all.
+     ALL THREE ARE NOW THE ACCENT'S OWN RED, and they are named after the
+     PANEL rather than after a colour. They used to be green, amber and azure
+     — three unrelated hues, which made the band a small second palette sitting
+     inside a page with exactly one accent in it. Worse, two of the three had
+     already drifted warm enough to read as yellow, and yellow beside a red
+     accent is the one neighbour that makes the accent look dirty.
 
-     Three steps and no more: nothing here may carry type or a mark, and none
-     of these values is contrast-safe. A darker step would have to be added
-     before one of these hues could.
+     What separates the tones now is TEMPERATURE inside the one red, not hue:
+     `read` is the neutral tint of the accent itself, `ask` is pushed a few
+     units towards coral, `voice` a few units the other way towards rose. Side
+     by side in a swatch they are nearly the same colour; arriving one after
+     another under a white card, with the mesh putting each one's weight in a
+     different corner, they are plainly three different grounds.
+
+     Named for the panel because a colour name is the one thing that can go
+     stale here — `azure` was already lying, and the moment the other two went
+     red all three were. A panel name cannot: `read` is the summaries plate for
+     as long as there is a summaries panel, whatever colour it ends up.
+
+     FOUR STEPS EACH, because a plate is a mesh and not a fill:
+
+         -50    the base wash, nearly white; what the middle of the plate is
+         -100   the first pool, bled in from one corner
+         -150   the second pool, bled in from another
+         -200   the marks drawn on the ground
+
+     The pools sit about SIX percent off white, and the whole ramp has been
+     pulled back twice for the same reason. At fifteen they read as a tint
+     someone had chosen; at ten to twelve they still put a visible peach
+     rectangle behind a white card, which on a page whose one loud colour is
+     the accent made the band the warmest thing on it. Here the mesh is
+     light on a surface rather than a colour applied to one — you can see
+     which corner it comes from without being able to name it.
+
+     `-200` came back with them: the marks drawn on the ground have to stay
+     a step above the pools to be seen at all, but a line ramp left at full
+     strength over a wash this pale reads as the only thing on the plate.
+     None of these is contrast-safe and none may carry type — a darker step
+     would have to be added first.
      ---------------------------------------------------------------------- */
-  --gl-plate-green-50: #f2f7e4;
-  --gl-plate-green-200: #d8e7ab;
-  --gl-plate-amber-50: #fbf6e3;
-  --gl-plate-amber-200: #f0e0a9;
-  /* The voice panel's plate. It was an azure pair (#eff4fa / #cadcef) and is
-     now a warm one — the same hue family as the amber plate above, pulled
-     further towards orange and held much further back. Blue was the one cool
-     note on a page that is otherwise entirely warm, and on the voice panel
-     specifically it fought the blob, which is warm by nature.
+  /* Summaries. The accent's own red, mixed straight to white and nudged
+     nowhere — the reference the other two are pushed either side of. */
+  --gl-plate-read-50: #fff7f6;
+  --gl-plate-read-100: #feeae8;
+  --gl-plate-read-150: #fff2f0;
+  --gl-plate-read-200: #f9d6d4;
 
-     The name stays `azure` on purpose for now: renaming a primitive is a
-     rename across the semantic layer and three component stylesheets, and
-     the token's JOB — "the third plate tone" — has not changed. Rename it
-     when something else needs a warm plate and the name starts lying twice. */
-  --gl-plate-azure-50: #fdf6ef;
-  --gl-plate-azure-200: #f2ddc6;
+  /* Ask Tal. The same red carried a few units towards coral — warmer than
+     `read`, and deliberately stopped well short of orange. The green channel
+     leads the blue by ten; at twenty it would start reading as amber again,
+     which is the hue this tone has just left. */
+  --gl-plate-ask-50: #fff8f5;
+  --gl-plate-ask-100: #feeae5;
+  --gl-plate-ask-150: #fff0ed;
+  --gl-plate-ask-200: #f8d6cd;
+
+  /* Voice. The same red carried the other way, towards rose: the blue channel
+     now leads the green by a hair, which is the coolest anything on this page
+     is allowed to get. It was an azure pair (#eff4fa / #cadcef) two changes
+     ago — the one cool note on a warm page, and on the voice panel especially
+     it fought the blob, which is warm by nature. */
+  --gl-plate-voice-50: #fff6f7;
+  --gl-plate-voice-100: #fde9ec;
+  --gl-plate-voice-150: #fef1f0;
+  --gl-plate-voice-200: #f6d6d9;
 
   /* ------------------------------------------------------------------------
      Typeface

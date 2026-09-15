@@ -163,11 +163,17 @@
 
    The position is what changed the design. Floating above the card it was an
    object in its own right and could be as loud as it liked. Sitting at the
-   head of a column of copy it is a label for what is underneath, so it is
-   quiet: a recessed track, muted labels, and one white thumb that slides.
-   The filled accent disc went with the move — a saturated red circle was the
-   loudest thing on a card whose entire job is to be read, and it was
-   fighting the accent in the tagline directly beneath it.
+   head of a column of copy it is a label for what is underneath, so almost
+   all of it is quiet: a recessed track and two muted labels.
+
+   The exception is the thumb, which is FILLED with the accent and carries a
+   white label. It was white-on-grey for a while, on the argument that the
+   whole control should sit back — and it sat back so far that the open tab
+   stopped reading as open. What settles it is that the band advances BY
+   ITSELF every eight seconds: a reader who looks up mid-cycle has to be able
+   to see which of the three is showing without hunting for it, and the one
+   element that can say so is the indicator. The tagline this used to fight
+   for the accent is long gone from the column beneath it.
 
    A thumb that TRANSLATES, not three buttons that change colour. The band
    turns itself over every eight seconds, and a control whose indicator
@@ -210,13 +216,23 @@
     (100% - var(--agent-tab-pad) * 2) / var(--agent-tab-count, 3)
   );
   border-radius: var(--gl-radius-md);
-  background-color: var(--gl-neutral-0);
-  /* The thumb sits in a groove a few pixels deep, so its shadow only has to
-     lift it out of that — anything heavier and a control 32px tall reads as
-     floating over the card rather than running along it. */
+  /* THE ACCENT, filled. The thumb was white on a barely-grey track, which is
+     the quietest indicator the system has: at a glance across a card of
+     near-white surfaces the open tab did not read as open. This band turns
+     itself over on a timer, so the one thing the control has to do is
+     announce a change nobody asked for, and a filled thumb does it from
+     across the room where a white one never could. */
+  background-color: var(--gl-color-accent);
+  /* The lift is now tinted with the fill rather than with slate. A neutral
+     shadow under a saturated red reads as grey smudge around the edge of it;
+     the accent's own hue at low alpha reads as the colour sitting on the
+     card. Kept light for the same reason as before — the thumb sits in a
+     groove a few pixels deep, so the shadow only has to lift it out of
+     that, and anything heavier makes a 32px control float over the card
+     rather than run along it. */
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.05),
-    0 3px 12px rgba(15, 23, 42, 0.04);
+    0 1px 2px rgba(249, 66, 58, 0.18),
+    0 4px 14px rgba(249, 66, 58, 0.16);
   transform: translate3d(calc(var(--agent-tab-index, 0) * 100%), 0, 0);
   /* Slower than the site's `fast`, and eased out hard. The thumb is the one
      thing on the card that has to be watchable — it is what says the band
@@ -254,16 +270,22 @@
    already carrying the state, and a second signal on top of it (a fill, a
    ring, a weight) would be the same fact said twice.
 
-   The ink is NEUTRAL, and that is the whole point of the control. This is a
-   segmented control at the head of a column of copy: the thumb plus a step
-   from muted grey to near-black is the entire signal, which is as much as a
-   control this small needs and is what the pattern it is borrowed from does.
-   The accent it used to print instead made the tab the loudest thing on a
-   card whose job is to be read, and it spent the brand colour on a label
-   rather than on the one thing in the panel worth clicking. No accent lives
-   in this control at any state. */
+   The ink is WHITE, because the thumb underneath it is now the accent (see
+   `.thumb`). The state lives in the fill; the label's only job is to stay
+   legible on it, and through `currentColor` the icon comes with it.
+
+   This went through accent-on-white first, which was the right instinct
+   applied to the wrong layer — it put the brand colour on a word while
+   leaving the indicator itself the palest thing on the card. Colouring the
+   thumb says the same thing with the element that was already carrying the
+   state, and leaves the label doing what a label does.
+
+   Still a single signal. The other two tabs keep their muted grey on the
+   bare track: nothing is added to them, and nothing beyond the fill is added
+   here — no ring, no weight change, no second accent anywhere in the
+   control. */
 .tab[aria-selected="true"] {
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-text-inverse);
 }
 
 /* --------------------------------------------------------------------------

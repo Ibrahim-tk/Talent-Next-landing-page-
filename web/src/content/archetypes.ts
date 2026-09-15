@@ -23,8 +23,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Top Performer",
     description:
       "The standard you hold yourself to, what you do when the work falls short of it, and how you show up the next day.",
-    image: "/assets/t1.png",
-    imageAlt: "A performer taking the stage, arms raised",
+    image: "/assets/top-performer.jpg",
+    imageAlt: "A woman in a blazer shaking hands, tablet in hand, mid-greeting",
   },
   {
     id: "athlete",
@@ -32,8 +32,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Athlete",
     description:
       "How you prepare, how you take coaching and criticism, and what you do after things don’t go your way.",
-    image: "/assets/t2.png",
-    imageAlt: "A swimmer mid-stroke in competition",
+    image: "/assets/athlete.jpg",
+    imageAlt: "An athlete holding a plank in the gym, pulling a dumbbell off the floor",
   },
   {
     id: "leader",
@@ -41,8 +41,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Leader",
     description:
       "How you set direction, how you get people to come with you, and how you pull the best out of the people around you.",
-    image: "/assets/t3.png",
-    imageAlt: "A speaker addressing a business forum",
+    image: "/assets/leader.jpg",
+    imageAlt: "A man on his feet at a meeting table, talking a seated team through an idea",
   },
   {
     id: "entrepreneur",
@@ -50,8 +50,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Entrepreneur",
     description:
       "How you start things before you have them figured out, how you test an idea, and how you decide whether to keep going or move on.",
-    image: "/assets/t4.png",
-    imageAlt: "A founder presenting on stage",
+    image: "/assets/entrepreneur.jpg",
+    imageAlt: "Two colleagues working an idea out in sticky notes across a glass wall",
   },
   {
     id: "not-sure",
@@ -59,8 +59,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Not Sure",
     description:
       "A wider conversation if none of these feel exactly right yet. What you’ve been drawn to, what you’ve been good at, and where you might be headed.",
-    image: "/assets/t5.png",
-    imageAlt: "Someone thinking at their desk, late in the day",
+    image: "/assets/not-sure.jpg",
+    imageAlt: "Two people mid-conversation across a low table, one thinking something over",
   },
   {
     id: "team-player",
@@ -68,8 +68,8 @@ export const archetypes: readonly Archetype[] = [
     name: "Team Player",
     description:
       "How you build trust, how you show up for people counting on you, and what you do when a group isn’t working well together.",
-    image: "/assets/t6.png",
-    imageAlt: "Colleagues working side by side",
+    image: "/assets/team-player.jpg",
+    imageAlt: "Five colleagues meeting in a high-five over a shared desk",
   },
 ];
 

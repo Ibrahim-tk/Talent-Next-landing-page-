@@ -113,6 +113,11 @@
    -------------------------------------------------------------------------- */
 .gauge {
   height: 100%;
+  /* The surface the rule sits on. RulerGauge paints this behind the filled
+     stretch of its accent track so the grey base track is hidden there
+     rather than showing through beneath the red ticks — see the component's
+     own CSS for what that was doing to the rule. */
+  --gl-ruler-backdrop: var(--gl-color-surface-inverse);
 }
 
 /* --------------------------------------------------------------------------

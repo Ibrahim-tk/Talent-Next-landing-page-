@@ -1,44 +1,34 @@
 /* ==========================================================================
    LegalPage
    --------------------------------------------------------------------------
-   Three columns: section rail, article, subsection rail. Both rails stick
-   under the site header while the article scrolls past them.
+   Two columns: the outline rail and the article. The rail sticks under the
+   site header while the article scrolls past it, and a hairline runs down
+   the seam between them.
 
-   `align-items` is left at its `stretch` default deliberately, and it is
-   load-bearing twice over: it is what makes each rail cell as tall as the
-   article beside it, which is both what lets its divider run the full
-   height and what gives the sticky box inside a tall enough containing
-   block to stay stuck against for the whole scroll. `align-items: start`
-   here would collapse the cells to the height of their lists and the
-   sticky would release almost immediately.
+   The rule was left out for a long time on the argument that the gutter and
+   the change of type were separation enough. On a short page they were; on
+   these, where the rail is a twelve-entry outline with sub-entries under it
+   and the article beside it is thousands of words, the two columns of small
+   grey type simply ran into each other and the reader had to work out where
+   the navigation stopped. The rule says it in one stroke.
+
+   `align-items` is left at its `stretch` default deliberately: it is what
+   makes the rail cell as tall as the article beside it, which gives the
+   sticky box inside a tall enough containing block to stay stuck against
+   for the whole scroll. `align-items: start` here would collapse the cell
+   to the height of its list and the sticky would release almost
+   immediately.
    ========================================================================== */
 
 .shell {
   display: grid;
-  grid-template-columns: minmax(200px, 268px) minmax(0, 1fr);
-}
-
-.shellWithRail {
-  grid-template-columns: minmax(200px, 268px) minmax(0, 1fr) minmax(
-      180px,
-      240px
-    );
+  grid-template-columns: minmax(200px, 288px) minmax(0, 1fr);
 }
 
 /* --------------------------------------------------------------------------
-   Rails
+   Rail
    -------------------------------------------------------------------------- */
-.navCell {
-  border-right: var(--gl-border-width-hairline) solid
-    var(--gl-color-border-rule);
-}
-
-.railCell {
-  border-left: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-.navInner,
-.railInner {
+.navInner {
   position: sticky;
   /* Clear of the sticky site header — the same offset `scroll-padding-top`
      on `html` already applies to in-page jumps. */
@@ -48,31 +38,59 @@
   /* A rail that has scrolled to its end should stop, not hand the gesture
      on to the page underneath it. */
   overscroll-behavior: contain;
-}
-
-.navInner {
-  padding: var(--gl-space-block-md) var(--gl-space-7) var(--gl-space-block-md)
-    var(--gl-space-9);
-}
-
-.railInner {
-  padding: var(--gl-space-block-md) var(--gl-space-9);
+  padding: var(--gl-space-block-md) var(--gl-space-11) var(--gl-space-block-md)
+    var(--gl-space-gutter-lg);
 }
 
 /* --------------------------------------------------------------------------
    Article
    -------------------------------------------------------------------------- */
 .articleCell {
+  position: relative;
   min-width: 0;
   padding: var(--gl-space-block-md) var(--gl-space-gutter-lg)
     var(--gl-space-block-xl) var(--gl-space-gutter-lg);
 }
 
+/* The seam rule.
+
+   A PSEUDO-ELEMENT, not `border-left`, because a border cannot fade. Drawn
+   flat, this line starts and stops dead — hard against the header at the top
+   and against nothing in particular at the bottom, where the article's own
+   trailing white space leaves a rule hanging past the last paragraph like a
+   crop mark. The gradient holds it at full strength through the body of the
+   page and lets it go at both ends, so it reads as a seam the two columns
+   share rather than as a box drawn around one of them.
+
+   The article cell is the taller of the two (the rail is a sticky box inside
+   a stretched cell), so hanging the rule here rather than on the rail is
+   what makes it span the whole row.
+
+   `--gl-color-border-rule` at full strength and nothing heavier: this is the
+   same hairline as every other rule on the site, and the fade is what makes
+   it feel considered — not a second, darker colour. */
+.articleCell::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--gl-border-width-hairline);
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    var(--gl-color-border-rule) var(--gl-space-block-md),
+    var(--gl-color-border-rule) calc(100% - var(--gl-space-block-xl)),
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 /* Breadcrumb, title and date share the prose column's own measure so the
    whole article — masthead included — sits on one left edge and one right
-   edge. The cell itself stretches to fill its grid track; the slack ends up
-   between the text and the right rail, which is what gives that rail its
-   air rather than having it crowd the paragraph endings. */
+   edge. The cell itself stretches to fill its grid track and the slack ends
+   up past the measure, which keeps the line length readable however wide
+   the window gets. */
 .breadcrumb,
 .title,
 .meta {
@@ -100,7 +118,7 @@
 }
 
 .crumbLink:hover {
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-accent);
 }
 
 .crumbSeparator {
@@ -122,31 +140,21 @@
 }
 
 /* --------------------------------------------------------------------------
-   Below the width the three columns need, the subsection rail is the first
-   to go: its entries are all reachable from the document itself, and the
-   section rail is the more useful of the two. Below that again the section
-   rail stops being a rail and becomes a band of jump links above the text —
-   still present, because these documents are long, but no longer sticky
-   and no longer eating a third of a narrow screen.
+   Below the width the two columns need, the rail stops being a rail and
+   becomes a band of jump links above the text — still present, because
+   these documents are long, but no longer sticky and no longer eating a
+   third of a narrow screen. The seam rule turns with it: a vertical line
+   between two columns is meaningless once there is only one, so it is
+   dropped and a rule under the band takes over the same job, because
+   stacked directly on the article with nothing between them the list and
+   the prose run together.
    -------------------------------------------------------------------------- */
-@media (max-width: 1100px) {
-  .shellWithRail {
-    grid-template-columns: minmax(200px, 268px) minmax(0, 1fr);
-  }
-
-  .railCell {
-    display: none;
-  }
-}
-
 @media (max-width: 860px) {
-  .shell,
-  .shellWithRail {
+  .shell {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .navCell {
-    border-right: none;
     border-bottom: var(--gl-border-width-hairline) solid
       var(--gl-color-border-rule);
   }
@@ -161,5 +169,12 @@
   .articleCell {
     padding-left: var(--gl-space-gutter-md);
     padding-right: var(--gl-space-gutter-md);
+  }
+
+  /* Stacked, there is no seam to draw — the rail's own bottom rule above is
+     the divider now, and a vertical line down the left of the article would
+     be a box side with no box. */
+  .articleCell::before {
+    content: none;
   }
 }

@@ -71,25 +71,141 @@
   will-change: transform;
 }
 
-/* The accent hairline under the track, scrubbed in step with it. Pulled up
-   1px so it sits on the card's own bottom rule rather than beside it. */
-.progress {
-  margin-top: -1px;
-  z-index: var(--gl-z-floating);
-}
-
 /* --------------------------------------------------------------------------
-   Footer note
+   Footer note — and its hover state
+   --------------------------------------------------------------------------
+   The whole row washes accent when it is pointed at. It used to wash in step
+   with the card track instead, as a scroll readout, and that was the wrong
+   job for it: the cards moving are already the progress indicator, and a fill
+   pegged to scroll position sits stopped partway for as long as the reader is
+   stopped, which reads as a bar that has stalled rather than as anything
+   deliberate.
+
+   Tied to hover, the same wash becomes an answer: the reader moves onto the
+   band and the band lights, which brings the "Explore more" link at its far
+   end forward at the moment they are heading for it. `.footerRow` is only the
+   stage: it holds the rule, the positioning context and the hover, while
+   `.footerInner` carries the layout that both the base copy and the
+   reversed-out copy inside `.footerFill` are laid out by.
    -------------------------------------------------------------------------- */
 .footerRow {
+  position: relative;
+  flex-shrink: 0;
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.footerInner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  flex-shrink: 0;
   gap: var(--gl-space-7);
   padding: var(--gl-space-11) var(--gl-space-gutter-lg);
-  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* The accent wash. Absolutely positioned so it inherits the row's exact box —
+   its copy of `.footerInner` therefore lays out at the same width as the base
+   layer beneath and registers with it to the pixel. `clip-path` then reveals
+   it left-to-right, which is what makes the type appear to flip colour under
+   a moving edge instead of crossfading.
+
+   It FADES, at exactly the speed and easing a button changes colour at
+   (`--gl-duration-fast`, `--gl-ease-standard`). It used to wipe in from the
+   left behind a travelling clip edge, which was a leftover from when this
+   layer was a scroll readout: as a hover state a wipe is a small performance,
+   and it made a row the width of the page feel like it was loading rather
+   than responding. Every other hover in the system is a colour arriving at
+   once; this one now matches, and the progress line above the row keeps the
+   one piece of left-to-right movement that was ever earning its keep.
+
+   The two layers register to the pixel, so the base copy underneath is
+   exactly where the reversed copy lands and the crossfade at 150ms reads as
+   one line of type changing colour rather than two lines dissolving. */
+.footerFill {
+  position: absolute;
+  inset: 0;
+  background-color: var(--gl-color-accent);
+  opacity: 0;
+  transition: opacity var(--gl-duration-fast) var(--gl-ease-standard);
+  /* Decorative twin of the real row — never take the pointer off it. */
+  pointer-events: none;
+
+  /* Reversed out by retargeting the tokens its children already read, rather
+     than by overriding their rules from the outside. Anything added to the
+     footer later reverses correctly without a matching override here. */
+  --gl-color-text-primary: var(--gl-color-text-inverse);
+  --gl-color-text-heading: var(--gl-color-text-inverse);
+  --gl-color-text-secondary: var(--gl-color-text-inverse);
+  --gl-color-text-body: var(--gl-color-text-inverse);
+  --gl-color-text-muted: var(--gl-color-text-inverse-secondary);
+  --gl-color-action-ghost-fg: var(--gl-color-text-inverse);
+  --gl-color-action-ghost-fg-hover: var(--gl-color-text-inverse);
+  color: var(--gl-color-text-inverse);
+}
+
+/* `:focus-within` alongside the hover so a keyboard reader tabbing onto
+   "Explore more" gets the same band lit, not a bare link on white. */
+.footerRow:hover .footerFill,
+.footerRow:focus-within .footerFill {
+  opacity: 1;
+}
+
+/* No pointer, no hover state to wait for — on touch the band is simply
+   accent. Without this the row would read as permanently unfilled on every
+   phone and tablet, which is the one state it should never rest in. */
+@media (hover: none) {
+  .footerFill {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The scroll readout — a line, not a wash.
+
+   The whole band used to fill in step with the card track, and washing a
+   page-wide row in accent to report "you are 40% through six cards" was far
+   more voice than the fact deserved. A 2px line along the row's top edge says
+   the same thing at the weight a progress indicator should be said at, and it
+   leaves the fill free to mean something else (hover).
+
+   It sits ON the row's existing hairline rather than beside it — pulled up by
+   its own height so its bottom edge lands on the rule — so the rule reads as
+   the track the line is running along and no new horizontal is added to a
+   section that already has several.
+
+   `scaleX` from a left origin, not a width: the transform is composited, and
+   this is being written on every scroll frame by a scrub.
+
+   DESKTOP ONLY, twice over. The `data-scrubbed` gate is the component saying
+   a pin was actually created — on a viewport wide enough to fit all six cards
+   there is no scrub, and a progress line that can never move is worse than no
+   line — and the breakpoint below drops it outright where the pin never
+   applies at all. */
+.footerProgress {
+  position: absolute;
+  top: calc(-1 * var(--gl-border-width-thick));
+  left: 0;
+  right: 0;
+  height: var(--gl-border-width-thick);
+  background-color: var(--gl-color-accent);
+  transform: scaleX(var(--archetype-fill, 0));
+  transform-origin: left center;
+  /* Hidden until something is driving it. `visibility` rather than `display`
+     so it cannot affect the row's layout in either state. */
+  visibility: hidden;
+  /* Above the fill, so a hovered band does not paint over its own readout. */
+  z-index: var(--gl-z-raised);
+  pointer-events: none;
+}
+
+.pinWrapper[data-scrubbed] .footerProgress {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footerFill {
+    transition: none;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -97,6 +213,12 @@
    touch-scrollable row.
    -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
+  /* No pin below here, so nothing to report — and the track is a plain
+     touch-scroll, which reports itself. */
+  .footerProgress {
+    display: none;
+  }
+
   .wrapper {
     padding-top: var(--gl-space-14);
     padding-bottom: var(--gl-space-14);
@@ -120,7 +242,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .footerRow {
+  .footerInner {
     flex-direction: column;
     align-items: flex-start;
     padding: var(--gl-space-9);

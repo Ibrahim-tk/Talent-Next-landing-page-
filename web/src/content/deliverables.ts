@@ -133,13 +133,25 @@ export const seeItInActionCopy = {
   headingAfter: "next Conversation Is Really Like",
   description:
     "Wondering what you’ll be asked? Watch part of a real conversation with a Talent Agent and see for yourself.",
-  videoSources: ["/video/agent-loop.mp4", "/video/candidate-loop.mp4"],
-  videoLabel:
+  /* The real clip, finally — the ambient `videoSources` loop, its Unsplash
+     `poster` and the `coaching_video.png` stand-in that stood in for it are
+     all gone with it.
+
+     Held as an id rather than a watch URL because that is what the embed
+     path needs; `videoUrl` is derived from it below for the plain link out.
+     The section plays it in place from a still, so nothing is requested
+     from YouTube until someone actually presses play. */
+  videoId: "WgZ570iSFbY",
+  videoTitle:
     "Excerpt from a Talentnext conversation between a candidate and a Talent Agent",
-  poster:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85",
-  // Temporary stand-in for the video above — swap `SeeItInActionSection`
-  // back to `VideoFrame` once the real clip is ready.
-  image: "/assets/coaching_video.png",
-  imageAlt: "A Talent Agent mid-conversation during a coaching session",
+  /* Labels the play control, so it has to name the action and not just the
+     picture — it replaces the cover's own alt text for anyone using a
+     screen reader, since an accessible name on the button wins over the
+     content inside it. */
+  playLabel:
+    "Play the video — part of a real Talentnext conversation between a candidate and a Talent Agent",
+  image: "/assets/video-cover.jpg",
 } as const;
+
+/** The public watch page — the fallback for anyone the embed doesn't reach. */
+export const seeItInActionVideoUrl = `https://www.youtube.com/watch?v=${seeItInActionCopy.videoId}`;

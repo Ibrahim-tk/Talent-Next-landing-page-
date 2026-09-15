@@ -14,9 +14,17 @@ export const heroCopy = {
    * drifts on scroll.
    */
   image: {
-    src: "/assets/herov1.png",
-    alt: "A person standing out from the crowd in a lift",
-    width: 1684,
-    height: 934,
+    /* Served from a 2400px re-encode rather than from the 8256px, 12MB
+       original that was dropped in (`hero section.jpeg`, kept alongside it).
+       Next's optimiser would happily resize the original on request, but it
+       would do that work against a 45-megapixel source, and nothing on this
+       page is ever served wider than the canvas — 2400 is already over twice
+       the largest rendition anyone sees. The hyphenated filename is the
+       other half of it: a space in a public path survives `next/image`'s own
+       encoding but not much else that touches a URL. */
+    src: "/assets/hero-section.jpg",
+    alt: "A young professional at their desk, turning to face the camera",
+    width: 2400,
+    height: 1600,
   },
 } as const;

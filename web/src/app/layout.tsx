@@ -9,6 +9,7 @@ import "@/gridline/tokens/semantic.css";
 import "@/gridline/styles/reset.css";
 import "./globals.css";
 
+import { HashScrollAnchor } from "@/components/layout/HashScrollAnchor";
 import { site } from "@/content/site";
 
 /* No next/font import: Helvetica Neue is the system's single typeface and
@@ -42,7 +43,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {/* Renders nothing. Mounted here rather than per-page so every
+            route — the landing page, the three variants and the two legal
+            pages — gets the same anchor behaviour from one place. */}
+        <HashScrollAnchor />
+        {children}
+      </body>
     </html>
   );
 }

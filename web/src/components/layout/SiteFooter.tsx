@@ -7,9 +7,7 @@ import {
   footerCopy,
   footerSocial,
   homeAnchors,
-  privacyNotice,
   site,
-  termsOfUse,
 } from "@/content/site";
 
 import styles from "./SiteFooter.module.css";
@@ -74,19 +72,9 @@ export function SiteFooter() {
       <div className={styles.accentBar} aria-hidden="true" />
 
       <div className={styles.legalBar}>
-        <div className={styles.legalLeft}>
-          <Text variant="caption" as="span" tone="muted">
-            {footerCopy.legal}
-          </Text>
-          <span className={styles.legalDot} aria-hidden="true" />
-          <Link href={privacyNotice.href} className={styles.legalLink}>
-            {privacyNotice.label}
-          </Link>
-          <span className={styles.legalDot} aria-hidden="true" />
-          <Link href={termsOfUse.href} className={styles.legalLink}>
-            {termsOfUse.label}
-          </Link>
-        </div>
+        <Text variant="caption" as="span" tone="muted">
+          {footerCopy.legal}
+        </Text>
       </div>
     </footer>
   );

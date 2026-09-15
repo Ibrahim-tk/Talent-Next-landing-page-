@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-import { GridModule, Highlight, SectionHeader } from "@gridline";
+import { GridModule, Highlight, Icon, SectionHeader } from "@gridline";
 import { useDarkNavRegion } from "@gridline/motion";
-import { seeItInActionCopy } from "@/content/deliverables";
+import {
+  seeItInActionCopy,
+  seeItInActionVideoUrl,
+} from "@/content/deliverables";
 
 import styles from "./SeeItInActionSection.module.css";
 
@@ -38,8 +41,9 @@ export interface SeeItInActionSectionProps {
  * video is centred on that plate at 80% of the column's width. There is no
  * scroll-driven motion here — the card is simply present at its final size.
  *
- * A client component only for `useDarkNavRegion` below; nothing here is
- * interactive.
+ * The still is a facade over the YouTube clip: it is a link to the watch
+ * page that swaps itself for an autoplaying embed when clicked, so nothing
+ * is fetched from YouTube for the majority of visitors who only scroll past.
  */
 export function SeeItInActionSection({
   tone = "default",
@@ -56,6 +60,10 @@ export function SeeItInActionSection({
   // black and not a pixel more.
   const darkSurfaceRef = useRef<HTMLDivElement>(null);
   useDarkNavRegion(darkSurfaceRef);
+
+  // One-way: once the embed is mounted the player owns its own play/pause,
+  // so there is nothing here that should ever set this back to false.
+  const [playing, setPlaying] = useState(false);
 
   return (
     <GridModule
@@ -123,17 +131,76 @@ export function SeeItInActionSection({
 
           <div className={styles.body}>
             <div className={styles.plate}>
-              {/* Temporary placeholder for the video — see the content
-                  file's note on `image`. */}
+              {/* A click-to-load facade rather than an iframe that is always
+                  there. An embed mounted on load costs a YouTube player
+                  bundle and its cookies for every visitor who scrolls past,
+                  most of whom never press play; the still is one image, and
+                  the player is built only once someone asks for it. That is
+                  also why the section can stay this cheap while sitting
+                  above the fold on `/v2`. */}
               <div className={styles.mediaFrame}>
-                <Image
-                  src={seeItInActionCopy.image}
-                  alt={seeItInActionCopy.imageAlt}
-                  fill
-                  sizes="(max-width: 920px) 85vw, 1200px"
-                  className={styles.mediaImage}
-                  priority={false}
-                />
+                {playing ? (
+                  <iframe
+                    className={styles.mediaEmbed}
+                    /* `-nocookie` and `rel=0`: no tracking cookie until
+                       playback, and related videos at the end are kept to
+                       this channel rather than opening onto whatever
+                       YouTube feels like suggesting.
+
+                       `autoplay=1` is honoured here because the iframe is
+                       mounted by a real click — a user gesture — which is
+                       exactly the condition browsers require. */
+                    src={`https://www.youtube-nocookie.com/embed/${seeItInActionCopy.videoId}?autoplay=1&rel=0`}
+                    title={seeItInActionCopy.videoTitle}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                ) : (
+                  /* A real link to the watch page that JS upgrades into an
+                     in-place player, rather than a button that only works
+                     once React has loaded. Three things fall out of that:
+                     it still goes somewhere with no JS, cmd/middle-click
+                     opens YouTube in a new tab the way any link should, and
+                     the destination is visible in the status bar on hover. */
+                  <a
+                    className={styles.playButton}
+                    href={seeItInActionVideoUrl}
+                    onClick={(event) => {
+                      // Leave modified clicks alone — those mean "open it
+                      // over there", not "play it here".
+                      if (
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      ) {
+                        return;
+                      }
+                      event.preventDefault();
+                      setPlaying(true);
+                    }}
+                    aria-label={seeItInActionCopy.playLabel}
+                  >
+                    {/* `alt=""` deliberately: the button's own aria-label
+                        already names this for assistive tech, and an
+                        accessible name on a control overrides its contents
+                        — a described image here would be announced by
+                        nobody while adding a second thing to maintain. */}
+                    <Image
+                      src={seeItInActionCopy.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 920px) 85vw, 1200px"
+                      className={styles.mediaImage}
+                      priority={false}
+                    />
+                    <span className={styles.playBadge} aria-hidden="true">
+                      {/* `play` is in Icon's own filled set, so it needs no
+                          prop to render solid. */}
+                      <Icon name="play" size={28} />
+                    </span>
+                  </a>
+                )}
               </div>
             </div>
           </div>

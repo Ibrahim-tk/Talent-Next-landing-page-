@@ -51,10 +51,23 @@
    `overflow: hidden` clips the ruled field to the plate's radius.
    -------------------------------------------------------------------------- */
 .plate {
-  /* Green unless a tone says otherwise, so the plate is never left with an
-     undefined ground if a new mock forgets to declare one. */
-  --agent-plate-ground: var(--gl-color-surface-plate-green);
-  --agent-plate-line: var(--gl-color-plate-line-green);
+  /* The read tone unless a tone says otherwise, so the plate is never left
+     with an undefined ground if a new mock forgets to declare one.
+
+     A TONE IS FIVE VALUES, not one. `--agent-plate-ground` is the base wash,
+     `--agent-plate-pool-a` and `--agent-plate-pool-b` the two colours bled
+     into it, `--agent-plate-fall` the angle the wash falls along, and the two
+     `-at` values say which corners the pools sit in. Every tone declares the
+     whole set: the paint path below is written once and the tones differ only
+     in what they feed it, so a plate cannot end up meshed on one tab and flat
+     on the next for reasons nobody can find. */
+  --agent-plate-ground: var(--gl-color-surface-plate-read);
+  --agent-plate-pool-a: var(--gl-color-surface-plate-read-pool-a);
+  --agent-plate-pool-b: var(--gl-color-surface-plate-read-pool-b);
+  --agent-plate-pool-a-at: 4% 0%;
+  --agent-plate-pool-b-at: 98% 100%;
+  --agent-plate-fall: 152deg;
+  --agent-plate-line: var(--gl-color-plate-line-read);
 
   position: relative;
   display: flex;
@@ -72,22 +85,97 @@
      One value, written once, so the four sides cannot drift apart again. */
   padding: clamp(1.25rem, 3.4vw, 3.25rem);
   border-radius: var(--gl-radius-2xl);
+  /* THE MESH. Four layers, painted back to front, and it is four rather than
+     one because a single linear ramp between two near-white colours is a
+     gradient you can describe but not see. What a shader-style ground
+     actually is, is colour arriving from PLACES rather than from a direction:
+     two pools bleeding in from two corners, a directional fall underneath
+     them to tie the two together, and a base wash under all of it.
+
+     Layer order matters and is the opposite of the reading order below —
+     `background-image` paints its first layer on top:
+
+       1  pool A     a soft ellipse in one corner, the hue that names the tone
+       2  pool B     a second ellipse in another corner, the hue it falls to
+       3  the fall   a wide linear ramp carrying A into B across the plate, so
+                     the two pools read as one surface and not as two stains
+       4  base wash  `background-color`, and what a browser that drops the
+                     gradients is left with
+
+     Both ellipses are far wider than they are tall and run off the edge of
+     the plate, which is what keeps them reading as light on a surface rather
+     than as circles someone drew. They fade to `transparent` — gradients
+     interpolate premultiplied, so that is a fade to nothing rather than a
+     fade through grey.
+
+     The fall's middle stop is transparent at 46%, not a colour: the white
+     card sits over the middle of the plate, so the ramp is only ever seen in
+     the two margins, and holding the centre open stops the mesh piling
+     colour up exactly where it would be covered anyway.
+
+     Each tone sets its own angle and its own two corners, so the three
+     grounds differ in WHERE the colour is as well as in which colour it is.
+     A tab change is then legible from across the room before a word of it
+     has been read, which is the whole reason the three tones exist. */
   background-color: var(--agent-plate-ground);
+  background-image:
+    radial-gradient(
+      124% 68% at var(--agent-plate-pool-a-at),
+      var(--agent-plate-pool-a) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      116% 74% at var(--agent-plate-pool-b-at),
+      var(--agent-plate-pool-b) 0%,
+      transparent 64%
+    ),
+    linear-gradient(
+      var(--agent-plate-fall),
+      var(--agent-plate-pool-a) 0%,
+      transparent 46%,
+      var(--agent-plate-pool-b) 100%
+    );
 }
 
-.plate[data-tone="green"] {
-  --agent-plate-ground: var(--gl-color-surface-plate-green);
-  --agent-plate-line: var(--gl-color-plate-line-green);
+/* Summaries — the neutral red pooling in the top-left and falling to its own
+   lighter tint in the bottom-right. The fall runs with the reading diagonal. */
+.plate[data-tone="read"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-read);
+  --agent-plate-pool-a: var(--gl-color-surface-plate-read-pool-a);
+  --agent-plate-pool-b: var(--gl-color-surface-plate-read-pool-b);
+  --agent-plate-pool-a-at: 4% 0%;
+  --agent-plate-pool-b-at: 98% 100%;
+  --agent-plate-fall: 152deg;
+  --agent-plate-line: var(--gl-color-plate-line-read);
 }
 
-.plate[data-tone="amber"] {
-  --agent-plate-ground: var(--gl-color-surface-plate-amber);
-  --agent-plate-line: var(--gl-color-plate-line-amber);
+/* Ask Tal — the coral-side red in the top-RIGHT falling to the bottom-left:
+   the same mesh mirrored. The three tones are close enough in colour that
+   moving the plate's weight across is doing most of the work of telling this
+   tab apart from the one before it. */
+.plate[data-tone="ask"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-ask);
+  --agent-plate-pool-a: var(--gl-color-surface-plate-ask-pool-a);
+  --agent-plate-pool-b: var(--gl-color-surface-plate-ask-pool-b);
+  --agent-plate-pool-a-at: 100% 6%;
+  --agent-plate-pool-b-at: 0% 96%;
+  --agent-plate-fall: 34deg;
+  --agent-plate-line: var(--gl-color-plate-line-ask);
 }
 
-.plate[data-tone="azure"] {
-  --agent-plate-ground: var(--gl-color-surface-plate-azure);
-  --agent-plate-line: var(--gl-color-plate-line-azure);
+/* Voice — the odd one out, and deliberately: the rose-side pool sits under
+   the plate's bottom EDGE rather than in a corner, so the ground rises from
+   below the card instead of falling across it. The voice panel's subject is
+   the blob in the middle of the card, and a mesh that climbs towards it
+   reads as the plate listening with it. */
+.plate[data-tone="voice"] {
+  --agent-plate-ground: var(--gl-color-surface-plate-voice);
+  --agent-plate-pool-a: var(--gl-color-surface-plate-voice-pool-a);
+  --agent-plate-pool-b: var(--gl-color-surface-plate-voice-pool-b);
+  --agent-plate-pool-a-at: 50% 108%;
+  --agent-plate-pool-b-at: 6% 2%;
+  --agent-plate-fall: 200deg;
+  --agent-plate-line: var(--gl-color-plate-line-voice);
 }
 
 /* The ruled field: a wall of vertical hairlines drifting slowly sideways,
@@ -116,9 +204,15 @@
    card's middle passes behind it and comes out the other side, which reads
    as one continuous thing the card happens to be standing on.
 
-   Three kinds, one per tab (`data-kind`), and they differ in the mark alone —
-   the strip, the loop, the mask and the colour are shared, so a fourth kind
-   is a `.artMark` variant and nothing else.
+   Three kinds, one per tab (`data-kind`), and the strip, the edge mask and
+   the colour are common to all three — only what is drawn inside differs.
+
+   `bars` is the marquee: a run of marks laid end to end and translated,
+   so another run-of-marks kind is an `.artMark` variant and nothing else.
+   `hatch` and `wave` are not, and could not be: a diagonal ruling and a
+   stack of sine lines are each one continuous drawing across the whole
+   strip, and cutting either into flex children puts a joint at every mark.
+   Both are drawn by their own component and their own rules below.
    -------------------------------------------------------------------------- */
 .plateArt {
   position: absolute;
@@ -153,6 +247,21 @@
    adding a mark to `PLATE_ART` cannot break it. Slower than the ticker
    below: this is a horizon, and a horizon that keeps pace with text reads as
    a conveyor. */
+/* ENOUGH COPIES TO COVER THE PLATE, which is a correctness requirement and
+   not a tuning knob. The track is `max-content`, so its width is just the
+   marks laid end to end; when that came to less than the plate, the run
+   simply stopped partway across and the right-hand margin was empty — most
+   visibly on the voice panel, whose columns are the narrowest marks here.
+
+   The loop translates by exactly ONE run, so after the shift there must
+   still be a full plate's worth of marks to the right of the window. With
+   `--agent-art-runs` copies that leaves `runs - 1` copies of clearance,
+   which at the count the component passes is several times the widest plate
+   this band is ever laid out at.
+
+   The count comes from the component rather than living here, because the
+   same number decides how many copies get rendered; splitting it across two
+   files is how a marquee acquires a seam nobody can reproduce. */
 .artTrack {
   display: flex;
   height: 100%;
@@ -184,56 +293,135 @@
   border-radius: var(--gl-radius-full);
 }
 
-/* Fat rounded columns — the shape every product uses for a voice, and the
-   one the reference draws. Wider than they are spaced, so the run reads as a
-   waveform rather than as a picket fence. */
-.plateArt[data-kind="wave"] .artRun {
-  gap: var(--gl-space-4);
+/* --------------------------------------------------------------------------
+   The two ruled fields — `hatch` on the ask panel, `chevron` on the voice
+   panel. Everything they have in common lives here; each one adds only its
+   own `background-image` below.
+
+   NEITHER USES THE MARQUEE ABOVE, and neither could. A marquee lays discrete
+   marks end to end; a ruling is one continuous drawing across the whole
+   strip, and cutting it into flex children puts a joint at every mark. They
+   scroll the same way regardless — one element, one period of overhang,
+   translated by exactly one period — so they read as the same band the
+   marquee kinds do.
+
+   `repeating-linear-gradient` rather than a tiled SVG: exactly even at any
+   size with nothing to keep in sync, it takes `--agent-plate-line` directly
+   so no mask is needed to colour it, and there is no tile whose edges have
+   to be made to meet.
+   -------------------------------------------------------------------------- */
+.ruledField {
+  /* Perpendicular distance between lines, and the weight of one line. The
+     pitch is the only thing that sets how dense the ruling reads. */
+  --agent-ruled-pitch: var(--gl-space-11);
+  --agent-ruled-weight: var(--gl-border-width-thick);
+
+  /* THE HORIZONTAL PERIOD, which is not the pitch. The lines are at 45deg,
+     so a ruling whose perpendicular spacing is P repeats every P / sin(45°)
+     — P times root two — measured along the x axis. Translating by the pitch
+     itself would land the pattern a third of a line out of register and put
+     a visible stutter in the loop. */
+  --agent-ruled-period: calc(var(--agent-ruled-pitch) * 1.41421356);
+
+  display: block;
+  height: 100%;
+  /* One period of overhang, covering the gap the translate opens at the
+     right. `.plateArt` already clips, so it is never seen. */
+  width: calc(100% + var(--agent-ruled-period));
+  will-change: transform;
+  animation: agentPlateRuled 9s linear infinite;
 }
 
-.plateArt[data-kind="wave"] .artMark {
-  width: var(--gl-space-9);
-  border-radius: var(--gl-radius-full);
+@keyframes agentPlateRuled {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-1 * var(--agent-ruled-period)), 0, 0);
+  }
 }
 
-/* Loose geometry. Square by `aspect-ratio` off the inline height, so every
-   shape stays regular however tall the strip is — a circle that is 46% of a
-   strip and a fixed width apart would be an ellipse at every other viewport. */
-.plateArt[data-kind="shapes"] .artRun {
-  gap: var(--gl-space-11);
+/* --------------------------------------------------------------------------
+   Ask — a plain diagonal ruling.
+
+   What was here was the logo's own chevron traced off
+   `talentnext-logo-black.svg` and repeated at three counts, and the traced
+   glyph was the right instinct for a while: the mark is the one shape on the
+   page that belongs to this company. But a glyph is a mark and this band
+   wants a TEXTURE. Three counts meant three widths against one constant gap,
+   so the pitch was never even; flattening it to a single count left a row of
+   identical strokes that only wanted to be a ruling anyway.
+
+   135deg is the GRADIENT axis and the bands run perpendicular to it, so this
+   draws the lines leaning `/` — the rise of the chevron's upper leg rather
+   than a stroke cutting across it.
+   -------------------------------------------------------------------------- */
+.plateArt[data-kind="hatch"] .ruledField {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--agent-plate-line) 0 var(--agent-ruled-weight),
+    transparent var(--agent-ruled-weight) var(--agent-ruled-pitch)
+  );
 }
 
-.plateArt[data-kind="shapes"] .artMark {
-  aspect-ratio: 1;
-  border-radius: var(--gl-radius-sm);
+/* --------------------------------------------------------------------------
+   Voice — the same ruling folded into chevrons.
+
+   TWO HALVES OF ONE ELEMENT, not two elements: the top half ruled at 45deg
+   (`\`) and the bottom half at 135deg (`/`), each sized `100% 50%` and
+   pinned to its own edge. Where they meet at the strip's centre line the two
+   legs close into a `>`.
+
+   The apexes land exactly on the seam for a reason, not by tuning. A 45deg
+   gradient and a 135deg one are mirror images about the horizontal axis, and
+   mirroring maps a box's bottom edge onto its top edge — so the x positions
+   where the top half's lines cross the seam are precisely where the bottom
+   half's lines start. That holds at any strip height, which is what lets the
+   band scale without the chevrons splitting open.
+
+   This replaced ten stacked sine lines. The waves were a truer picture of a
+   voice, but they were the one backdrop in the set drawn in curves, and a
+   panel band reads better as one family: the chevron is the same ruling as
+   the ask panel's, folded.
+   -------------------------------------------------------------------------- */
+.plateArt[data-kind="chevron"] .ruledField {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--agent-plate-line) 0 var(--agent-ruled-weight),
+      transparent var(--agent-ruled-weight) var(--agent-ruled-pitch)
+    ),
+    repeating-linear-gradient(
+      135deg,
+      var(--agent-plate-line) 0 var(--agent-ruled-weight),
+      transparent var(--agent-ruled-weight) var(--agent-ruled-pitch)
+    );
+  background-size:
+    100% 50%,
+    100% 50%;
+  background-position:
+    left top,
+    left bottom;
+  background-repeat: no-repeat;
 }
 
-.plateArt[data-kind="shapes"] .artMark[data-shape="circle"] {
-  border-radius: var(--gl-radius-full);
-}
+/* One run's width, whatever the run count is — `100% / runs` of a track made
+   of that many identical runs is exactly one of them, so at the end of the
+   cycle every mark sits where its neighbour to the right began and the loop
+   has no seam. Writing it as a division rather than as a literal is what
+   stops the keyframe and the copy count drifting apart: change the count and
+   this follows it.
 
-/* The two outlined marks. Drawn with a border and no fill, so the run has
-   solid and hollow marks in it and does not read as one repeated stamp. */
-.plateArt[data-kind="shapes"] .artMark[data-shape="ring"] {
-  border: var(--gl-border-width-thick) solid var(--agent-plate-line);
-  border-radius: var(--gl-radius-full);
-  background-color: transparent;
-}
-
-/* A triangle from a clip, not from the border trick: `clip-path` keeps the
-   shape tied to the box's own size, where border-width triangles need three
-   more numbers kept in sync with it. */
-.plateArt[data-kind="shapes"] .artMark[data-shape="triangle"] {
-  border-radius: 0;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
+   It also holds the SPEED fixed. The shift used to be a flat -50%, which on a
+   two-run track was one run — so expressing it as one run keeps the marks
+   moving at exactly the pace they moved at before, rather than four times
+   faster on a track with four times the copies. */
 @keyframes agentPlateArt {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(calc(-100% / var(--agent-art-runs)), 0, 0);
   }
 }
 
@@ -1060,10 +1248,11 @@
   /* The blob is not in this list: it is a `<video>`, and a media query
      cannot pause one. The component pauses it on its first frame instead —
      see `TalBlob`. */
-  /* The one ambient loop the container still runs. The strip holds where it
-     is rather than being removed: it is the plate's drawing, and a reader who
-     asked for less motion has not asked for a plain swatch. */
-  .artTrack {
+  /* The ambient loops the container still runs. Every backdrop holds where
+     it is rather than being removed: it is the plate's drawing, and a reader
+     who asked for less motion has not asked for a plain swatch. */
+  .artTrack,
+  .ruledField {
     animation: none;
   }
 

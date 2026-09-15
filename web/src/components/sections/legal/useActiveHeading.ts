@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
  * Track which of a set of headings the reader is currently on, for
  * highlighting an entry in the navigation beside the document.
  *
- * Shared by both rails so the left nav and the right one can never disagree
- * about where you are.
+ * Used by the outline rail, where it both marks the reader's position and
+ * decides which section opens itself.
  *
  * The `rootMargin` narrows the observer's root to a band across the upper
  * part of the viewport rather than the whole of it. With the full viewport,

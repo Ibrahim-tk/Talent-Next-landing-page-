@@ -355,7 +355,20 @@ export function DeliverablesSection() {
   );
 
   return (
-    <div ref={sectionRef}>
+    /* The nav anchor lives on this plain wrapper and NOT on `.stage` below,
+       which is where it would otherwise naturally go. `.stage` is
+       `position: sticky`, and Next's App Router refuses to auto-scroll to a
+       sticky or fixed target — `shouldSkipElement` in its layout-router
+       bails out, looks for a next sibling to use instead, finds that
+       `.stage` is an only child, and gives up without scrolling at all. The
+       header link then changed the URL hash and moved the page nowhere.
+
+       This wrapper is static, so the router will scroll to it, and it
+       begins at exactly the same offset as the track it contains — so the
+       landing position is unchanged from what the sticky element would have
+       given. `aria-labelledby` stays on the <section>, which is still the
+       landmark; only the scroll target moved. */
+    <div id="what-youll-get" ref={sectionRef}>
       <div
         className={styles.scrollTrack}
         ref={trackRef}
@@ -368,7 +381,6 @@ export function DeliverablesSection() {
       >
         <section
           className={styles.stage}
-          id="what-youll-get"
           aria-labelledby="deliverables-heading"
         >
           <div className={styles.tabs}>

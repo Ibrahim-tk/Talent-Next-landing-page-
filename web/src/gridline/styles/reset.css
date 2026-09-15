@@ -48,6 +48,70 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   Scrollbars — every scroller on the site, drawn once.
+
+   The default bar is a 15px slab of system chrome with a hard-edged grey
+   thumb running corner to corner, and on a page whose entire visual argument
+   is fine rules and generous white space it is the single least considered
+   thing on screen. It also arrives twice — once down the page, once inside
+   the legal pages' outline rail — so it is not a detail anyone gets to
+   ignore.
+
+   WHAT MAKES IT THIN IS THE TRANSPARENT BORDER, not the track width. The
+   track stays 10px, which is what the pointer has to hit; the thumb takes a
+   3px transparent border and `background-clip: content-box`, so what is
+   PAINTED is a 4px capsule floating in the middle of a 10px lane. Narrowing
+   the track itself instead would have given a 4px target, which is a thing
+   you chase rather than grab. The same trick is why the thumb has real
+   margins at the ends of its travel rather than butting into the arrows'
+   corners.
+
+   Fully rounded, on a transparent track: the thumb reads as a mark on the
+   page rather than as a slider in a groove, which is the only way a bar this
+   thin can look deliberate instead of vestigial.
+
+   Two declarations of everything, and both are needed for a while yet:
+   `scrollbar-width`/`scrollbar-color` is the standard and is what Firefox
+   reads; the `::-webkit-scrollbar` pseudo-elements are what Chrome and
+   Safari read, and they are the only one of the two that can express the
+   inset capsule. `scrollbar-width` is not inherited, hence the `*`.
+
+   Note the interaction with `scrollbar-gutter: stable` on `html` above:
+   styling the WebKit pseudo-elements opts that engine out of overlay
+   scrollbars, so the bar takes real layout space. The gutter is already
+   reserved for exactly that reason, so nothing shifts.
+   -------------------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gl-color-scroll-thumb) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* No groove. The page behind the thumb is the track. */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gl-color-scroll-thumb);
+  /* The inset: 3px of transparent border on each side of a 10px lane paints
+     a 4px capsule. `content-box` is what keeps the border transparent rather
+     than filled. */
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--gl-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gl-color-scroll-thumb-hover);
+}
+
+/* --------------------------------------------------------------------------
    Element defaults — the reference type scale, applied to the bare HTML
    elements so a heading is correctly sized even when it is written directly
    rather than through `Text`. `Text`'s role classes set their own font-size

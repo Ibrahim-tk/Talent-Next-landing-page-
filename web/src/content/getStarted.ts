@@ -6,8 +6,14 @@ import type { PillChoice } from "@gridline";
  */
 
 export const getStartedCopy = {
-  heading:
-    "Fill out the form below to get connected with a Talent Agent",
+  /* A short title and a separate line of body, rather than the one long
+     sentence that used to be the panel's only text. The sentence was doing
+     two jobs — naming the section and telling you what to do — and at the
+     size this panel sets a heading, an instruction set in it reads as a
+     shout. The title names the thing; the body gives the instruction at the
+     size an instruction should be given. */
+  heading: "Connect with Talent Agent",
+  body: "Fill out the form to get connected with the talent agent.",
   success: {
     title: "Thank you! Your information has been submitted.",
     body: "A Talent Agent will reach out to you shortly to confirm your session.",

@@ -33,10 +33,6 @@
   margin-top: var(--gl-space-21);
 }
 
-.sectionNumber {
-  margin-bottom: var(--gl-space-4);
-}
-
 .sectionHeading {
   text-wrap: balance;
 }
@@ -92,7 +88,7 @@
 }
 
 .link:hover {
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-accent);
 }
 
 /* --------------------------------------------------------------------------

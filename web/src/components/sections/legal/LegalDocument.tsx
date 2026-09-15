@@ -97,12 +97,15 @@ function renderBlock(block: LegalBlock, index: number) {
   switch (block.type) {
     case "section":
       return (
+        /* No number above the heading. It was a `kicker` — small, uppercase
+           and tracked out — sitting on its own line over every section, and
+           a numeral given that treatment reads as a label for the section
+           rather than as part of its title. The outline rail already numbers
+           every entry, which is where a reader looks to place themselves;
+           repeating it here only to set it in a different style meant the
+           same fact arriving twice in two voices. `block.number` is still on
+           the data and still drives the rail and the subsection headings. */
         <div key={index} id={block.id} className={styles.sectionHead}>
-          {block.number ? (
-            <Text variant="kicker" as="span" className={styles.sectionNumber}>
-              {block.number}
-            </Text>
-          ) : null}
           <Text variant="headingLg" as="h2" className={styles.sectionHeading}>
             {block.heading}
           </Text>

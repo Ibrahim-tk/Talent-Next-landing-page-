@@ -11,8 +11,8 @@
 
    Below the column row, a thicker accent-coloured bar (the same role
    RulerGauge's progress track plays — a bolder, `--gl-color-accent` closing
-   mark) separates the columns from the final legal line: copyright + Terms
-   of Use, centred as one group.
+   mark) separates the columns from the final line: the copyright, centred
+   on its own.
    ========================================================================== */
 
 .footer {
@@ -23,7 +23,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: minmax(240px, 1.3fr) repeat(4, minmax(150px, 1fr));
+  grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(150px, 1fr));
   align-items: stretch;
 }
 
@@ -40,12 +40,12 @@
 .brandCell {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .brandMark {
-  height: 44px;
+  height: 88px;
   width: auto;
-  margin-bottom: var(--gl-space-13);
 }
 
 .tagline {
@@ -72,7 +72,7 @@
 }
 
 .link:hover {
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-accent);
 }
 
 /* --------------------------------------------------------------------------
@@ -122,38 +122,15 @@
 .legalBar {
   display: flex;
   /* Centred, not split: the credit line that used to hold the right end of
-     this bar is gone, so the copyright and the two legal links read as one
-     centred group rather than sitting off to one side. */
+     this bar is gone, and so are the Privacy/Terms links that used to sit
+     beside the copyright — both already have a row in the "Legal & Support"
+     column above, and repeating them here put the same two destinations on
+     screen twice. The copyright is the whole line now. */
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--gl-space-7);
   padding: var(--gl-space-11) clamp(2.25rem, 4vw, 3.5rem);
-}
-
-.legalLeft {
-  display: flex;
-  align-items: center;
-  gap: var(--gl-space-6);
-}
-
-.legalDot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: var(--gl-color-border-interactive);
-}
-
-.legalLink {
-  font-size: var(--gl-type-caption-size);
-  color: var(--gl-color-text-muted);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
-}
-
-.legalLink:hover {
-  color: var(--gl-color-text-primary);
 }
 
 @media (max-width: 860px) {

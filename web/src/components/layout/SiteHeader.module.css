@@ -58,7 +58,7 @@
 }
 
 :global(html[data-nav-theme="dark"]) .navLink:hover {
-  color: var(--gl-color-text-inverse);
+  color: var(--gl-color-accent);
 }
 
 /* The wordmark asset is solid black; inverting it is the simplest way to a
@@ -108,7 +108,7 @@
 }
 
 :global(html[data-nav-theme="overlay"]) .navLink:hover {
-  color: var(--gl-color-text-inverse);
+  color: var(--gl-color-accent);
 }
 
 :global(html[data-nav-theme="overlay"]) .brandMark {
@@ -183,7 +183,7 @@
 }
 
 :global(html[data-nav-theme="blur"]) .navLink:hover {
-  color: var(--gl-color-text-inverse);
+  color: var(--gl-color-accent);
 }
 
 /* The wordmark asset is solid black; inverting it is the simplest way to a
@@ -225,7 +225,7 @@
 }
 
 .brandMark {
-  height: 40px;
+  height: 60px;
   width: auto;
 }
 
@@ -243,7 +243,7 @@
 }
 
 .navLink:hover {
-  color: var(--gl-color-text-primary);
+  color: var(--gl-color-accent);
 }
 
 .actions {
@@ -286,6 +286,11 @@
   color: var(--gl-color-text-primary);
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-subtle);
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.drawerLink:hover {
+  color: var(--gl-color-accent);
 }
 
 .drawerCta {

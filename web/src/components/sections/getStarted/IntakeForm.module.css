@@ -65,10 +65,15 @@
   flex-direction: column;
   /* Was `space-between`, which pinned the heading to the top and the step
      meter to the bottom. The meter now lives above the question it reports
-     on (see IntakeForm.tsx), so the heading is this panel's only child and
-     simply starts at the top. */
+     on (see IntakeForm.tsx), so the title and its line of body start at the
+     top and the rest of the panel is deliberately empty. */
   justify-content: flex-start;
-  gap: var(--gl-space-9);
+  /* The gap between the title and the body under it, and nothing else —
+     they are the panel's only two children. Tight on purpose: at the size
+     the title is set, anything looser and the two stop reading as one block
+     and start reading as two unrelated things at opposite ends of a very
+     tall black column. */
+  gap: var(--gl-space-7);
   /* Was a flat 24px all round. Both panels now carry 48px top/bottom and
      56px left/right — the extra on the sides is deliberate, so the copy and
      the options sit well inside the card's edges rather than close to them. */
@@ -82,16 +87,35 @@
    read too large and too heavy for a form-panel heading rather than a
    page-level one. */
 .introPanel .introHeading {
-  max-width: 22ch;
-  /* Two rungs up the modular scale from where this started (h6 → h5 became
-     h5 → h4, and now h4 → h3), the vw term multiplied by the scale's own
-     1.25 ratio at each step so the jump holds at every width and not just
-     at the clamp ends. With the step meter moved out of this panel the
-     heading is the only thing left in it, and at the old size it sat small
-     in a tall black column; it now carries the column on its own and is
-     set above `headingLg`'s default rather than below it. */
-  font-size: clamp(var(--gl-scale-h4), 4.7vw, var(--gl-scale-h3));
-  font-weight: var(--gl-weight-regular);
+  /* Narrow enough that the title breaks into two or three short lines
+     rather than running the panel's full width as one — a measure this
+     column was already holding when the text in it was a whole sentence. */
+  max-width: 14ch;
+  /* No font-size here on purpose. This climbed the modular scale a rung at
+     a time in local overrides (h6 → h5 → h4 → h3 → h2) until it wanted to
+     be display size, and at that point the override was just a hand-rolled
+     near-copy of the `display` role. It now takes that role from the type
+     scale instead (see IntakeForm.tsx) — same clamp every other display
+     heading on the page uses, so the form's title tracks them at every
+     width rather than drifting on its own vw term.
+
+     Size matters here because with the step meter moved out of this panel
+     the title and one line of body are all that is left to carry it, and
+     the section around the card is a full viewport high — a heading that
+     merely filled the old column would read as a caption in this one. At
+     display it is the loudest thing on the page bar the hero, which is the
+     point: the form is what this section is for. */
+}
+
+/* The instruction line under the title. Doubled-up for the same reason the
+   heading is: it has to beat `Text`'s own `.bodyLg`.
+
+   Held to a shorter measure than the panel allows, so it wraps to two lines
+   under a title that is itself two or three. A single line running the full
+   width of the column would read as a caption pinned under the title rather
+   than as the paragraph it is. */
+.introPanel .introBody {
+  max-width: 30ch;
 }
 
 /* --------------------------------------------------------------------------
@@ -211,9 +235,10 @@
     grid-template-columns: 1fr;
   }
 
+  /* The gap is the base rule's already — the title and its body travel as
+     one block at every width. Only the panel's own height comes down. */
   .introPanel {
     min-height: 200px;
-    gap: var(--gl-space-7);
   }
 
   /* Stacked in one column, the step panel no longer has to match a

@@ -24,14 +24,24 @@
   margin-bottom: var(--gl-space-3); /* 8px */
 }
 
-/* Weight is deliberately *not* set here. A question earns its prominence
-   from size (`labelVariant`) and from the air beneath it, not from weight —
-   the system is regular-weight throughout, and a bold question read as a
-   different typeface sitting in an otherwise even form. Doubled selector so
-   that, should a weight ever belong here, it reliably beats whichever
-   `Text` role class the caller picked via `labelVariant`. */
+/* ONE step up the weight scale, and one only. This sat at regular on the
+   argument that a question should earn its prominence from size and from the
+   air beneath it rather than from weight — which held while the question was
+   the only thing on the step, and stopped holding once the options under it
+   grew to 18px. At regular the question and its four answers were the same
+   mark at slightly different sizes, so the step read as five statements
+   rather than as one thing asked and four things offered.
+
+   Medium is the smallest move that fixes that. Semibold was the temptation
+   and is wrong here: at this size it reads as a different typeface sitting in
+   an otherwise even form, which is the failure the original note was guarding
+   against. The guard was right about bold and wrong about 500.
+
+   Doubled selector because `Text`'s own role class — whichever one the caller
+   picked via `labelVariant` — also sets a weight at one-class specificity,
+   and its stylesheet wins the tie. */
 .labelQuestion.labelQuestion {
-  font-weight: var(--gl-weight-regular);
+  font-weight: var(--gl-weight-medium);
 }
 
 .input {

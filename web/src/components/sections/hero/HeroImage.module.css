@@ -15,11 +15,16 @@
   line-height: 0;
 }
 
-/* `cover` against a capped height: the plate is a 16:9 photograph, so at
-   full canvas width its natural height would push the fold well past the
-   headline. The crop is anchored to the top edge — the subject's head sits
-   near the top of the frame, so a centred crop trims it. Everything the
-   cap removes comes off the bottom instead. */
+/* `cover` against a capped height: the plate is a 3:2 photograph, so at full
+   canvas width its natural height would push the fold well past the headline
+   — more so than the 16:9 frame that was here before, which is why the cap
+   matters more now, not less.
+
+   The crop stays anchored to the top edge. The subject's head clears the top
+   of the frame by only a few percent of its height, so a centred crop takes
+   the cap's trim out of both ends and cuts into it; anchored top, everything
+   the cap removes comes off the bottom, where the photograph has desk and
+   floor to give away. */
 .image {
   width: 100%;
   height: auto;

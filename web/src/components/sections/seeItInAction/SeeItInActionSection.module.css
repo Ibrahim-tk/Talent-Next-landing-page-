@@ -99,6 +99,89 @@
 }
 
 /* --------------------------------------------------------------------------
+   The play facade
+   --------------------------------------------------------------------------
+   The still is a link filling the frame. It carries a scrim of its own — a
+   gentle darkening that deepens from the centre outward — because the badge
+   has to hold against whatever the cover happens to be, and the cover is
+   art-directed for the picture rather than for this.
+   -------------------------------------------------------------------------- */
+.playButton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* The frame already clips; this stops a focus ring being drawn outside it. */
+  overflow: hidden;
+}
+
+.playButton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.18) 55%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  transition: opacity var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.playButton:hover::after {
+  opacity: 0.6;
+}
+
+.playBadge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Fluid so it stays in proportion on a phone, where the frame is a third
+     of the width it is on a desktop. */
+  width: clamp(56px, 6vw, 88px);
+  height: clamp(56px, 6vw, 88px);
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-color-accent);
+  color: var(--gl-color-text-inverse);
+  /* The glyph is a triangle with no counterweight on its right, so it reads
+     as sitting left of centre when it is actually centred. Nudged back. */
+  padding-left: 0.12em;
+  transition:
+    transform var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.playButton:hover .playBadge {
+  background-color: var(--gl-color-accent-hover);
+  transform: scale(1.06);
+}
+
+.playButton:active .playBadge {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playBadge,
+  .playButton:hover .playBadge,
+  .playButton:active .playBadge {
+    transform: none;
+  }
+}
+
+/* The embed replaces the still in the same box, so it inherits the frame's
+   16:9 and its clipping and needs only to fill it. */
+.mediaEmbed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
    Inverse tone — the dark treatment, opted into via the section's `tone`
    prop (by the homepage and `/v2`; `/v1` and `/v3` stay light).
 

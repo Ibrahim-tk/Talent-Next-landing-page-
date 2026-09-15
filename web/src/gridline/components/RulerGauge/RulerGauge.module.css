@@ -3,18 +3,41 @@
    --------------------------------------------------------------------------
    A vertical measuring rule. Two identical tick tracks are stacked: the base
    track in grey, and an accent-coloured copy on top whose `clip-path` an
-   animation driver reveals from the bottom up. The result reads as a scale
+   animation driver reveals from the top down. The result reads as a scale
    filling with elapsed progress.
+
+   The ticks are painted as tiled `linear-gradient` backgrounds rather than
+   drawn as one element each, and that is load-bearing rather than a
+   micro-optimisation. The earlier version laid out a fixed 101 ticks with
+   `justify-content: space-between` across `height: 100%`, so the pitch was
+   whatever `(viewport height − header − padding − ink) / 100` worked out to
+   — never a whole number — and each tick was `1.5px` tall, never on a whole
+   pixel either. Two copies of that fractional stack were then rasterised
+   independently, the accent one on its own compositing layer (it carries
+   `will-change: clip-path`), which rounds to device pixels on its own terms.
+   The two copies landed a fraction of a pixel apart, so over the filled
+   stretch you saw the red ticks and the grey ticks underneath them at once:
+   doubled, ragged, visibly out of step with the clean single-painted grey
+   below the fill line.
+
+   Both halves of that are gone here. A tiled background repeats at a fixed
+   whole-pixel pitch measured from the box's own content edge, so tick
+   positions no longer depend on the box's height at all and every tick
+   lands on a device pixel; and `.progressTrack` paints an opaque backdrop
+   behind its own ticks, so the grey track cannot show through the filled
+   stretch even if the two layers were offset. The tick count now varies
+   with the available height, which is what a measuring rule should do
+   anyway — the rule doesn't restretch itself for a shorter window.
    ========================================================================== */
 
 .root {
   position: relative;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
 }
 
+/* `background-origin`/`background-clip: content-box` is what anchors the
+   tiling to the padded content edge, so the first tick sits exactly
+   `--gl-space-5` down rather than under the padding. */
 .track {
   position: absolute;
   top: 0;
@@ -22,44 +45,56 @@
   left: 50%;
   transform: translateX(-50%);
   width: 32px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
   padding: var(--gl-space-5) 0;
   box-sizing: border-box;
   pointer-events: none;
-}
 
-.tick {
-  display: block;
-  /* Every tick — minor and major alike — is the same width: the midpoint
-     between what used to be a 12px minor tick and a 24px major one. Major
-     ticks still read as distinct via height and colour alone (see
-     `.tickMajor` below), not by sticking out further than the rest. */
-  width: 18px;
-  height: var(--gl-border-width-rule);
-  background-color: var(--gl-color-tick);
-  border-radius: 0 var(--gl-radius-xs) var(--gl-radius-xs) 0;
-  align-self: flex-start;
-}
-
-.tickMajor {
-  height: var(--gl-border-width-thick);
-  background-color: var(--gl-color-tick-major);
+  /* Two tiles, majors in front: each tile is one pitch tall with a solid
+     tick at its top edge and nothing below it. Every tick — minor and major
+     alike — is the same 18px wide and one hairline tall, so the rule reads
+     as an even run of thin bars. Majors are distinguished by colour alone,
+     neither taller nor thicker than the rest. */
+  background-image:
+    linear-gradient(
+      to bottom,
+      var(--gl-color-tick-major) 0 var(--gl-border-width-hairline),
+      transparent var(--gl-border-width-hairline)
+    ),
+    linear-gradient(
+      to bottom,
+      var(--gl-color-tick) 0 var(--gl-border-width-hairline),
+      transparent var(--gl-border-width-hairline)
+    );
+  background-size:
+    18px var(--gl-ruler-pitch-major),
+    18px var(--gl-ruler-pitch);
+  background-repeat: repeat-y;
+  background-position: left top;
+  background-origin: content-box;
+  background-clip: content-box;
 }
 
 /* The accent overlay. Starts fully clipped; the driver animates
-   `clip-path: inset(0 0 <n>% 0)` toward 0. */
+   `clip-path: inset(0 0 <n>% 0)` toward 0.
+
+   `--gl-ruler-backdrop` is the surface this gauge is sitting on. Setting it
+   makes the filled stretch opaque, so the base track is hidden rather than
+   overpainted there — the one thing that guarantees the two tracks can
+   never read as doubled. Left unset it falls back to transparent and the
+   gauge behaves as a plain overlay. */
 .progressTrack {
   clip-path: inset(0 0 100% 0);
   -webkit-clip-path: inset(0 0 100% 0);
   will-change: clip-path;
   z-index: var(--gl-z-raised);
-}
+  background-color: var(--gl-ruler-backdrop, transparent);
 
-.progressTrack .tick,
-.progressTrack .tickMajor {
-  background-color: var(--gl-color-tick-progress);
+  /* One layer, not two: with majors and minors now identical in size and
+     colour here, the major tile would paint nothing the minor one doesn't. */
+  background-image: linear-gradient(
+    to bottom,
+    var(--gl-color-tick-progress) 0 var(--gl-border-width-hairline),
+    transparent var(--gl-border-width-hairline)
+  );
+  background-size: 18px var(--gl-ruler-pitch);
 }

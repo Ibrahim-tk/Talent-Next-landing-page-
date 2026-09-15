@@ -101,12 +101,24 @@ export function IntakeForm() {
     >
       <div className={styles.introPanel}>
         <Text
-          variant="headingLg"
+          variant="display"
           as="h2"
+          id="get-started-heading"
           tone="inverse"
           className={styles.introHeading}
         >
           {getStartedCopy.heading}
+        </Text>
+        {/* The instruction, demoted out of the heading. It used to BE the
+            heading — one long sentence set at display size — which made the
+            panel shout a form instruction and left the section without a
+            name. The title names it; this says what to do, at body size. */}
+        <Text
+          variant="bodyLg"
+          tone="inverseSecondary"
+          className={styles.introBody}
+        >
+          {getStartedCopy.body}
         </Text>
       </div>
 

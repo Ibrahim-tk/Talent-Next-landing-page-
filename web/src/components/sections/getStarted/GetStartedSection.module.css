@@ -27,9 +27,35 @@
      on, not as a border around it. Side padding stays on the fluid gutter
      every other section's outer edge uses. */
   padding: var(--gl-space-block-xl) var(--gl-space-gutter-lg);
+
+  /* A FULL VIEWPORT, as a floor. This section is the one place on the page
+     that asks the reader for something, and it was arriving as another band
+     in a run of bands — tall, but no taller than the sections either side of
+     it. Held to a screen it stops being one of the run: scroll into it and
+     there is nothing else on screen to attend to, which is the whole of the
+     emphasis this section needed.
+
+     A FLOOR and not a height. The card grows with its content — step 3 is
+     two questions — and on a short landscape window the form must be allowed
+     to run past the fold rather than be cut off inside a box told to be
+     exactly one screen.
+
+     `svh` over `vh` on the browsers that have it: on mobile, `100vh` is the
+     viewport with the address bar hidden, so a section pinned to it overflows
+     by the height of the chrome the moment the chrome is showing. `svh` is
+     the small viewport — the one that is always actually there — and it does
+     not resize as the bar hides, which `dvh` would, taking the whole page's
+     layout with it mid-scroll. The `vh` line stays above as the fallback. */
+  min-height: 100vh;
+  min-height: 100svh;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* The card sits in the middle of that screen rather than at the top of it.
+     With the section now taller than its contents, `flex-start` would have
+     put all the new room underneath the card and none above. */
+  justify-content: center;
   background-image: url("/assets/form_gradient.png");
   background-size: cover;
   background-position: center;

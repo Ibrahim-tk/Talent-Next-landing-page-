@@ -51,6 +51,33 @@
   pointer-events: none;
 }
 
+/* A scrim under the letter, so it holds against a light patch of photograph
+   without the whole image being darkened for it.
+
+   Anchored back to the media's own corner by cancelling `.letter`'s offsets,
+   and sized in `em` so it stays in proportion to the glyph it's protecting.
+   Radial rather than linear: a linear wash of this size lands a visible
+   straight edge across the picture, where a corner radial has none.
+
+   It sits at `z-index: -1` within `.letter`'s own stacking context (which
+   exists because `.letter` is positioned with a z-index) — behind the glyph,
+   still above the photograph. */
+.letter::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--gl-space-7) * -1);
+  left: calc(var(--gl-space-8) * -1);
+  width: 5.4em;
+  height: 4.95em;
+  background: radial-gradient(
+    100% 100% at 0 0,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.42) 34%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  z-index: -1;
+}
+
 .content {
   padding: var(--gl-space-11) var(--gl-space-9);
   display: flex;

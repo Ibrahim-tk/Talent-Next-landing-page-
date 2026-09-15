@@ -49,10 +49,9 @@ export const site = {
 } as const;
 
 /**
- * The two legal routes. Both are referenced from the "Legal & Support"
- * column below *and* from the footer's closing legal bar, so the label and
- * href each live in exactly one place and the two appearances cannot drift
- * onto different destinations.
+ * The two legal routes. Named separately rather than written inline in the
+ * "Legal & Support" column because the legal pages themselves link across to
+ * each other, so the label and href live in exactly one place.
  */
 export const privacyNotice: NavItem = {
   label: "Privacy Notice",
@@ -73,15 +72,6 @@ export const footerColumns: readonly {
     links: primaryNav,
   },
   {
-    title: "The Process",
-    links: [
-      { label: "30-Minute Conversation", href: "/#how-it-works" },
-      { label: "Talent Agent Assessment", href: "/#how-it-works" },
-      { label: "Strengths & Skill Gaps", href: "/#what-youll-get" },
-      { label: "Personalized Roadmap", href: "/#what-youll-get" },
-    ],
-  },
-  {
     title: "Legal & Support",
     links: [
       privacyNotice,
@@ -100,5 +90,5 @@ export const footerSocial: readonly SocialItem[] = [
 export const footerCopy = {
   tagline:
     "Uncover the skills you already have and begin to see what they could mean for your future.",
-  legal: `© ${new Date().getFullYear()} Talentnext, Inc. All rights reserved.`,
+  legal: `© ${new Date().getFullYear()} TALENTnext, Inc. All rights reserved.`,
 } as const;
