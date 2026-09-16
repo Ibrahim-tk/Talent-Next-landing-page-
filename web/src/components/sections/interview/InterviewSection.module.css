@@ -89,7 +89,7 @@
    tuned ones.
 
    The stills' aspect ratios differ (pic1 square at 1:1, pic2-trim landscape
-   at 1.85:1, pic3-trim landscape at 1.96:1), so at a common height their
+   at 1.88:1, pic3-trim landscape at 1.96:1), so at a common height their
    widths differ too — that is expected and fine; a square and two cards of
    the same height look like a set, whereas matching their widths instead
    would make the square tower over the cards. What DOES have to hold is
@@ -105,12 +105,13 @@
    The three stills must be cropped tight to their artwork — no transparent
    margin left in the files — which is what lets `contain` centre them for
    free. CROP EVERY RE-EXPORT TO ITS OPAQUE BOUNDS. This is the one recurring
-   failure in this row and it has now landed three times: pic2-trim as a
-   1873x1118 canvas holding 1605x501; pic2-trim again as a 599x441 holding
-   502x271 at (48, 0); pic1 as a 560x669 holding 418x418 at (71, 0). Each
-   time `contain` sized the empty CANVAS to the box, so the visible artwork
-   came out a fraction of its neighbours' size and — where the spare canvas
-   sat below the artwork — above the centre of its plate. None of it is
+   failure in this row and every delivery so far has arrived padded:
+   pic2-trim as a 1873x1118 canvas holding 1605x501; pic2-trim again as a
+   599x441 holding 502x271 at (48, 0); pic1 as a 560x669 holding 418x418 at
+   (71, 0); pic2-trim a third time as a 436x320 holding 365x194 at (35, 0).
+   Each time `contain` sized the empty CANVAS to the box, so the visible
+   artwork came out a fraction of its neighbours' size and — where the spare
+   canvas sat below the artwork — above the centre of its plate. None of it is
    visible from the stylesheet: the height below stays correct and the panel
    is simply small and high. Treat a faint shadow tail (sub-alpha-8 on pic2's
    canvas) as margin, not artwork. */
