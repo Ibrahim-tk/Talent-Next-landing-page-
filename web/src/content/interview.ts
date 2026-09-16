@@ -4,10 +4,13 @@
  * and one line of reassurance copy underneath. The gradients and stills are
  * paired index-for-index: panel one gets grad1 + pic1, and so on.
  *
- * The `-trim` stills are the source PNGs with their transparent margins
- * cropped off (the originals ship a lot of empty canvas below the artwork,
- * which made the three read as different heights and sat them off-centre on
- * their plates). pic1 needed no crop, so it's referenced as-is.
+ * All three stills are cropped to their opaque bounds — the delivered PNGs
+ * ship a lot of empty canvas around the artwork, which made the three read
+ * as different heights and sat them off-centre on their plates. The `-trim`
+ * suffix records that on the two that were first delivered padded; pic1 was
+ * delivered clean originally and was cropped in place later, so it keeps its
+ * plain name. Crop any re-export the same way — see InterviewSection.module
+ * .css's `.overlay` for what goes wrong when one arrives padded.
  */
 
 export interface InterviewStage {
@@ -32,7 +35,7 @@ export const interviewStages: readonly InterviewStage[] = [
     id: "real-stories",
     background: "/assets/grad2.png",
     overlay: "/assets/pic2-trim.png",
-    overlayAlt: "The Tal AI prompt panel, ready for a question",
+    overlayAlt: "A Talent Agent and a candidate talking on a video call",
     body: "Your Talent Agent will ask about real experiences from your life and give you a chance to talk through what happened and how you handled it.",
   },
   {

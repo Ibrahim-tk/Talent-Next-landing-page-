@@ -80,58 +80,45 @@
   opacity: 0.4;
 }
 
-/* Height is the dimension that's pinned, and width is left at the full panel
-   so it never becomes the binding constraint — with `contain` inside a box
-   this shape, each still resolves to exactly the box height and sits centred
-   on its plate. 45cqw is the base measure; the 280px cap stops the row
-   growing unreasonably on very wide viewports.
+/* Height is the dimension that's pinned, and it is THE SAME FOR ALL THREE
+   PANELS — that shared height is the whole point of this rule, so it lives
+   here and nowhere else. Width is left at the full panel so it never becomes
+   the binding constraint: with `contain` inside a box this shape, each still
+   resolves to exactly the box height and sits centred on its plate, and the
+   three read as one row of artwork at one size rather than three separately
+   tuned ones.
 
-   The three stills are cropped tight to their artwork (pic1 square at 1:1,
-   pic2-trim a wide banner at 3.20:1, pic3-trim landscape at 1.96:1) — no
-   transparent margin left in the files, which is what lets `contain` centre
-   them for free. VERIFY THAT AFTER ANY RE-EXPORT: pic2-trim once shipped as
-   a 1873x1118 canvas holding 1605x501 of artwork, so it filled 45% of its
-   own height, and `contain` dutifully sized the empty canvas to the box
-   while the visible banner came out at well under half the size of its
-   neighbours. Nothing about that is visible in the stylesheet — the scale
-   below looked correct and the panel was simply small. The source PNGs shipped ~237px of empty canvas below the
-   artwork; while that was still in there, `contain` dutifully centred the
-   CANVAS, which pushed the visible artwork of panels 2 and 3 well above the
-   centre of their plates. If either still is ever re-exported, crop it to
-   its opaque bounds or that reappears.
+   The stills' aspect ratios differ (pic1 square at 1:1, pic2-trim landscape
+   at 1.85:1, pic3-trim landscape at 1.96:1), so at a common height their
+   widths differ too — that is expected and fine; a square and two cards of
+   the same height look like a set, whereas matching their widths instead
+   would make the square tower over the cards. What DOES have to hold is
+   that height stays the binding dimension for all three, or `contain` would
+   start sizing one of them off its width and break the shared height. The
+   widest, pic3-trim, lands at 38cqw x 1.962 = ~75cqw — comfortably inside
+   the panel, with room to spare before the hairline. Re-check that figure if
+   a still is ever re-exported at a much wider aspect ratio.
 
-   Because they're now tight crops, their aspect ratios differ far more than
-   a shared box height can absorb: at one common height pic2-trim would run
-   over three times as wide as it is tall and blow past the panel edges. So
-   each panel scales the base measure instead (`--overlay-scale`, applied
-   per panel below). Width stays non-binding at every scale: the widest,
-   panel two, lands at ~72cqw below the 280px cap and less above it. */
+   38cqw is the measure; the 238px cap stops the row growing unreasonably on
+   very wide viewports.
+
+   The three stills must be cropped tight to their artwork — no transparent
+   margin left in the files — which is what lets `contain` centre them for
+   free. CROP EVERY RE-EXPORT TO ITS OPAQUE BOUNDS. This is the one recurring
+   failure in this row and it has now landed three times: pic2-trim as a
+   1873x1118 canvas holding 1605x501; pic2-trim again as a 599x441 holding
+   502x271 at (48, 0); pic1 as a 560x669 holding 418x418 at (71, 0). Each
+   time `contain` sized the empty CANVAS to the box, so the visible artwork
+   came out a fraction of its neighbours' size and — where the spare canvas
+   sat below the artwork — above the centre of its plate. None of it is
+   visible from the stylesheet: the height below stays correct and the panel
+   is simply small and high. Treat a faint shadow tail (sub-alpha-8 on pic2's
+   canvas) as margin, not artwork. */
 .overlay {
   position: relative;
   z-index: var(--gl-z-content);
   width: 100%;
-  height: calc(min(45cqw, 280px) * var(--overlay-scale, 1));
-}
-
-/* Panel two's banner and panel three's card are keyed to the row by index,
-   the same way `interviewStages` pairs each gradient with its still. Panel
-   three's is the artwork's own share of the old padded canvas, so it reads
-   at exactly the size it did before the crop, with a deliberate 1.2x on top
-   (0.64 x 1.2) so the recommendation card sits a little larger than the rest
-   of the row.
-
-   PANEL TWO'S IS SET DIRECTLY, not derived that way, because its still no
-   longer matches the canvas the old figure was measured against — see
-   `.overlay` above. Now that the file is cropped, the scale is just the
-   banner's height as a share of the base measure: half, which at 3.20:1
-   lands it a touch wider than panel three's card and appreciably shorter,
-   which is the right relationship for a banner beside a card. */
-.grid > .panel:nth-child(2) .overlay {
-  --overlay-scale: 0.5;
-}
-
-.grid > .panel:nth-child(3) .overlay {
-  --overlay-scale: 0.768;
+  height: min(38cqw, 238px);
 }
 
 .overlayImage {
