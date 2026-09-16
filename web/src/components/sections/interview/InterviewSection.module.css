@@ -93,10 +93,11 @@
    "Card", not "still", is the thing being equalised, and for panel two those
    are not the same. pic1 and pic3 are card-only — their artwork IS the card,
    edge to edge — so their boxes are simply `--card-height`. pic2's artwork is
-   a 1111x734 composition of which only the bottom 1111x546 is the call
-   window; the 188px above it is the handwritten "Human"/"You" annotation
-   overhanging the card. Sized to a common box height, its card would come out
-   546/734 = 74% of its neighbours', which is exactly the too-small middle
+   a 1118x677 composition of which only the bottom 539 rows are the call
+   window; the 138px above it is the handwritten "Human"/"You" annotation
+   overhanging the card, which is deliberate and stays. Sized to a common box
+   height, its card would come out 539/677 = 80% of its neighbours', the
+   too-small middle
    panel this row keeps drifting back into. So panel two gets a box taller by
    the inverse of that share, and is then pulled up so its CARD — not its
    artwork — shares the row's centreline. Both rules below are derived from
@@ -104,14 +105,14 @@
    is re-exported with a different overhang, and drop them entirely if the
    annotation ever goes away.
 
-   The stills' aspect ratios differ (pic1 1:1, pic2-trim 1.51:1 overall and
-   2.03:1 for its card alone, pic3-trim 1.96:1), so at a common card height
+   The stills' aspect ratios differ (pic1 1:1, pic2-trim 1.65:1 overall and
+   2.07:1 for its card alone, pic3-trim 1.96:1), so at a common card height
    their widths differ too — that is expected and fine; a square beside two
    cards of the same height reads as a set, whereas matching widths instead
    would make the square tower over the cards. What DOES have to hold is that
    height stays the binding dimension for all three, or `contain` would start
    sizing one off its width and break the shared height. The widest, panel
-   two, lands at ~77cqw — inside the panel with room before the hairline.
+   two, lands at ~79cqw — inside the panel with room before the hairline.
    Re-check that if a still is re-exported much wider.
 
    All three stills must be cropped tight to their artwork — no transparent
@@ -121,8 +122,9 @@
    as a 1873x1118 canvas holding 1605x501; pic2-trim again as a 599x441
    holding 502x271 at (48, 0); pic1 as a 560x669 holding 418x418 at (71, 0);
    pic2-trim a third time as a 436x320 holding 365x194 at (35, 0); then
-   pic2-trim as a 1280x1229 holding 1111x734 at (85, 250) and pic3-trim as a
-   960x658 holding 826x421 at (67, 0). Each time `contain` sized the empty
+   pic2-trim as a 1280x1229 holding 1111x734 at (85, 250); pic3-trim as a
+   960x658 holding 826x421 at (67, 0); pic2-trim once more as a 1280x1229
+   holding 1118x677 at (81, 298). Each time `contain` sized the empty
    CANVAS to the box, so the visible artwork came out a fraction of its
    neighbours' size and — where the spare canvas sat below the artwork —
    above the centre of its plate. None is visible from the stylesheet: the
@@ -135,13 +137,14 @@
   height: var(--card-height);
 }
 
-/* Panel two only: box scaled by artwork/card (734/546) so the call window
+/* Panel two only: box scaled by artwork/card (677/539) so the call window
    itself measures `--card-height`, then shifted up by the card centre's
-   offset from the artwork centre (94/734 of the box) to put that window on
-   the same centreline as the cards either side of it. */
+   offset from the artwork centre (69/677 of the box) to put that window on
+   the same centreline as the cards either side of it. The handwriting then
+   overhangs above the row's card line, which is the intended composition. */
 .grid > .panel:nth-child(2) .overlay {
-  height: calc(var(--card-height) * 734 / 546);
-  transform: translateY(calc(100% * -94 / 734));
+  height: calc(var(--card-height) * 677 / 539);
+  transform: translateY(calc(100% * -69 / 677));
 }
 
 .overlayImage {
