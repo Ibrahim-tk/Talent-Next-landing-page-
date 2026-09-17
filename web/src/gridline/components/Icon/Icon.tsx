@@ -30,7 +30,16 @@ export type IconName =
   | "waveform"
   | "mic"
   | "ledger"
-  | "trendUp";
+  | "trendUp"
+  | "truck"
+  | "shieldCheck"
+  | "user"
+  | "bolt"
+  | "gridSquares"
+  | "briefcase"
+  | "youtube"
+  | "checkCircleSolid"
+  | "mail";
 
 export interface IconProps {
   name: IconName;
@@ -165,6 +174,55 @@ const iconPaths: Record<IconName, () => ReactNode> = {
       <line x1="8" y1="17" x2="12" y2="17" />
     </>
   ),
+  truck: () => (
+    <>
+      <path d="M1 3h15v13H1z" />
+      <path d="M16 8h4l3 3v5h-7V8z" />
+      <circle cx="5.5" cy="18.5" r="2.5" />
+      <circle cx="18.5" cy="18.5" r="2.5" />
+    </>
+  ),
+  shieldCheck: () => (
+    <>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <polyline points="9 12 11 14 15 10" />
+    </>
+  ),
+  user: () => (
+    <>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </>
+  ),
+  bolt: () => (
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  ),
+  gridSquares: () => (
+    <>
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+    </>
+  ),
+  briefcase: () => (
+    <>
+      <rect x="2" y="7" width="20" height="14" rx="2" />
+      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </>
+  ),
+  youtube: () => (
+    <path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42a2.5 2.5 0 0 0-1.76 1.77A26.5 26.5 0 0 0 2 12a26.5 26.5 0 0 0 .42 4.81 2.5 2.5 0 0 0 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77A26.5 26.5 0 0 0 22 12a26.5 26.5 0 0 0-.42-4.81zM10 15.5v-7l6 3.5-6 3.5z" />
+  ),
+  checkCircleSolid: () => (
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.2 14.2l-3.5-3.5 1.41-1.41 2.09 2.08 5.69-5.69 1.41 1.41-7.1 7.11z" />
+  ),
+  mail: () => (
+    <>
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </>
+  ),
 };
 
 const filledIcons: ReadonlySet<IconName> = new Set([
@@ -172,6 +230,8 @@ const filledIcons: ReadonlySet<IconName> = new Set([
   "x",
   "instagram",
   "play",
+  "youtube",
+  "checkCircleSolid",
 ]);
 
 export function Icon({

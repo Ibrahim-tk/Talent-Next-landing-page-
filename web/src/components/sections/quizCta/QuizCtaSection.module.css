@@ -1,0 +1,120 @@
+/* ==========================================================================
+   QuizCtaSection — Full-screen backdrop CTA infused just above the footer
+   --------------------------------------------------------------------------
+   `.bleed` breaks out to the full viewport width (100vw) so the dramatic
+   textured image (/assets/form_gradient.png) runs edge-to-edge.
+   The content sits dead centre: a large white display headline and the red
+   "Take Talentnext" action button.
+   ========================================================================== */
+
+.bleed {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  /* Height scaled to 0.8x */
+  min-height: 60vh;
+  min-height: 60svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(3.2rem, 6.4vh, 5.5rem) var(--gl-space-gutter-lg);
+  background-image: url("/assets/form_gradient.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+  z-index: var(--gl-z-base);
+}
+
+.heading {
+  color: #ffffff;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+  font-weight: var(--gl-weight-medium);
+  line-height: var(--gl-leading-tight);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--gl-space-6);
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+.description {
+  color: #ffffff;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(1.05rem, 1.9vw, 1.2rem);
+  font-weight: var(--gl-weight-regular);
+  line-height: var(--gl-leading-relaxed);
+  letter-spacing: -0.005em;
+  max-width: 56ch;
+  margin: 0 0 var(--gl-space-10);
+  text-align: center;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  opacity: 0.96;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--gl-color-accent);
+  color: #ffffff;
+  padding: 1rem 2.25rem;
+  font-size: 1rem;
+  font-weight: var(--gl-weight-medium);
+  font-family: var(--gl-font-sans);
+  text-transform: none; /* Keep "Talent" capitalized and "next" lowercase as requested */
+  letter-spacing: 0.01em;
+  border-radius: var(--gl-radius-xs);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(249, 66, 58, 0.4);
+  transition:
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    transform var(--gl-duration-fast) var(--gl-ease-standard),
+    box-shadow var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.ctaButton:hover {
+  background-color: var(--gl-color-accent-hover);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(249, 66, 58, 0.5);
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .bleed {
+    min-height: 48vh;
+    min-height: 48svh;
+    padding: var(--gl-space-16) var(--gl-space-7);
+  }
+
+  .heading {
+    font-size: clamp(2.25rem, 8vw, 3rem);
+    margin-bottom: var(--gl-space-10);
+  }
+
+  .ctaButton {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9375rem;
+  }
+}

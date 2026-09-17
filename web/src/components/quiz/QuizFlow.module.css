@@ -1,0 +1,532 @@
+/* ==========================================================================
+   QuizFlow — Multi-step Get Started Quiz
+   --------------------------------------------------------------------------
+   - Blueprint lattice background with 2x2 grid cell padding on all sides.
+   - White card has NO border-radius and NO shadow.
+   - Card height is fixed across all questions (11 blueprint grid cells).
+   - Options: no circle icon; selected option has accent red border, accent red
+     text, and 15% opacity accent red background fill.
+   ========================================================================== */
+
+.section {
+  width: 100%;
+  /* 2x2 grid cells padding from all sides: locks card boundaries exactly onto gridlines */
+  padding: calc(2 * var(--gl-blueprint-cell)) calc(2 * var(--gl-blueprint-cell-x));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  /* Fixed height across questions: 11 grid cells tall */
+  height: calc(11 * var(--gl-blueprint-cell));
+  min-height: 610px;
+  background-color: var(--gl-color-surface-raised);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(2rem, 3.5vw, 3.25rem) clamp(2rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Progress Header
+   -------------------------------------------------------------------------- */
+.progressHeader {
+  margin-bottom: var(--gl-space-9);
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gl-space-3);
+}
+
+.stepLabel {
+  font-size: var(--gl-size-caption);
+  text-transform: uppercase;
+  letter-spacing: var(--gl-tracking-wider);
+  color: var(--gl-color-text-muted);
+  font-weight: var(--gl-weight-semibold);
+}
+
+.questionNumberText {
+  font-size: var(--gl-size-caption);
+  color: var(--gl-color-text-secondary);
+  font-weight: var(--gl-weight-medium);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+/* --------------------------------------------------------------------------
+   Questions Stage
+   -------------------------------------------------------------------------- */
+.stageContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.questionHeader {
+  margin-bottom: var(--gl-space-7);
+}
+
+.questionTitle {
+  font-size: clamp(1.65rem, 3vw, 2.15rem);
+  font-weight: var(--gl-weight-bold);
+  line-height: var(--gl-leading-tight);
+  color: var(--gl-color-text-primary);
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--gl-space-2);
+}
+
+.questionSubtitle {
+  font-size: var(--gl-size-body-base);
+  line-height: var(--gl-leading-normal);
+  color: var(--gl-color-text-secondary);
+  margin: 0;
+}
+
+.optionsStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-3);
+  margin-bottom: auto;
+}
+
+/* Option Pill: NO circle at end */
+.pillButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 16px 22px;
+  background-color: var(--gl-color-surface-sunken);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: 0;
+  color: var(--gl-color-text-primary);
+  font-size: 1.05rem;
+  font-family: var(--gl-font-sans);
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.pillButton:hover:not(.pillButtonSelected) {
+  background-color: var(--gl-color-surface-hover);
+  border-color: var(--gl-color-border-interactive);
+}
+
+/* Selected option: Accent red border, accent red text, 15% opacity bg fill */
+.pillButtonSelected {
+  border: 1.5px solid var(--gl-color-accent);
+  color: var(--gl-color-accent);
+  background-color: rgba(249, 66, 58, 0.15);
+  font-weight: var(--gl-weight-medium);
+}
+
+/* --------------------------------------------------------------------------
+   Stage Footer Navigation
+   -------------------------------------------------------------------------- */
+.footerNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--gl-space-7);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   Step 13: Personal Info Form (No big heading, description only)
+   -------------------------------------------------------------------------- */
+.formDescription {
+  font-size: 1.125rem;
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-secondary);
+  margin: 0 0 var(--gl-space-8);
+  max-width: 58ch;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-5);
+  margin-bottom: var(--gl-space-8);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gl-space-5);
+}
+
+.inputField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-2);
+}
+
+.inputLabel {
+  font-size: var(--gl-size-body-sm);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-primary);
+}
+
+.textInput {
+  padding: 13px 16px;
+  font-size: 1rem;
+  font-family: var(--gl-font-sans);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: 0;
+  background-color: var(--gl-neutral-0);
+  color: var(--gl-color-text-primary);
+  outline: none;
+  transition: border-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.textInput:focus {
+  border-color: var(--gl-color-accent);
+  box-shadow: 0 0 0 1px var(--gl-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   OTP Verification Screen (no progress bar)
+   -------------------------------------------------------------------------- */
+.otpCenteredContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: auto 0;
+  width: 100%;
+}
+
+.otpCenterHeader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--gl-space-4);
+}
+
+.otpBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gl-space-3) 0 var(--gl-space-6);
+  width: 100%;
+}
+
+.otpGrid {
+  display: flex;
+  gap: var(--gl-space-4);
+  margin: var(--gl-space-7) 0;
+}
+
+.otpInput {
+  width: 54px;
+  height: 62px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: var(--gl-weight-bold);
+  font-family: var(--gl-font-sans);
+  border: 1.5px solid var(--gl-color-border-interactive);
+  border-radius: 0;
+  background-color: var(--gl-neutral-0);
+  color: var(--gl-color-text-primary);
+  outline: none;
+  transition: border-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.otpInput:focus {
+  border-color: var(--gl-color-accent);
+  box-shadow: 0 0 0 1px var(--gl-color-accent);
+}
+
+.otpErrorText {
+  color: var(--gl-color-accent);
+  font-size: var(--gl-size-body-sm);
+  margin-top: var(--gl-space-2);
+  margin-bottom: var(--gl-space-3);
+}
+
+.resendRow {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-3);
+  font-size: var(--gl-size-body-sm);
+  color: var(--gl-color-text-secondary);
+}
+
+.resendButton {
+  background: none;
+  border: none;
+  color: var(--gl-color-accent);
+  font-weight: var(--gl-weight-medium);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Results Screen
+   -------------------------------------------------------------------------- */
+.resultsBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+  padding: 6px 14px;
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-accent);
+  font-size: var(--gl-size-caption);
+  font-weight: var(--gl-weight-semibold);
+  letter-spacing: var(--gl-tracking-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--gl-space-4);
+  border-radius: 0;
+}
+
+.scoreBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gl-space-8) var(--gl-space-10);
+  background-color: var(--gl-neutral-900);
+  color: #ffffff;
+  margin-bottom: var(--gl-space-8);
+  border-radius: 0;
+}
+
+.scoreNumber {
+  font-size: 2.75rem;
+  font-weight: var(--gl-weight-bold);
+  color: var(--gl-color-accent);
+  line-height: 1;
+}
+
+.scoreDenominator {
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: var(--gl-weight-regular);
+}
+
+.scoreMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.archetypeName {
+  font-size: 1.35rem;
+  font-weight: var(--gl-weight-semibold);
+  margin-bottom: 4px;
+}
+
+.archetypeTag {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.traitsCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-5);
+  padding: var(--gl-space-7);
+  background-color: var(--gl-color-surface-sunken);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  margin-bottom: var(--gl-space-8);
+  border-radius: 0;
+}
+
+.traitRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-2);
+}
+
+.traitMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--gl-size-body-sm);
+  font-weight: var(--gl-weight-medium);
+  color: var(--gl-color-text-primary);
+}
+
+.traitBarTrack {
+  width: 100%;
+  height: 8px;
+  background-color: var(--gl-neutral-300);
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.traitBarFill {
+  height: 100%;
+  background-color: var(--gl-color-accent);
+  transition: width 1s var(--gl-ease-standard);
+}
+
+/* --------------------------------------------------------------------------
+   Confirmation / Email Info Screen
+   -------------------------------------------------------------------------- */
+.emailInfoBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--gl-space-12) var(--gl-space-6);
+  margin: auto 0;
+}
+
+.emailIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--gl-radius-full);
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--gl-space-7);
+}
+
+.emailTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: var(--gl-weight-bold);
+  color: var(--gl-color-text-primary);
+  margin: 0 0 var(--gl-space-4);
+  letter-spacing: -0.02em;
+}
+
+.emailBody {
+  font-size: 1.125rem;
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-secondary);
+  max-width: 48ch;
+  margin: 0 0 var(--gl-space-11);
+}
+
+/* --------------------------------------------------------------------------
+   Modal Overlay & Dialog
+   -------------------------------------------------------------------------- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--gl-z-overlay);
+  background-color: rgba(17, 17, 17, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gl-space-7);
+  animation: modalFadeIn var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalDialog {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background-color: var(--gl-color-surface-raised);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: 0;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  padding: clamp(2.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: modalScaleIn var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalCloseButton {
+  position: absolute;
+  top: var(--gl-space-6);
+  right: var(--gl-space-6);
+  background: transparent;
+  border: none;
+  color: var(--gl-color-text-muted);
+  cursor: pointer;
+  padding: var(--gl-space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalCloseButton:hover {
+  color: var(--gl-color-text-primary);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .section {
+    padding: var(--gl-space-8) var(--gl-space-4);
+  }
+
+  .card {
+    height: auto;
+    min-height: 560px;
+    padding: var(--gl-space-8) var(--gl-space-6);
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .scoreBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gl-space-4);
+    padding: var(--gl-space-6);
+  }
+
+  .otpGrid {
+    gap: var(--gl-space-2);
+  }
+
+  .otpInput {
+    width: 44px;
+    height: 54px;
+    font-size: 1.25rem;
+  }
+}

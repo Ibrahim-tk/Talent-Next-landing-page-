@@ -1,0 +1,487 @@
+/* ==========================================================================
+   ResultsCard — Diagnostic Results Layout
+   --------------------------------------------------------------------------
+   - Follows the Gridline architectural landing page design system:
+     clean white surfaces, hairlines, blueprint lattice spacers, brand accent
+     red (#F9423A), generous vertical breathing room, and zero drop shadows.
+   - Exact verbatim copy from the Builder archetype specification.
+   ========================================================================== */
+
+.root {
+  width: 100%;
+  background-color: var(--gl-color-surface-raised);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   Blueprint Lattice Spacer
+   -------------------------------------------------------------------------- */
+.gridBox {
+  height: calc(2 * var(--gl-blueprint-cell));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: left top;
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   Hero Header Row — Diagnosis Announcement
+   -------------------------------------------------------------------------- */
+.headerRow {
+  padding: clamp(3.5rem, 6vw, 5.5rem) clamp(2rem, 5vw, 4.5rem);
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.kickerRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--gl-space-5);
+}
+
+.kickerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+  padding: 6px 14px;
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-accent);
+  font-size: var(--gl-size-caption);
+  font-weight: var(--gl-weight-semibold);
+  letter-spacing: var(--gl-tracking-wider);
+  text-transform: uppercase;
+  border: var(--gl-border-width-hairline) solid rgba(249, 66, 58, 0.2);
+}
+
+.headline {
+  margin: 0 0 var(--gl-space-6) 0;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  color: var(--gl-color-text-primary);
+}
+
+.roleBox {
+  padding: var(--gl-space-8) var(--gl-space-9);
+  background-color: var(--gl-color-surface-sunken);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-left: 3px solid var(--gl-color-accent);
+  max-width: 820px;
+  box-sizing: border-box;
+}
+
+.roleTitle {
+  margin: 0 0 var(--gl-space-2) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--gl-tracking-wide);
+  color: var(--gl-color-text-primary);
+}
+
+.roleDescription {
+  margin: 0;
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Two-Column Matrix Grid (Characteristics & Career Ideas)
+   -------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  min-height: 480px;
+  box-sizing: border-box;
+}
+
+.leftColumn {
+  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+  border-right: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.rightColumn {
+  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.columnEyebrow {
+  margin: 0 0 var(--gl-space-7) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--gl-tracking-wider);
+  color: var(--gl-color-accent);
+  font-weight: var(--gl-weight-semibold);
+}
+
+/* Characteristics List */
+.characteristicsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-5);
+}
+
+.characteristicItem {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-4);
+  padding: var(--gl-space-5) var(--gl-space-6);
+  background-color: var(--gl-color-surface-sunken);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  box-sizing: border-box;
+}
+
+.checkBadge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.characteristicText {
+  color: var(--gl-color-text-primary);
+  font-weight: var(--gl-weight-medium);
+}
+
+/* Career Ideas List */
+.careerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.careerItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gl-space-4);
+  padding: var(--gl-space-5) 0;
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  line-height: var(--gl-leading-normal);
+}
+
+.careerItem:first-child {
+  padding-top: 0;
+}
+
+.careerItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.careerIconBadge {
+  width: 34px;
+  height: 34px;
+  background-color: var(--gl-neutral-100);
+  color: var(--gl-color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.careerText {
+  color: var(--gl-color-text-secondary);
+  font-size: 1rem;
+}
+
+.careerTitle {
+  font-weight: var(--gl-weight-semibold);
+  color: var(--gl-color-text-primary);
+}
+
+.dash {
+  color: var(--gl-color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Next Step & Action Tiles Section
+   -------------------------------------------------------------------------- */
+.nextStepSection {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  box-sizing: border-box;
+}
+
+.nextStepHeader {
+  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem) var(--gl-space-7);
+}
+
+.nextStepTitle {
+  margin: 0 0 var(--gl-space-3) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--gl-tracking-wider);
+  color: var(--gl-color-accent);
+}
+
+.nextStepDescription {
+  margin: 0;
+  max-width: 680px;
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-secondary);
+}
+
+.actionTilesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.actionTile {
+  background: transparent;
+  border: none;
+  border-right: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  padding: clamp(2.5rem, 4vw, 3.5rem) var(--gl-space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--gl-space-4);
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    border-color var(--gl-duration-fast) var(--gl-ease-standard);
+  font-family: inherit;
+  min-height: 160px;
+  box-sizing: border-box;
+}
+
+.actionTile:last-child {
+  border-right: none;
+}
+
+.actionTile:hover {
+  background-color: var(--gl-color-surface-hover);
+}
+
+.actionTileActive:hover {
+  background-color: var(--gl-color-surface-accent-soft);
+}
+
+.actionTileIcon {
+  color: var(--gl-color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionTileActive .actionTileIcon {
+  color: var(--gl-color-accent);
+}
+
+.actionTileText {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.05rem;
+  font-weight: var(--gl-weight-medium);
+  line-height: 1.3;
+  color: var(--gl-color-text-primary);
+}
+
+.actionTileActive .actionTileText {
+  color: var(--gl-color-accent);
+  font-weight: var(--gl-weight-semibold);
+}
+
+/* --------------------------------------------------------------------------
+   Bottom Share Bar
+   -------------------------------------------------------------------------- */
+.shareRow {
+  padding: var(--gl-space-7) clamp(2rem, 5vw, 4.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gl-space-4);
+  box-sizing: border-box;
+  background-color: var(--gl-color-surface-sunken);
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.sharePrompt {
+  font-style: italic;
+  color: var(--gl-color-text-secondary);
+  margin: 0;
+}
+
+.shareBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-3);
+  background-color: var(--gl-color-surface-raised);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  padding: 8px 18px;
+  cursor: pointer;
+  color: var(--gl-color-text-primary);
+  font-size: var(--gl-size-caption);
+  font-weight: var(--gl-weight-semibold);
+  transition:
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    border-color var(--gl-duration-fast) var(--gl-ease-standard);
+  outline: none;
+}
+
+.shareBadge:hover {
+  background-color: var(--gl-color-surface-hover);
+  border-color: var(--gl-color-border-interactive);
+}
+
+.shareIcons {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+  color: var(--gl-color-text-secondary);
+}
+
+.copiedTag {
+  font-size: 0.8rem;
+  font-weight: var(--gl-weight-semibold);
+  color: var(--gl-color-accent);
+  margin-left: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Overlay & Dialog (Check Your Email!)
+   -------------------------------------------------------------------------- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--gl-z-overlay);
+  background-color: rgba(17, 17, 17, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gl-space-7);
+  animation: modalFadeIn var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalDialog {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background-color: var(--gl-color-surface-raised);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-radius: 0;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  padding: clamp(2.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: modalScaleIn var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalCloseButton {
+  position: absolute;
+  top: var(--gl-space-6);
+  right: var(--gl-space-6);
+  background: transparent;
+  border: none;
+  color: var(--gl-color-text-muted);
+  cursor: pointer;
+  padding: var(--gl-space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.modalCloseButton:hover {
+  color: var(--gl-color-text-primary);
+}
+
+.emailIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--gl-color-surface-accent-soft);
+  color: var(--gl-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--gl-space-7);
+}
+
+.emailTitle {
+  margin: 0 0 var(--gl-space-4);
+  color: var(--gl-color-text-primary);
+}
+
+.emailBody {
+  margin: 0;
+  max-width: 44ch;
+  line-height: var(--gl-leading-relaxed);
+  color: var(--gl-color-text-secondary);
+  font-size: 1.05rem;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leftColumn {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  }
+
+  .actionTilesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionTile {
+    border-right: none;
+    border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+    min-height: 120px;
+  }
+
+  .actionTile:last-child {
+    border-bottom: none;
+  }
+}
