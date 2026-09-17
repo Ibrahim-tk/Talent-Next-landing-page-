@@ -93,11 +93,11 @@
    "Card", not "still", is the thing being equalised, and for panel two those
    are not the same. pic1 and pic3 are card-only — their artwork IS the card,
    edge to edge — so their boxes are simply `--card-height`. pic2's artwork is
-   a 1118x677 composition of which only the bottom 539 rows are the call
-   window; the 138px above it is the handwritten "Human"/"You" annotation
-   overhanging the card, which is deliberate and stays. Sized to a common box
-   height, its card would come out 539/677 = 80% of its neighbours', the
-   too-small middle
+   a 2234x1409 composition of which only rows 335..1404 are the call window;
+   the 335px above it is the handwritten "Human"/"You" annotation overhanging
+   the card, which is deliberate and stays. Sized to a common box height, its
+   card would come out 1070/1409 = 76% of its neighbours', the too-small
+   middle
    panel this row keeps drifting back into. So panel two gets a box taller by
    the inverse of that share, and is then pulled up so its CARD — not its
    artwork — shares the row's centreline. Both rules below are derived from
@@ -105,8 +105,8 @@
    is re-exported with a different overhang, and drop them entirely if the
    annotation ever goes away.
 
-   The stills' aspect ratios differ (pic1 1:1, pic2-trim 1.65:1 overall and
-   2.07:1 for its card alone, pic3-trim 1.96:1), so at a common card height
+   The stills' aspect ratios differ (pic1 1:1, pic2-trim 1.59:1 overall and
+   2.08:1 for its card alone, pic3-trim 1.96:1), so at a common card height
    their widths differ too — that is expected and fine; a square beside two
    cards of the same height reads as a set, whereas matching widths instead
    would make the square tower over the cards. What DOES have to hold is that
@@ -124,7 +124,8 @@
    pic2-trim a third time as a 436x320 holding 365x194 at (35, 0); then
    pic2-trim as a 1280x1229 holding 1111x734 at (85, 250); pic3-trim as a
    960x658 holding 826x421 at (67, 0); pic2-trim once more as a 1280x1229
-   holding 1118x677 at (81, 298). Each time `contain` sized the empty
+   holding 1118x677 at (81, 298); pic2-trim yet again as a 2234x1467 holding
+   2234x1409 at (0, 58). Each time `contain` sized the empty
    CANVAS to the box, so the visible artwork came out a fraction of its
    neighbours' size and — where the spare canvas sat below the artwork —
    above the centre of its plate. None is visible from the stylesheet: the
@@ -137,14 +138,20 @@
   height: var(--card-height);
 }
 
-/* Panel two only: box scaled by artwork/card (677/539) so the call window
+/* Panel two only: box scaled by artwork/card (1409/1070) so the call window
    itself measures `--card-height`, then shifted up by the card centre's
-   offset from the artwork centre (69/677 of the box) to put that window on
-   the same centreline as the cards either side of it. The handwriting then
-   overhangs above the row's card line, which is the intended composition. */
+   offset from the artwork centre (165.5/1409 of the box) to put that window
+   on the same centreline as the cards either side of it. The handwriting then
+   overhangs above the row's card line, which is the intended composition.
+
+   BOTH NUMBERS ARE MEASURED OFF THE CURRENT EXPORT and have been re-derived
+   on every pic2 redelivery so far, because each arrives with a different gap
+   between the annotation and the card. If the still changes again, re-measure
+   the card's rows and redo both; if the annotation is ever dropped, delete
+   this rule rather than tuning it. */
 .grid > .panel:nth-child(2) .overlay {
-  height: calc(var(--card-height) * 677 / 539);
-  transform: translateY(calc(100% * -69 / 677));
+  height: calc(var(--card-height) * 1409 / 1070);
+  transform: translateY(calc(100% * -165.5 / 1409));
 }
 
 .overlayImage {
