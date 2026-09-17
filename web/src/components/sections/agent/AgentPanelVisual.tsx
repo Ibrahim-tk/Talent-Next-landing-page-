@@ -15,12 +15,12 @@ import { useReducedMotion } from "@gridline/motion";
 import {
   agentAskCopy,
   agentVoiceCopy,
-  agentBlobVideo,
   agentDigestCopy,
   agentDigestPages,
   agentChatTurns,
   type AgentSummary,
 } from "@/content/agent";
+import { TalOrb } from "@/components/orb/TalOrb";
 
 import styles from "./AgentPanelVisual.module.css";
 
@@ -142,7 +142,7 @@ function DigestMock() {
           the column now that nothing else does. */}
       <div className={styles.summary}>
         <p className={styles.summaryHead}>
-          <TalBlob />
+          <TalOrb size={36} state="thinking" className={styles.summaryOrb} />
           {agentDigestCopy.summaryLabel}
         </p>
 
@@ -454,7 +454,7 @@ function AskMock() {
 
         {stage === "thinking" ? (
           <p className={styles.thinking}>
-            <TalBlob size="sm" />
+            <TalOrb size={28} state="thinking" className={styles.replyOrb} />
             <span className={styles.dots} aria-hidden="true">
               {[0, 1, 2].map((dot) => (
                 <span
@@ -473,7 +473,7 @@ function AskMock() {
         {answered ? (
           <div className={styles.reply} key={`${turn.id}-reply`}>
             <p className={styles.replyHead}>
-              <TalBlob size="sm" />
+              <TalOrb size={28} state="speaking" className={styles.replyOrb} />
               <Icon name="trendUp" size={15} />
               {turn.title}
             </p>
@@ -522,23 +522,7 @@ function AskMock() {
  * randomised at render time is a different run on the server and in the
  * browser, which is a hydration mismatch, and one randomised once at module
  * scope is stable but untunable. Hand-set, the row can be given the shape a
- * voice actually has — an uneven middle that runs hot, tapering at both ends,
- * with no two neighbours the same height and no figure repeating on a short
- * enough beat to read as a pattern.
- */
-const WAVE_PEAKS: readonly number[] = [
-  0.22, 0.44, 0.31, 0.62, 0.48, 0.8, 0.57, 0.93, 0.68, 1, 0.74, 0.88, 0.55,
-  0.96, 0.63, 0.79, 0.41, 0.7, 0.34, 0.52, 0.26,
-];
 
-/**
- * The eleven the overlay actually draws — the middle of the run above, where
- * the peaks are highest. Taken from the same sequence rather than authored
- * separately so there is one place to tune the level's shape, and taken from
- * the MIDDLE because the ends of that run taper: a short slice off either end
- * would be a level that never gets loud.
- */
-const OVERLAY_PEAKS: readonly number[] = WAVE_PEAKS.slice(5, 16);
 
 /**
  * The stage: the blob, lit, with rings leaving it — and nothing else.
@@ -571,54 +555,10 @@ const OVERLAY_PEAKS: readonly number[] = WAVE_PEAKS.slice(5, 16);
 function VoiceMock() {
   return (
     <MockStack tone="voice" art="chevron">
-      {/* The stage: the blob at twice the size it was, the room lit behind
-          it, and the level laid ON it rather than under it.
-
-          The level moved because the two were competing. A row of bars
-          sitting below the blob is a second object, and the panel then has
-          two centres — where a level overlaid on the blob makes one object
-          that is visibly doing something. It is also what let the blob grow:
-          the stage no longer has to share the surface's height with a meter.
-
-          There is no glow behind the blob any more. It was a rose radial
-          wash the rings dissolved into, and on a panel whose whole point is
-          to be calm it read as a red stain under the one warm object on the
-          card. The rings now leave into plain white and are neutral
-          themselves.
-
-          Decorative in full: the label underneath says what is happening, and
-          a halo announces nothing to a screen reader. */}
       <div className={styles.stage} data-listening="">
-        <span className={styles.ring} aria-hidden="true" />
-        <span className={styles.ring} aria-hidden="true" />
-        <TalBlob size="xl" />
-
-        {/* The level. Each bar on one shared keyframe at its own peak and its
-            own NEGATIVE delay — negative, so the row is already mid-motion on
-            its first frame instead of rippling into life from the left, which
-            is a loading bar and not a voice.
-
-            Eleven bars and not the full twenty-one: this is now sitting on
-            the blob rather than spanning the card, and a level wider than the
-            thing it belongs to reads as a caption strip across it. */}
-        <div className={styles.waveOverlay} data-listening="" aria-hidden="true">
-          {OVERLAY_PEAKS.map((peak, index) => (
-            <span
-              key={index}
-              className={styles.waveBar}
-              style={
-                {
-                  "--agent-wave-peak": peak,
-                  animationDelay: `-${index * 80}ms`,
-                } as CSSProperties
-              }
-            />
-          ))}
-        </div>
+        <TalOrb size={210} state="listening" className={styles.voiceOrb} />
       </div>
 
-      {/* At the foot of the surface, not under the stage — `margin-top: auto`
-          pushes it to the bottom edge whatever height the stage takes. */}
       <p className={styles.listening}>{agentVoiceCopy.listeningLabel}</p>
     </MockStack>
   );
@@ -819,54 +759,4 @@ function MockStack({ tone, art, label, children }: MockStackProps) {
   );
 }
 
-interface TalBlobProps {
-  /**
-   * `sm` sits beside an answer, `lg` is the byline mark on the read panel,
-   * and `xl` is the voice panel's subject — the blob as the thing that is
-   * listening, rather than as a mark next to something else.
-   */
-  size?: "sm" | "lg" | "xl";
-}
 
-/**
- * Tal's mark: the supplied blob, played as a looping video.
- *
- * `mix-blend-mode: multiply` rather than a mask or a circular clip. The asset
- * is a blob on a light ground, and multiplying it into the card drops that
- * ground away wherever it is white while leaving the blob itself untouched —
- * where a circular clip would cut the corners off an organic shape and a
- * chroma key would need an alpha channel the file does not have. It is safe
- * because the surface underneath is flat `--gl-neutral-0`; if the card is
- * ever tinted, this is the declaration that has to be revisited.
- *
- * Always decorative. The byline beside it already says "Summary by Tal" and
- * the answer beside it is the answer, so there is nothing here for a screen
- * reader that the copy has not said.
- *
- * Under reduced motion it is paused on its first frame rather than removed:
- * the mark is Tal's face, and a reader who asked for less motion has not
- * asked to be shown less of the product.
- */
-function TalBlob({ size = "lg" }: TalBlobProps) {
-  const reduced = useReducedMotion();
-
-  return (
-    <video
-      className={styles.blob}
-      data-size={size}
-      src={agentBlobVideo}
-      autoPlay
-      muted
-      loop
-      playsInline
-      /* `metadata`, not `auto`: the file is far heavier than it should be
-         (see the note on `agentBlobVideo`) and this page must not spend its
-         connection on a decorative loop before the copy has painted. */
-      preload="metadata"
-      aria-hidden="true"
-      onLoadedData={(event) => {
-        if (reduced) event.currentTarget.pause();
-      }}
-    />
-  );
-}

@@ -1195,6 +1195,21 @@
   color: var(--gl-color-text-muted);
 }
 
+.summaryOrb {
+  flex: none;
+  display: inline-flex;
+}
+
+.replyOrb {
+  flex: none;
+  display: inline-flex;
+}
+
+.voiceOrb {
+  flex: none;
+  display: inline-flex;
+}
+
 /* The mic button's own text. Clipped rather than `display: none`, so the
    control still has a name in the accessibility tree — the visible label
    below it is a `p` and names nothing. */

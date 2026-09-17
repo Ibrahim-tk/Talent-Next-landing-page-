@@ -1,0 +1,33 @@
+<!-- ==========================================================================
+     Tal Orb — canonical markup
+     --------------------------------------------------------------------------
+     Copy this block anywhere. Spans, not divs, on purpose: the orb is often
+     printed inside a <button> or a <span>, and a <div> in either is invalid
+     nesting that the parser silently reshuffles.
+
+     data-state drives everything:
+       idle | listening | thinking | thinking2 | thinking3 | speaking | loading | error
+
+     Size with the --borb-size custom property (default 288px). Every length in
+     the stylesheet is a calc() off it, so it scales from a 16px avatar to a
+     600px hero with no duplicate keyframes.
+     ====================================================================== -->
+
+<span class="borb" data-state="idle" style="--borb-size:288px" aria-hidden="true">
+  <span class="borb__ripple"></span>
+  <span class="borb__ripple borb__ripple--2"></span>
+  <span class="borb__field">
+    <span class="borb__cloud borb__cloud--1"></span>
+    <span class="borb__cloud borb__cloud--2"></span>
+    <span class="borb__cloud borb__cloud--3"></span>
+    <span class="borb__cloud borb__cloud--4"></span>
+  </span>
+  <span class="borb__mark">
+    <span class="borb__blade borb__blade--a"></span>
+    <span class="borb__blade borb__blade--b"></span>
+    <span class="borb__blade borb__blade--c"></span>
+    <svg class="borb__waves" viewBox="0 0 100 100" aria-hidden="true">
+      <path d=""/><path d=""/><path d=""/>
+    </svg>
+  </span>
+</span>
