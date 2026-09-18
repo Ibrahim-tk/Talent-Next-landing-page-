@@ -25,6 +25,22 @@ import { TalOrb } from "@/components/orb/TalOrb";
 import styles from "./AgentPanelVisual.module.css";
 
 /**
+ * The one state the blob is drawn in on the summary and the chat panels.
+ *
+ * It used to follow the panel: `thinking` while the answer was being built,
+ * `speaking` once it had arrived. That was a state machine nobody could
+ * read — the blob is a byline at this size, the two states differ by the
+ * angle of three blades, and the switch landed mid-exchange so the mark
+ * appeared to twitch for no reason a viewer could connect to anything. The
+ * panels say what is happening in words and in the row of dots; the blob
+ * only has to say who is talking, and it says that best by holding still.
+ *
+ * The voice panel does NOT use this: there the blob is the subject and it
+ * alternates between listening and idle on purpose.
+ */
+const AGENT_STATIC_ORB_STATE = "thinking" as const;
+
+/**
  * The right-hand column of the Tal panel — one working mock per tab.
  *
  * **There is no frame around them.** Each mock used to sit in a white card
@@ -142,7 +158,11 @@ function DigestMock() {
           the column now that nothing else does. */}
       <div className={styles.summary}>
         <p className={styles.summaryHead}>
-          <TalOrb size={36} state="thinking" className={styles.summaryOrb} />
+          <TalOrb
+            size="var(--agent-orb-size)"
+            state={AGENT_STATIC_ORB_STATE}
+            className={`${styles.summaryOrb} ${styles.staticOrb}`}
+          />
           {agentDigestCopy.summaryLabel}
         </p>
 
@@ -454,7 +474,11 @@ function AskMock() {
 
         {stage === "thinking" ? (
           <p className={styles.thinking}>
-            <TalOrb size={28} state="thinking" className={styles.replyOrb} />
+            <TalOrb
+              size="var(--agent-orb-size)"
+              state={AGENT_STATIC_ORB_STATE}
+              className={`${styles.replyOrb} ${styles.staticOrb}`}
+            />
             <span className={styles.dots} aria-hidden="true">
               {[0, 1, 2].map((dot) => (
                 <span
@@ -473,9 +497,18 @@ function AskMock() {
         {answered ? (
           <div className={styles.reply} key={`${turn.id}-reply`}>
             <p className={styles.replyHead}>
-              <TalOrb size={28} state="speaking" className={styles.replyOrb} />
-              <Icon name="trendUp" size={15} />
-              {turn.title}
+              <TalOrb
+                size="var(--agent-orb-size)"
+                state={AGENT_STATIC_ORB_STATE}
+                className={`${styles.replyOrb} ${styles.staticOrb}`}
+              />
+              {/* Icon and title in one span, so the head can stack the blob
+                  onto its own line on a phone without also breaking the
+                  caret away from the words it belongs to. */}
+              <span className={styles.replyHeadText}>
+                <Icon name="trendUp" size={15} />
+                {turn.title}
+              </span>
             </p>
 
             {/* Three rows on one grid, so the figures line up down the left
@@ -553,16 +586,64 @@ function AskMock() {
  * room is exactly the wrong metaphor, and there were three of them here.
  */
 function VoiceMock() {
+  const reducedMotion = useReducedMotion();
+
+  /* The stage alternates: the blob listens for a spell, comes back to rest,
+     and listens again. A blob pinned to `listening` forever is a still of a
+     voice UI rather than a picture of one being used, and the two states are
+     also the only way a viewer learns what the resting blob looks like.
+
+     Listening runs the longer of the two beats, because it is the state the
+     panel is making a claim about; idle is the breath between takes.
+
+     Under reduced motion the cycle does not run at all and the stage stays
+     listening, which is the state the label and the rings are written for. */
+  const [listening, setListening] = useState(true);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setListening(true);
+      return;
+    }
+
+    let timer: number;
+
+    const schedule = (next: boolean) => {
+      timer = window.setTimeout(() => {
+        setListening(next);
+        schedule(!next);
+      }, next ? AGENT_VOICE_IDLE_MS : AGENT_VOICE_LISTEN_MS);
+    };
+
+    schedule(false);
+
+    return () => window.clearTimeout(timer);
+  }, [reducedMotion]);
+
   return (
     <MockStack tone="voice" art="chevron">
-      <div className={styles.stage} data-listening="">
-        <TalOrb size={210} state="listening" className={styles.voiceOrb} />
+      <div className={styles.stage} data-listening={listening ? "" : undefined}>
+        {/* Sized off the stage's own variable rather than a fixed 210px. A
+            fixed diameter inside a clamped stage overflows it on a phone,
+            and an overflowing blob is no longer centred on anything — it sat
+            off to one side of the card with its field clipped. */}
+        <TalOrb
+          size="var(--agent-stage-size)"
+          state={listening ? "listening" : "idle"}
+          className={styles.voiceOrb}
+        />
       </div>
 
-      <p className={styles.listening}>{agentVoiceCopy.listeningLabel}</p>
+      <p className={styles.listening}>
+        {listening ? agentVoiceCopy.listeningLabel : agentVoiceCopy.idleLabel}
+      </p>
     </MockStack>
   );
 }
+
+/** How long the voice stage holds each half of its cycle. */
+const AGENT_VOICE_LISTEN_MS = 4200;
+const AGENT_VOICE_IDLE_MS = 2200;
 
 
 

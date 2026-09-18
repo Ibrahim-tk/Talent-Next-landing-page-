@@ -380,6 +380,13 @@ export const agentVoiceCopy = {
    * a translator would never find them.
    */
   listeningLabel: "Listening…",
+  /**
+   * The other half of the pair. The stage alternates between listening and
+   * idle, so the status line has to have something true to say while the
+   * blob is at rest — a stage that goes quiet under a label still reading
+   * "Listening…" is the one state the panel must never show.
+   */
+  idleLabel: "Ready",
 } as const;
 
 export const agentCopy = {

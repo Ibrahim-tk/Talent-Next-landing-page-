@@ -262,6 +262,14 @@
   transition: color var(--gl-transition-fast);
 }
 
+/* Never let the glyph carry the shrink. The tabs are equal grid columns, so
+   at a narrow width something in the row has to give — with the label set
+   `nowrap`, that was the icon, squashed out of square. It holds its size
+   now, and below 620px it is dropped outright. */
+.tab svg {
+  flex: none;
+}
+
 .tab:hover:not([aria-selected="true"]) {
   color: var(--gl-color-text-secondary);
 }
@@ -437,6 +445,18 @@
     max-width: none;
   }
 
+  /* The pill goes to the middle once the card is one column. Left-aligned it
+     was reading as a control belonging to a left-hand column that no longer
+     exists — the mock under it is centred on the card, so a switcher pinned
+     to the left edge is the only thing on the panel off the centre line.
+     Full width up to its own cap, so the three tabs also stop being squeezed
+     into whatever the widest label needs. */
+  .switcher {
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+  }
+
   /* The visual is the taller of the two columns on one column, and the
      delay that reads as a sequence side by side reads as a lag stacked. */
   .cardVisual {
@@ -455,6 +475,17 @@
   .card {
     border-radius: var(--gl-radius-xl);
     padding: var(--gl-space-13) var(--gl-space-11);
+  }
+
+  /* The tab glyphs go. Three equal columns on a phone leave each tab barely
+     wider than its own word, and the icon was the part that gave: as a flex
+     item beside a `nowrap` label it got squashed to a sliver of itself,
+     which is worse than no icon at all — a 15px mark crushed to 6px reads as
+     a rendering fault. The words are the labels here; the icons were only
+     ever reinforcement, and the same three appear again on the badge row
+     inside each panel. */
+  .tab svg {
+    display: none;
   }
 }
 

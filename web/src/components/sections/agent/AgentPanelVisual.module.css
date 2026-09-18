@@ -570,8 +570,8 @@
   /* Kept in step with `--agent-stage-size` by hand, because the stage is the
      blob's parent and cannot size itself from a child. If one changes, both
      change. */
-  width: clamp(9rem, 18vw, 12rem);
-  height: clamp(9rem, 18vw, 12rem);
+  width: var(--agent-stage-size);
+  height: var(--agent-stage-size);
 }
 
 .mockTitle {
@@ -622,6 +622,12 @@
    the summary is Tal talking, and a signature in a second typeface would be
    a second voice. */
 .summaryHead {
+  /* The blob's diameter, as one number per row. It is a variable and not a
+     prop on the component because the size is a RESPONSE TO THE VIEWPORT,
+     and the viewport is something the stylesheet can see and the component
+     cannot. */
+  --agent-orb-size: 36px;
+
   display: flex;
   align-items: center;
   gap: var(--gl-space-5);
@@ -837,6 +843,8 @@
    that an answer comes back, and an answer that appears the instant the
    question does has not come back from anywhere. */
 .thinking {
+  --agent-orb-size: 28px;
+
   display: flex;
   align-items: center;
   gap: var(--gl-space-5);
@@ -883,6 +891,8 @@
    what KIND of answer this is before you have read a figure — and it is the
    only place in the reply where the accent is not spent. */
 .replyHead {
+  --agent-orb-size: 28px;
+
   display: flex;
   align-items: center;
   gap: var(--gl-space-5);
@@ -1022,15 +1032,22 @@
      sized off the same diameter, so the stage keeps its proportions at every
      viewport instead of being three things that happen to agree at one
      width. */
-  --agent-stage-size: clamp(9rem, 18vw, 12rem);
+  /* Upper bound is the blob's authored diameter (210px). The blob is sized
+     off this variable now instead of carrying its own fixed size, so the
+     stage box and the blob inside it are the same measure at every
+     viewport — which is what keeps it centred on a phone. A fixed blob in a
+     clamped box overflowed the box and read as sitting off to one side. */
+  --agent-stage-size: clamp(9rem, 46vw, 13.125rem);
 
   position: relative;
   display: grid;
   place-items: center;
+  justify-self: center;
   align-self: center;
   flex: none;
   width: var(--agent-stage-size);
   height: var(--agent-stage-size);
+  max-width: 100%;
 }
 
 .ring {
@@ -1287,4 +1304,192 @@
     transform: scaleY(calc(var(--agent-wave-peak, 1) * 0.55));
     transition: none;
   }
+}
+
+
+/* --------------------------------------------------------------------------
+   Small screens — the blob, twice the size and on its own line.
+
+   At 36px and 28px the blob is legible on a laptop and all but invisible on
+   a phone: it is the assistant's face, and at that diameter on a narrow card
+   it reads as a bullet. Doubling it makes it the object it is meant to be,
+   and a blob that size can no longer sit on the same line as its heading —
+   inline, it would set the row's height and push the text into a short
+   column beside it. So the rows STACK: blob first, heading under it, both
+   flush left with everything else in the mock.
+   -------------------------------------------------------------------------- */
+@media (max-width: 620px) {
+  .summaryHead {
+    --agent-orb-size: 72px;
+  }
+
+  .thinking,
+  .replyHead {
+    --agent-orb-size: 56px;
+  }
+
+  .summaryHead,
+  .thinking,
+  .replyHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gl-space-4);
+  }
+
+  /* Pulled left by the blob's own optical inset. The component's BOX is
+     wider than the sphere you see in it — the sphere is 0.80556 of the box
+     and centred, so there is 9.722% of clear air down each side for the glow
+     and the cast shadow to live in. Laid flush left in a column, the box
+     lines up with the text and the sphere therefore does not: it sits a
+     tenth of its own width in from the heading under it, which is exactly
+     the misalignment the eye picks up. Offsetting by that inset aligns the
+     SPHERE with the text instead of the box. */
+  .summaryOrb,
+  .replyOrb {
+    margin-left: calc(var(--agent-orb-size) * -0.09722);
+  }
+
+  /* The asker's photograph goes on a phone. It is a stand-in carrying no
+     information — its `alt` is empty for the same reason — and on a narrow
+     card the 48px portrait plus its gap took a third of the row, which
+     squeezed the question into two or three words a line. The bubble is the
+     content; the face was the first thing that could be spent to give it
+     room. */
+  .asker {
+    display: none;
+  }
+
+  /* With nothing to sit beside, the bubble can use the whole row. It stays
+     right-aligned, because that is what says the question is the reader's
+     and not Tal's. */
+  .askBubble {
+    max-width: 100%;
+  }
+}
+
+/* The caret and the title, kept on one line whichever way the head is laid
+   out — the head itself becomes a column on a phone. */
+.replyHeadText {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-5);
+}
+
+
+/* --------------------------------------------------------------------------
+   The static blob — tabs 1 and 2.
+
+   On the summary and the chat the blob is a BYLINE: a small disc saying who
+   is talking, beside something else that is doing the talking. At that size
+   its motion cannot be read as motion — four drifting pools inside a 56px
+   sphere resolve to a faint shimmer, which is noise next to a line of type
+   and a second moving thing on a card that already has a typewriter and a
+   row of dots running. So here it holds still. It is the same component with
+   the same paint; only the clocks stop.
+
+   The voice panel is untouched: there the blob IS the subject, at the size of
+   a face, and its motion is the whole claim.
+   -------------------------------------------------------------------------- */
+.staticOrb,
+.staticOrb::before,
+.staticOrb::after,
+.staticOrb :global(*),
+.staticOrb :global(*)::before,
+.staticOrb :global(*)::after {
+  animation: none !important;
+}
+
+/* What gives the still sphere its presence — and it is all shadow, no line.
+   The field's own rim is deliberately soft: it is masked out over the last
+   tenth of its radius so a travelling ripple can leave it without a seam,
+   and at byline size that soft edge is most of the sphere. A drawn ring
+   fixed that and cost more than it fixed — a hairline circle around the
+   blob reads as a button, or as a sticker cut out and laid on the card,
+   which is the one thing a sphere must not look like. So the edge is given
+   by the light instead: warmth gathering inside the rim, and a shadow
+   underneath saying the thing is sitting above the card.
+
+   All of it is drawn on the idle ripple layer, which is exactly the diameter
+   of the sphere and has nothing to do while the animations are off. */
+.staticOrb :global(.borb__ripple) {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  /* ABOVE the glass, not under it. The ripple layer sits at z1 by default,
+     beneath the field's own gradients, where a ring and an inner glow drawn
+     on it would simply be painted over. At z3 it is over the sphere and
+     still under the mark, which is the only order in which this layer can
+     do rim work at all. */
+  z-index: 3;
+  /* Three jobs, and the order is the order they paint:
+
+     1. THE INNER ACCENT — warm light gathering just inside the rim, which is
+        what makes a still sphere read as glass with depth rather than a flat
+        disc with a line around it. It is deliberately at the edge of
+        noticeable: at any real strength it stops being the sphere's own
+        shading and becomes a visible band inside the outline, which is a
+        harder, more mechanical object than this one should be. A white
+        hairline outside the sphere and then a warm one on it were both tried
+        here and both went: on a white card neither separated anything, and
+        each read as a stroke drawn around the blob.
+     2. a second, lower inner pass weighted to the bottom of the sphere,
+        where a lit sphere's own colour gathers. Fainter and blurrier than
+        the first, so it shades rather than lines.
+     3. THE CAST SHADOW, thrown down and spread wide. Two passes, the further
+        one softer and fainter, on the same rule the card's own shadow
+        follows — a shadow gets both softer and weaker with distance.
+
+     Every length is a share of `--borb-size`, so the whole treatment scales
+     with the blob instead of being tuned for one diameter. Terracotta, not
+     grey: a neutral shadow under the one warm object on a white card reads
+     as smudge. */
+  box-shadow:
+    inset 0 0 calc(var(--borb-size) * 0.2) calc(var(--borb-size) * 0.01)
+      rgba(198, 76, 58, 0.12),
+    inset 0 calc(var(--borb-size) * -0.08) calc(var(--borb-size) * 0.17)
+      calc(var(--borb-size) * -0.04) rgba(176, 58, 42, 0.1),
+    0 calc(var(--borb-size) * 0.07) calc(var(--borb-size) * 0.26)
+      calc(var(--borb-size) * -0.07) rgba(186, 96, 74, 0.14),
+    0 calc(var(--borb-size) * 0.14) calc(var(--borb-size) * 0.4)
+      calc(var(--borb-size) * -0.14) rgba(186, 96, 74, 0.1);
+}
+
+/* The second ripple would double the ring a hair off-register. */
+.staticOrb :global(.borb__ripple--2) {
+  display: none;
+}
+
+/* Denser in the middle, and less glass over it.
+
+   TWO CHANGES THAT WORK TOGETHER. The sphere's own paint is built for the
+   voice panel, where it is the size of a face: four drifting tint pools
+   under a full glass shell — a bottom wash, two specular fields and a set of
+   inset white rims. At byline size, still, that shell is most of what you
+   see, and what it reads as is a clear bead with a pink smudge in it rather
+   than the assistant's own mark.
+
+   So the highlights come off and the colour comes up. The field's inset
+   whites go; and a warm radial is laid over the tints, dense at dead centre
+   and gone well before the rim, which is the shading a small sphere needs to
+   read as one. It is drawn on the same ripple layer as the shadows, at z3 —
+   over the glass, under the mark, so the chevron keeps its contrast. */
+.staticOrb :global(.borb__field) {
+  box-shadow: none;
+}
+
+.staticOrb::before {
+  /* The specular fields and the bottom wash, at a third. Not removed
+     outright: with no highlight at all the sphere stops being lit from
+     anywhere and goes matte, which is a different wrong answer. */
+  opacity: 0.34;
+}
+
+.staticOrb :global(.borb__ripple) {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(206, 70, 48, 0.26) 0%,
+    rgba(206, 70, 48, 0.2) 26%,
+    rgba(210, 84, 62, 0.1) 52%,
+    rgba(214, 100, 78, 0) 76%
+  );
 }
