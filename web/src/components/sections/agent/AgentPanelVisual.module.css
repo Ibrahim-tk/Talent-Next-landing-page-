@@ -1380,15 +1380,26 @@
    The static blob — tabs 1 and 2.
 
    On the summary and the chat the blob is a BYLINE: a small disc saying who
-   is talking, beside something else that is doing the talking. At that size
-   its motion cannot be read as motion — four drifting pools inside a 56px
-   sphere resolve to a faint shimmer, which is noise next to a line of type
-   and a second moving thing on a card that already has a typewriter and a
-   row of dots running. So here it holds still. It is the same component with
-   the same paint; only the clocks stop.
+   is talking, beside something else that is doing the talking. Two things
+   follow from that, and they are the whole of this block.
 
-   The voice panel is untouched: there the blob IS the subject, at the size of
-   a face, and its motion is the whole claim.
+   IT HOLDS STILL. At that size four drifting tint pools resolve to a faint
+   shimmer, which is noise next to a line of type and a second moving thing
+   on a card that already runs a typewriter and a row of dots. It is also one
+   fixed state, never `thinking` then `speaking`: the states differ by the
+   angle of three blades and the switch landed mid-exchange, so the mark
+   appeared to twitch for no reason a viewer could connect to anything.
+
+   IT IS FLAT COLOUR, NOT GLASS. The component's own paint — four tint pools
+   under a clear shell, two specular fields, a bottom wash, inset white rims,
+   a masked edge and a cast sphere-shadow — is built to be looked INTO at the
+   size of a face, which is what the voice panel does with it. Reproduced at
+   44px it is a pale bead with a smudge in it. What the design calls for here
+   is the brand mark: one clean diagonal ramp of the accent, corner to
+   corner, with the chevron in white on it. So every layer of the glass is
+   switched off and a single gradient is painted in its place.
+
+   The voice panel is untouched by all of this.
    -------------------------------------------------------------------------- */
 .staticOrb,
 .staticOrb::before,
@@ -1399,97 +1410,63 @@
   animation: none !important;
 }
 
-/* What gives the still sphere its presence — and it is all shadow, no line.
-   The field's own rim is deliberately soft: it is masked out over the last
-   tenth of its radius so a travelling ripple can leave it without a seam,
-   and at byline size that soft edge is most of the sphere. A drawn ring
-   fixed that and cost more than it fixed — a hairline circle around the
-   blob reads as a button, or as a sticker cut out and laid on the card,
-   which is the one thing a sphere must not look like. So the edge is given
-   by the light instead: warmth gathering inside the rim, and a shadow
-   underneath saying the thing is sitting above the card.
+/* Every part of the glass, off: the sheen and the cast sphere-shadow on the
+   element itself, the field's gradients, its inset white rims, its noise and
+   its tint clouds. What is left to paint is one layer. */
+.staticOrb::before,
+.staticOrb::after,
+.staticOrb :global(.borb__field),
+.staticOrb :global(.borb__ripple--2) {
+  opacity: 0;
+}
 
-   All of it is drawn on the idle ripple layer, which is exactly the diameter
-   of the sphere and has nothing to do while the animations are off. */
+/* THE SPHERE — one linear ramp of the accent across the diagonal, and
+   nothing else on it. No key light, no terminator, no grain, no cast shadow:
+   the reference is a flat gradient disc, and each of those was an attempt to
+   model a ball that the design does not ask for.
+
+   The ramp is the accent at full strength in the top-left corner falling to
+   a pale tint of ITSELF at the bottom-right — every stop is `--gl-rose-500`
+   mixed into white, so there is one hue in the disc and it is the site's
+   own. The intermediate stops are there to keep the falloff smooth; two
+   stops alone band visibly across a circle this size.
+
+   Drawn on the ripple layer, which is exactly the diameter of the sphere and
+   has nothing to do while the animations are off, at z3 — over what is left
+   of the component, under the mark. */
 .staticOrb :global(.borb__ripple) {
   opacity: 1;
   filter: none;
   transform: none;
-  /* ABOVE the glass, not under it. The ripple layer sits at z1 by default,
-     beneath the field's own gradients, where a ring and an inner glow drawn
-     on it would simply be painted over. At z3 it is over the sphere and
-     still under the mark, which is the only order in which this layer can
-     do rim work at all. */
   z-index: 3;
-  /* Three jobs, and the order is the order they paint:
-
-     1. THE INNER ACCENT — warm light gathering just inside the rim, which is
-        what makes a still sphere read as glass with depth rather than a flat
-        disc with a line around it. It is deliberately at the edge of
-        noticeable: at any real strength it stops being the sphere's own
-        shading and becomes a visible band inside the outline, which is a
-        harder, more mechanical object than this one should be. A white
-        hairline outside the sphere and then a warm one on it were both tried
-        here and both went: on a white card neither separated anything, and
-        each read as a stroke drawn around the blob.
-     2. a second, lower inner pass weighted to the bottom of the sphere,
-        where a lit sphere's own colour gathers. Fainter and blurrier than
-        the first, so it shades rather than lines.
-     3. THE CAST SHADOW, thrown down and spread wide. Two passes, the further
-        one softer and fainter, on the same rule the card's own shadow
-        follows — a shadow gets both softer and weaker with distance.
-
-     Every length is a share of `--borb-size`, so the whole treatment scales
-     with the blob instead of being tuned for one diameter. Terracotta, not
-     grey: a neutral shadow under the one warm object on a white card reads
-     as smudge. */
-  box-shadow:
-    inset 0 0 calc(var(--borb-size) * 0.2) calc(var(--borb-size) * 0.01)
-      rgba(198, 76, 58, 0.12),
-    inset 0 calc(var(--borb-size) * -0.08) calc(var(--borb-size) * 0.17)
-      calc(var(--borb-size) * -0.04) rgba(176, 58, 42, 0.1),
-    0 calc(var(--borb-size) * 0.07) calc(var(--borb-size) * 0.26)
-      calc(var(--borb-size) * -0.07) rgba(186, 96, 74, 0.14),
-    0 calc(var(--borb-size) * 0.14) calc(var(--borb-size) * 0.4)
-      calc(var(--borb-size) * -0.14) rgba(186, 96, 74, 0.1);
-}
-
-/* The second ripple would double the ring a hair off-register. */
-.staticOrb :global(.borb__ripple--2) {
-  display: none;
-}
-
-/* Denser in the middle, and less glass over it.
-
-   TWO CHANGES THAT WORK TOGETHER. The sphere's own paint is built for the
-   voice panel, where it is the size of a face: four drifting tint pools
-   under a full glass shell — a bottom wash, two specular fields and a set of
-   inset white rims. At byline size, still, that shell is most of what you
-   see, and what it reads as is a clear bead with a pink smudge in it rather
-   than the assistant's own mark.
-
-   So the highlights come off and the colour comes up. The field's inset
-   whites go; and a warm radial is laid over the tints, dense at dead centre
-   and gone well before the rim, which is the shading a small sphere needs to
-   read as one. It is drawn on the same ripple layer as the shadows, at z3 —
-   over the glass, under the mark, so the chevron keeps its contrast. */
-.staticOrb :global(.borb__field) {
+  background: linear-gradient(
+    145deg,
+    var(--gl-rose-500) 0%,
+    color-mix(in srgb, var(--gl-rose-500) 78%, #fff) 26%,
+    color-mix(in srgb, var(--gl-rose-500) 52%, #fff) 52%,
+    color-mix(in srgb, var(--gl-rose-500) 32%, #fff) 74%,
+    color-mix(in srgb, var(--gl-rose-500) 20%, #fff) 100%
+  );
   box-shadow: none;
 }
 
-.staticOrb::before {
-  /* The specular fields and the bottom wash, at a third. Not removed
-     outright: with no highlight at all the sphere stops being lit from
-     anywhere and goes matte, which is a different wrong answer. */
-  opacity: 0.34;
+/* The mark, at half the diameter — up from the 0.29 the component uses on
+   the voice panel, where it is a detail inside a face-sized object. Here the
+   disc IS the mark's container and the chevron is the thing you are meant to
+   see, which is the proportion the reference draws it at.
+
+   No drop shadow. White strokes on a saturated ground need no lift, and the
+   component's own warm pair reads as a smudge under them at this size. */
+.staticOrb :global(.borb__mark) {
+  width: calc(var(--borb-size) * 0.5);
+  height: calc(var(--borb-size) * 0.5);
+  filter: none;
 }
 
-.staticOrb :global(.borb__ripple) {
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(206, 70, 48, 0.26) 0%,
-    rgba(206, 70, 48, 0.2) 26%,
-    rgba(210, 84, 62, 0.1) 52%,
-    rgba(214, 100, 78, 0) 76%
-  );
+/* Flat white. The strokes carry a radial ramp from 0.80 to 1.0 alpha, which
+   on a glass sphere is the mark picking light up across its own width; on a
+   flat disc it is a chevron whose middle is dimmer than its tips. */
+.staticOrb :global(.borb__blade) {
+  background: #fff;
+  box-shadow: none;
 }
