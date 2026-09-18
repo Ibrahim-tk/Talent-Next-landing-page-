@@ -1308,42 +1308,45 @@
 
 
 /* --------------------------------------------------------------------------
-   Small screens — the blob, twice the size and on its own line.
+   Small screens — the blob beside its heading, not above it.
 
-   At 36px and 28px the blob is legible on a laptop and all but invisible on
-   a phone: it is the assistant's face, and at that diameter on a narrow card
-   it reads as a bullet. Doubling it makes it the object it is meant to be,
-   and a blob that size can no longer sit on the same line as its heading —
-   inline, it would set the row's height and push the text into a short
-   column beside it. So the rows STACK: blob first, heading under it, both
-   flush left with everything else in the mock.
-   -------------------------------------------------------------------------- */
+   At 36px and 28px the blob is all but invisible on a phone: it is the
+   assistant's face, and at that diameter on a narrow card it reads as a
+   bullet. It was enlarged and stacked onto its own line, which made it the
+   object it is meant to be but also cost the top of the card two rows and
+   turned a byline into a headline — the blob says WHO is talking, so it
+   belongs on the same line as the words that say what.
+
+   So the rows stay HORIZONTAL and the blob comes down to 0.7 of the stacked
+   size: 50px on the summary, 39px on the chat. That is still well above the
+   laptop diameter, so it reads as a face rather than a bullet, and small
+   enough that it no longer sets the row's height and squeezes the heading
+   into a column beside it. */
 @media (max-width: 620px) {
   .summaryHead {
-    --agent-orb-size: 72px;
+    --agent-orb-size: 50px;
   }
 
   .thinking,
   .replyHead {
-    --agent-orb-size: 56px;
+    --agent-orb-size: 39px;
   }
 
   .summaryHead,
   .thinking,
   .replyHead {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: var(--gl-space-4);
   }
 
   /* Pulled left by the blob's own optical inset. The component's BOX is
      wider than the sphere you see in it — the sphere is 0.80556 of the box
      and centred, so there is 9.722% of clear air down each side for the glow
-     and the cast shadow to live in. Laid flush left in a column, the box
-     lines up with the text and the sphere therefore does not: it sits a
-     tenth of its own width in from the heading under it, which is exactly
-     the misalignment the eye picks up. Offsetting by that inset aligns the
-     SPHERE with the text instead of the box. */
+     and the cast shadow to live in. Flush left at the head of the row, the
+     box lines up with the column below it and the sphere therefore does not:
+     it sits a tenth of its own width in. Offsetting by that inset aligns the
+     SPHERE with the rest of the mock instead of the box. */
   .summaryOrb,
   .replyOrb {
     margin-left: calc(var(--agent-orb-size) * -0.09722);
