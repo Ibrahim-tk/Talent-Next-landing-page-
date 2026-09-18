@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
+
 import { GridModule } from "@gridline";
+import { useDarkNavRegion } from "@gridline/motion";
 import { quizCtaCopy } from "@/content/quizCta";
 
 import styles from "./QuizCtaSection.module.css";
@@ -27,9 +32,21 @@ export function QuizCtaSection({
   buttonLabel = quizCtaCopy.buttonLabel,
   buttonHref = quizCtaCopy.buttonHref,
 }: QuizCtaSectionProps) {
+  /* The sticky nav inverts over this band, the same way it does over Get
+     Started on the homepage: the backdrop is a deep red curtain and the
+     default bar — white at 95%, with a near-black CTA on it — sits on that
+     as a bright slab. The ref goes on `.bleed`, the box that carries the
+     image, so the bar flips over exactly the range that is dark. */
+  const darkSurfaceRef = useRef<HTMLDivElement>(null);
+  useDarkNavRegion(darkSurfaceRef);
+
   return (
-    <GridModule id="quiz-cta" rule="bottom" aria-labelledby="quiz-cta-heading">
-      <div className={styles.bleed}>
+    /* `rule="none"`: GridModule rules its bottom edge by default, and this
+       band is the last thing above the dark footer — that hairline was the
+       white line running between the two. The footer's own change of colour
+       is the division; there is nothing left for a rule to separate. */
+    <GridModule id="quiz-cta" rule="none" aria-labelledby="quiz-cta-heading">
+      <div className={styles.bleed} ref={darkSurfaceRef}>
         <div className={styles.content}>
           <h2 id="quiz-cta-heading" className={styles.heading}>
             {headingLine1}
