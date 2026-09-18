@@ -8,8 +8,9 @@
    runs to the actual browser edges instead of stopping at the sitewide
    column. `.wrapper` then re-applies a normal centred measure so the card
    itself still lines up with the rest of the page; only the image behind
-   it is wider. GridModule's own `rule="bottom"` hairline (at the ordinary
-   canvas width) is what closes the section out.
+   it is wider. Nothing closes the section out: GridModule's default
+   `rule="bottom"` is turned off here, because the footer directly below is
+   dark and a hairline between the two read as a light gap across the seam.
 
    `.bleed`'s side padding uses the same fluid gutter every other section's
    outer edge uses (`--gl-space-gutter-lg`) rather than a fixed value, so
@@ -65,4 +66,24 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Phones — where the plate is cropped from, not whether it is there.
+
+   The artwork is 3456x1578, a 2.19:1 landscape. The box here is a full
+   screen tall and a phone wide — roughly 0.43:1 — so `cover` has to scale
+   the plate to the box's HEIGHT and then throw away about four fifths of
+   its width. `cover` never stretches, so nothing is distorted; what shows
+   is simply a narrow vertical sliver taken from the middle of the image,
+   which is the darkest, flattest part of it — the muddy band that reads as
+   a smear rather than as a gradient.
+
+   `left center` moves that sliver onto the left of the plate, which is the
+   saturated red with the lit corner in it: the part of the artwork that
+   still looks like the artwork when only a sliver of it is showing. */
+@media (max-width: 768px) {
+  .bleed {
+    background-position: left center;
+  }
 }

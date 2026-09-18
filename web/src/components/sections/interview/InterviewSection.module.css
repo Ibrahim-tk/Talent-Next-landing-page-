@@ -167,28 +167,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   Footer row — full-bleed width only, NOT full-screen height. `left: 50%`
-   + a negative margin re-centres a 100vw box on the viewport regardless of
-   how narrow the constrained GridCanvas column around it is (the same
-   breakout DeliverablesSection's own full-bleed `.pinWrapper` uses), but
-   the height is left to size from its own padding alone — a viewport-tall
-   height was tried here once and, on an otherwise-empty box, that just
-   reads as a wall of blank space. `--gl-space-17` is a fixed (not fluid)
-   48px, which is the deliberate point here: 48px read right at every
-   width tested, so this is pinned rather than left to scale with the
-   viewport like most block padding in this codebase. Left empty until
-   there's copy for it.
-   -------------------------------------------------------------------------- */
-.footerRow {
-  position: relative;
-  left: 50%;
-  width: 100vw;
-  margin-left: -50vw;
-  padding: var(--gl-space-17);
-  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-/* --------------------------------------------------------------------------
    Responsive — a single stacked column below the desktop breakpoint.
    -------------------------------------------------------------------------- */
 @media (max-width: 860px) {

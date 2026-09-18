@@ -14,7 +14,7 @@
   padding: calc(2 * var(--gl-blueprint-cell)) calc(2 * var(--gl-blueprint-cell-x));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   display: flex;
   justify-content: center;

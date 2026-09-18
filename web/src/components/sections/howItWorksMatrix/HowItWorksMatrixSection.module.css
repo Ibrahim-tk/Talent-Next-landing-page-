@@ -28,7 +28,7 @@
 
 /* The blueprint spacer that opens the section. Deliberately identical to
    SeeItInActionSection's `.gridBox` — same two-row height, same lattice
-   pinned `left top` so the cells sit on the canvas's two vertical rules
+   pinned at `-1px -1px` so the cells sit on the canvas's two vertical rules
    instead of being centred and cropped at each edge, same closing hairline.
    Expressed in whole rows rather than a pixel height so the panel always
    ends on a grid line, and so the two sections stay the same height as the
@@ -37,7 +37,7 @@
   height: calc(2 * var(--gl-blueprint-cell));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-rule);
 }

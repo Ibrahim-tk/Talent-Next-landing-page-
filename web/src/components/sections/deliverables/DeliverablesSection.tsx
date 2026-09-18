@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 
 import { RulerGauge, Text, cx } from "@gridline";
 import {
@@ -354,6 +361,77 @@ export function DeliverablesSection() {
     { scope: trackRef },
   );
 
+  /* --------------------------------------------------------------------
+     The phone layout's own machinery.
+
+     Below `pinnedMediaQuery` the scroll timeline above never runs, so the
+     five stages are a plain vertical list — and with a full-bleed image on
+     each one that list is far too long to read without a map. The rail
+     below the header is that map: it is the same five tab labels, laid out
+     horizontally, scrolling itself so the active one is always in view.
+
+     Everything here is inert on desktop: the observer only ever fires
+     because the elements it watches are `display: none` above the
+     breakpoint, so they have no box and never intersect.
+     -------------------------------------------------------------------- */
+  const [activeStage, setActiveStage] = useState(0);
+  const railRef = useRef<HTMLDivElement>(null);
+  const railTabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const mobileStageRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const elements = mobileStageRefs.current.filter(
+      (element): element is HTMLElement => element !== null,
+    );
+    if (elements.length === 0) return;
+
+    /* A band across the middle of the viewport rather than the whole of it:
+       with one observer and five tall blocks, two are intersecting at once
+       for most of the scroll, and "whichever is crossing the middle" is the
+       only rule that gives a single unambiguous answer at every position. */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const index = elements.indexOf(entry.target as HTMLElement);
+          if (index !== -1) setActiveStage(index);
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  /* The rail scrolls ITSELF, never the page. `scrollIntoView` on the tab
+     would do both — it walks every scrollable ancestor — and on a sticky
+     rail that means the document jumping every time the active stage
+     changes, which is the one thing a progress indicator must not do. */
+  useEffect(() => {
+    const rail = railRef.current;
+    const tab = railTabRefs.current[activeStage];
+    if (!rail || !tab) return;
+
+    rail.scrollTo({
+      left: tab.offsetLeft - (rail.clientWidth - tab.clientWidth) / 2,
+      behavior: "smooth",
+    });
+  }, [activeStage]);
+
+  const handleRailClick = useCallback(
+    (index: number) => (event: MouseEvent<HTMLAnchorElement>) => {
+      const target = mobileStageRefs.current[index];
+      if (!target) return;
+      // The href stays a real in-page anchor for keyboard and no-JS use;
+      // this only takes over so the landing offset respects the header and
+      // the rail, which `scroll-margin-top` on the block supplies.
+      event.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [],
+  );
+
   return (
     /* The nav anchor lives on this plain wrapper and NOT on `.stage` below,
        which is where it would otherwise naturally go. `.stage` is
@@ -501,6 +579,93 @@ export function DeliverablesSection() {
                   aria-hidden="true"
                 />
               </div>
+            </div>
+
+            {/* ----------------------------------------------------------
+                The phone layout. A separate render rather than a
+                restructure of `.row` above: that row's DOM shape — one
+                image frame holding five stacked layers, one caption column
+                holding five fixed-height rows — is exactly what lets the
+                desktop timeline step by arithmetic without measuring
+                anything, and it is the wrong shape for a list of five
+                self-contained blocks. The two are mutually exclusive
+                (`display: none` on whichever is not in play), so nothing
+                is duplicated to a reader or to assistive tech.
+                ---------------------------------------------------------- */}
+            <div className={styles.mobileRail} ref={railRef}>
+              {deliverableStages.map((stage, index) => (
+                <a
+                  key={stage.id}
+                  href={`#deliverable-${stage.id}`}
+                  ref={(element) => {
+                    railTabRefs.current[index] = element;
+                  }}
+                  onClick={handleRailClick(index)}
+                  aria-current={index === activeStage ? "step" : undefined}
+                  className={cx(
+                    styles.railTab,
+                    index === activeStage && styles.railTabActive,
+                  )}
+                >
+                  {stage.tabLabel}
+                </a>
+              ))}
+            </div>
+
+            <div className={styles.mobileStages}>
+              {deliverableStages.map((stage, index) => (
+                <article
+                  key={stage.id}
+                  id={`deliverable-${stage.id}`}
+                  ref={(element) => {
+                    mobileStageRefs.current[index] = element;
+                  }}
+                  className={styles.mobileStage}
+                >
+                  <div className={styles.mobileFrame}>
+                    <Image
+                      src={stage.background}
+                      alt=""
+                      aria-hidden="true"
+                      fill
+                      sizes="100vw"
+                      className={styles.layerBackground}
+                    />
+                    {stage.card ? (
+                      <Image
+                        src={stage.card}
+                        alt={stage.imageAlt}
+                        fill
+                        sizes="100vw"
+                        className={styles.layerCard}
+                        style={
+                          {
+                            "--card-inset": stage.cardFraming?.inset,
+                            "--card-bias": stage.cardFraming?.bias,
+                          } as CSSProperties
+                        }
+                      />
+                    ) : null}
+                  </div>
+
+                  {/* The copy is what carries the gutter now — the section
+                      itself is edge to edge on a phone so the image can be,
+                      so every block that is NOT the image holds itself off
+                      the window edges on its own. */}
+                  <div className={styles.mobileCopy}>
+                    <Text
+                      variant="headingSm"
+                      tone="inverse"
+                      className={styles.captionHeading}
+                    >
+                      {stage.tabLabel}
+                    </Text>
+                    <Text variant="bodyMd" tone="inverseSecondary">
+                      {stage.description}
+                    </Text>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>

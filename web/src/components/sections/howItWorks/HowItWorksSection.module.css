@@ -15,12 +15,12 @@
 
 /* Identical to the shared section's own spacer, and to
    SeeItInActionSection's: two whole rows of the sitewide lattice, pinned
-   `left top` so the cells sit on the canvas's vertical rules. */
+   `-1px -1px` so the cells sit on the canvas's vertical rules. */
 .gridBox {
   height: calc(2 * var(--gl-blueprint-cell));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   border-bottom: var(--gl-border-width-hairline) solid
     var(--gl-color-border-rule);
 }
@@ -125,7 +125,7 @@
   margin: calc(-1 * clamp(1.5rem, 3.5vw, 3rem));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   -webkit-mask-image: var(--gl-mask-blueprint);
   mask-image: var(--gl-mask-blueprint);
   pointer-events: none;
@@ -188,5 +188,20 @@
     border-right: none;
     border-bottom: var(--gl-border-width-hairline) solid
       var(--gl-color-border-rule);
+  }
+}
+
+@media (max-width: 768px) {
+  /* The closing row is an empty full-bleed band with a rule on it — on a
+     phone that is a strip of nothing between this section and the next. */
+  .footerRow {
+    display: none;
+  }
+
+  /* The rule under the heading reads as an underline at this width, where
+     the header row is barely wider than the headline itself. The mesh panel
+     above it is already dividing this section from the one before. */
+  .headerRow {
+    border-bottom: none;
   }
 }

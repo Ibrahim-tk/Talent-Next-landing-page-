@@ -295,6 +295,25 @@
      25 columns reads a little finer than the 80px cell it replaces: 56px
      at the frame's 1400px ceiling, and proportionally smaller below it,
      since the frame is `min(1400px, 95vw)`. */
+  /* ANCHOR EVERY BLUEPRINT BOX AT `-1px -1px`, NOT `left top`.
+
+     Each of these gradients draws its line at the START of the tile, so
+     anchored at the origin the lattice puts a line on the box's own first
+     pixel column and first pixel row. Those two pixels are already spoken
+     for: the canvas draws a vertical rule down each side of the page, and
+     every box that opens a section sits directly under that section's top
+     rule. The lattice's first line landed on top of each of them, and a
+     hairline drawn twice a pixel apart reads as one thick, slightly darker
+     border — which is the doubled edge you see along the left and the top
+     of every grid panel.
+
+     Shifting the whole lattice back by one pixel puts that first line at
+     -1, where the box clips it, and leaves the interior lines where they
+     were. Nothing lands on the far edges either: with 25 tiles across the
+     width, the last line falls a cell short of the right-hand rule. So the
+     lattice draws only the inside of the grid and the page's own rules
+     draw its frame, which is the division the two were always meant to
+     have. */
   --gl-blueprint-columns: 25;
   --gl-blueprint-cell-x: calc(100% / var(--gl-blueprint-columns));
   /* The row height, in px, since a vertical percentage would resolve
@@ -449,4 +468,71 @@
   --gl-control-padding-md: 14.48px var(--gl-space-10); /* 14.48 22 */
   --gl-control-padding-field: var(--gl-space-5) var(--gl-space-6); /* 12 14 */
   --gl-control-padding-pill: var(--gl-space-5) var(--gl-space-7); /* 12 16 */
+}
+
+
+/* --------------------------------------------------------------------------
+   The lattice on a phone — fewer, larger cells.
+
+   25 columns is a count, not a size, so it holds its proportions as the
+   frame narrows and the CELLS shrink with it: about 56px at the 1400px
+   ceiling, but roughly 15px across a 390px phone. At that size the
+   blueprint stops being a lattice and becomes a grey haze — the lines are
+   as thick as a seventh of the cell, and the two-row strips that open
+   several sections read as a smudged band rather than as graph paper.
+
+   Ten columns restores the cell to roughly the size it has on a laptop
+   (~37px on the same phone), which is the size the texture was drawn to be
+   read at. Because every box that draws the lattice sizes its columns as
+   `100% / n`, the lines still land exactly on the canvas's two vertical
+   rules, and because the row height divides the same frame width, the
+   cells stay square. Anything sized in whole rows scales with them.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  :root {
+    /* THE BIG-HEADING FLOOR, 31.25px → 28px.
+
+       Every fluid heading role in the system — `display`, `editorial`,
+       `editorial-tight` — clamps to the h4 step at its small end, and
+       `heading-lg` clamps to it at its large end, so on a phone the h4 step
+       IS the size the big headings are set at. Retargeting the one step is
+       what moves all of them together; setting each role by hand would take
+       them off the shared scale and let them drift apart.
+
+       28px is off-ratio against the 1.25 scale (h4 would be 31.25px and h5
+       25px, with nothing between), and that is deliberate and confined to
+       this breakpoint: at the top of the scale the ratio's own steps are
+       further apart than a phone has room to choose between. Above 768px
+       the step is back on-scale. */
+    --gl-scale-h4: 1.75rem; /* 28 */
+
+    /* The `display` role is the one big-heading role that does NOT clamp to
+       h4 — it runs h3 → h1, so on a phone it was landing on h3 (39.06px)
+       while every other section heading had already come down to 28. It is
+       pinned to the same 28 here, as a flat value rather than a clamp,
+       because at this width the clamp has nothing left to choose between:
+       its vw term resolves far below the floor on any phone.
+
+       The hero's headline is untouched by this. It reads `--gl-scale-*`
+       directly in its own clamps rather than going through this role, for
+       exactly the reason that it needs to run past where the roles stop. */
+    --gl-size-display: 1.75rem; /* 28 */
+
+    --gl-blueprint-columns: 10;
+
+    /* EDGE TO EDGE. The frame is `min(1400px, 95vw)`, so on every phone it
+       holds 2.5% of the window out as bare margin down each side and the
+       page floats in it — a proportion that reads as deliberate air at
+       1400px and as a mistake at 390px, where it is ten pixels of nothing
+       beside content that is already fighting for width. At this size the
+       frame IS the window: the canvas runs wall to wall, its two vertical
+       rules come off with the margin (see GridCanvas, and the sections that
+       reinstate that pair against their own full-bleed dark), and the
+       gutters inside each section go on holding the content off the edge.
+
+       Every box that draws the blueprint reads this same value for its row
+       height, so the lattice follows the canvas out to the edges instead of
+       being left on the old measure. */
+    --gl-frame-max-width: 100vw;
+  }
 }

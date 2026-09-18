@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 
 import { cx, Icon, Text } from "@gridline";
+import { useDarkNavRegion } from "@gridline/motion";
 import {
   footerColumns,
   footerCopy,
@@ -13,13 +17,27 @@ import {
 import styles from "./SiteFooter.module.css";
 
 export function SiteFooter() {
+  /* The footer is a dark band now, so the sticky nav has to invert over it
+     the same way it does over the other dark sections — a white bar at 95%
+     over black is the exact wash-out the dark theme exists to prevent, and
+     the footer is the one band a reader is guaranteed to end on. Its bottom
+     never crosses the top of the viewport, so once claimed the dark bar
+     holds to the foot of the page. */
+  const darkSurfaceRef = useRef<HTMLElement>(null);
+  useDarkNavRegion(darkSurfaceRef);
+
   return (
-    <footer className={styles.footer} id="footer" aria-label="Site footer">
+    <footer
+      className={styles.footer}
+      id="footer"
+      aria-label="Site footer"
+      ref={darkSurfaceRef}
+    >
       <div className={styles.row}>
         <div className={cx(styles.cell, styles.brandCell)}>
           <Link href={homeAnchors.hero} aria-label={`${site.name} home`}>
             <Image
-              src={site.logoBlack}
+              src={site.logoWhite}
               alt={site.name}
               width={104}
               height={40}
@@ -58,10 +76,10 @@ export function SiteFooter() {
                 <Link href={social.href} className={styles.socialLink}>
                   <Icon
                     name={social.icon}
-                    size={22}
+                    size={18}
                     className={styles.socialGlyph}
                   />
-                  <span>{social.label}</span>
+                  <span className={styles.socialLabel}>{social.label}</span>
                 </Link>
               </li>
             ))}

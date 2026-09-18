@@ -208,6 +208,9 @@ export function SeeItInActionSection({
           {/* A closing row below the video, same shape as InterviewSection's
               own footer bar — left empty until there's copy for it. */}
           <div className={styles.footerRow} />
+
+          {/* Phone only — see `.gridBoxFoot`. */}
+          <div className={styles.gridBoxFoot} aria-hidden="true" />
         </div>
       </div>
     </GridModule>

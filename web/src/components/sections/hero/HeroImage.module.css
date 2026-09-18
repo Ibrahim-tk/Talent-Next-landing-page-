@@ -34,8 +34,12 @@
   display: block;
 }
 
+/* The photograph takes the bottom ~35% of the screen on a phone; the copy
+   above it gets whatever is left (~45% after the sticky header), centred in
+   it by HeroSection's own mobile rules. */
 @media (max-width: 768px) {
   .image {
-    max-height: clamp(260px, 42vh, 420px);
+    max-height: 35vh;
+    max-height: 35svh;
   }
 }

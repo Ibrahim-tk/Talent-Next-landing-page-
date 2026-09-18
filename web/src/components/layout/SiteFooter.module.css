@@ -4,21 +4,91 @@
    A ruled row of cells, edge-to-edge between the GridCanvas's two constant
    verticals — same idiom as the HowItWorks matrix and ArchetypeCard rail:
    full-bleed panels, no gaps, divided only by the sitewide hairline. Each
-   cell also draws a top rule, which is why `.footer` carries its own small
-   top padding first — GetStartedSection already draws its own
-   `rule="bottom"` immediately above, and without that buffer the two lines
-   would sit flush and read as one doubled seam.
+   cell also draws a top rule. That rule used to double with the
+   `rule="bottom"` GetStartedSection draws immediately above — two hairlines
+   flush against each other, reading as one thick seam — and a strip of top
+   padding on `.footer` was what held them apart. It is gone: the footer's
+   own surface is dark now, so its top edge is a change of colour rather
+   than a line, and the cells' rule is drawn in the dark neutral and no
+   longer meets a light one.
 
    Below the column row, a thicker accent-coloured bar (the same role
    RulerGauge's progress track plays — a bolder, `--gl-color-accent` closing
    mark) separates the columns from the final line: the copyright, centred
    on its own.
+
+   THE FOOTER IS DARK. It is the one band the page ends on, and on the light
+   surface it shared with the section above it the two ran together — the
+   footer read as more page rather than as the bottom of it. The colour is
+   set by retargeting the tokens its children already read, the same way
+   SeeItInActionSection's own inverse tone does, rather than by overriding
+   each rule from the outside: type, rules and the logo all follow, and
+   anything added here later is correct without a matching override.
    ========================================================================== */
 
 .footer {
   width: 100%;
-  background-color: var(--gl-color-surface-raised);
-  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  position: relative;
+
+  /* Reversed out. `--gl-color-border-rule` is the one that matters most —
+     every seam in this footer is drawn with it, and left as the light
+     neutral each would be a bright scratch across the dark. */
+  --gl-color-text-primary: var(--gl-color-text-inverse);
+  --gl-color-text-heading: var(--gl-color-text-inverse);
+  --gl-color-text-secondary: var(--gl-color-text-inverse-secondary);
+  --gl-color-text-body: var(--gl-color-text-inverse-secondary);
+  --gl-color-text-muted: var(--gl-color-text-inverse-secondary);
+  --gl-color-border-rule: var(--gl-color-border-inverse);
+  color: var(--gl-color-text-inverse);
+}
+
+/* The dark, carried out to the window.
+
+   The footer lives inside GridCanvas, which is `min(1400px, 95vw)` wide, so
+   painting the surface on `.footer` itself stopped the dark at the canvas's
+   two rules and left a white strip of page down each side of it — the band
+   the page ends on, floating in daylight. The other dark sections
+   (Deliverables, SeeItInAction) each break a background box out to 100vw
+   for exactly this reason; the footer does the same, with the difference
+   that it needs no element of its own for it.
+
+   A pseudo-element rather than a breakout on `.footer`, because the CONTENT
+   must not move: the cells, their dividing rules and the copyright all stay
+   on the canvas measure, and only the colour behind them runs wall to wall.
+   It is the footer's first child and the rows below are positioned, so they
+   paint over it in document order without anyone having to name a z-index.
+
+   `100vw` centred on the footer, the same `left: 50%` / `-50vw` pair used
+   everywhere else in this codebase for a full-bleed box inside the frame.
+   On a phone the frame is already the window, so this resolves to the same
+   edges the footer would have had anyway. */
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background-color: var(--gl-color-surface-inverse);
+}
+
+/* Above the wash, and carrying the canvas's own two rules back with them.
+   The wash covers the pair GridCanvas draws for the footer's whole height —
+   the same thing Deliverables' full-bleed dark does to them — so they are
+   reinstated here in the dark neutral, and the rule that they run
+   uninterrupted from the header to the foot of the page holds. */
+.row,
+.accentBar,
+.legalBar {
+  position: relative;
+}
+
+.row,
+.legalBar {
+  border-left: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
+  border-right: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
 }
 
 .row {
@@ -27,8 +97,13 @@
   align-items: stretch;
 }
 
+/* The cells carried `clamp(4.5rem, 9vw, 7rem)` top and bottom — 72px at the
+   floor, 112px at the ceiling — which on a row of three-item lists made the
+   footer nearly a screen of its own. Halved, and the list rhythm inside it
+   pulled in to match (see `.linkList` and `.socialList`): the content is
+   unchanged, the band is a footer again. */
 .cell {
-  padding: clamp(4.5rem, 9vw, 7rem) clamp(2.25rem, 4vw, 3.5rem);
+  padding: clamp(2.25rem, 4.5vw, 3.5rem) clamp(2.25rem, 4vw, 3.5rem);
   border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
@@ -53,7 +128,7 @@
 }
 
 .columnTitle {
-  margin-bottom: var(--gl-space-11);
+  margin-bottom: var(--gl-space-9);
 }
 
 .linkList {
@@ -62,7 +137,7 @@
 }
 
 .linkList li {
-  padding-bottom: var(--gl-space-9);
+  padding-bottom: var(--gl-space-7);
 }
 
 .link {
@@ -77,7 +152,7 @@
 
 /* --------------------------------------------------------------------------
    Connect — this list carries its own rhythm rather than `.linkList`'s.
-   A 22px brand glyph, not the 12.8px label, sets the row height here, so
+   An 18px brand glyph, not the 12.8px label, sets the row height here, so
    rows that looked evenly spaced as plain text links sit too close together
    once each one is a glyph: the gap has to clear the icon box, not the cap
    height. Hence a real `gap` instead of a per-item `padding-bottom`, and a
@@ -90,7 +165,7 @@
 .socialList {
   display: flex;
   flex-direction: column;
-  gap: var(--gl-space-13);
+  gap: var(--gl-space-9);
   margin-top: var(--gl-space-4);
 }
 
@@ -130,7 +205,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--gl-space-7);
-  padding: var(--gl-space-11) clamp(2.25rem, 4vw, 3.5rem);
+  padding: var(--gl-space-9) clamp(2.25rem, 4vw, 3.5rem);
 }
 
 @media (max-width: 860px) {
@@ -142,5 +217,162 @@
     border-right: none;
     border-bottom: var(--gl-border-width-hairline) solid
       var(--gl-color-border-rule);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phones — four rows, not four stacked blocks.
+
+   Stacking all four cells one per row turned a footer into a page: each
+   cell keeps the desktop padding, so
+   the brand and three short link lists ran to most of a screen, and the two
+   link columns — three rows each, of two or three words — wasted a full
+   row apiece on half-empty lines.
+
+   So the grid becomes two columns and the cells are placed on it:
+
+     1. the brand and its tagline, across both, with the least padding of
+        the four — it is a mark and one sentence, and it is the row a reader
+        scrolls PAST rather than reads;
+     2. Navigation and Legal & Support side by side, which is what their
+        line lengths are actually shaped for, divided by the same hairline
+        that divides them on a desktop;
+     3. Connect, across both, because its rows are a glyph plus a label and
+        do not halve;
+     4. the accent bar and the copyright, unchanged.
+
+   Every cell already draws its own top rule, so the horizontal divisions
+   come for free and the stacked `border-bottom` above is dropped — kept, it
+   would double every seam into two hairlines a pixel apart.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* A band of dark above the columns, and nothing in it.
+
+     The section above the footer is the intake form on its full-bleed
+     gradient plate. On a phone the footer is short enough that scrolling to
+     the very bottom of the page still leaves the last strip of that plate
+     on screen, under the header — a stripe of red between the nav and the
+     logo that reads as a stray band rather than as the end of a section.
+
+     Padding the footer's top is what pushes that strip off: the footer
+     simply becomes tall enough to fill the window on its own once it is
+     reached. Nothing inside moves — the cells keep their own padding and
+     their own rules, and this space sits above all of it.
+
+     It goes on `.footer` and not on `.row`, because the cells draw a top
+     rule; put on the row, this space would open up BELOW that rule and the
+     hairline would float away from the content it belongs to. */
+  .footer {
+    padding-top: var(--gl-space-block-xl);
+  }
+
+  /* No rules to put back down here — the canvas drops its own pair at phone
+     widths and the page runs edge to edge (see GridCanvas). */
+  .row,
+  .legalBar {
+    border-left: none;
+    border-right: none;
+  }
+
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cell {
+    padding: var(--gl-space-15) var(--gl-space-9);
+  }
+
+  .cell:not(:last-child) {
+    border-bottom: none;
+  }
+
+  /* Row 1. Tighter than the rest, and tighter still at the top, where the
+     footer's own padding is already holding it off the section above. */
+  .brandCell {
+    grid-column: 1 / -1;
+    padding: var(--gl-space-11) var(--gl-space-9) var(--gl-space-13);
+
+    /* Every cell draws a top rule so the row reads as a set of divided
+       panels. The brand cell is the first one down here, so its rule has no
+       cell beside it to divide it from — it just draws a line across the
+       footer under the new band of padding, which is the seam that band
+       exists to remove. */
+    border-top: none;
+  }
+
+  /* Row 2 — the pair. The divider goes on Navigation's right edge, the one
+     border in the footer that is still vertical down here. */
+  .cell:nth-child(2) {
+    border-right: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
+
+  /* Row 3. */
+  .cell:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Both set for a desktop column with room under it. In a half-width cell
+     beside another list, and in a glyph row that is already 22px tall, they
+     open gaps wider than the rows they separate. */
+  .columnTitle {
+    margin-bottom: var(--gl-space-9);
+  }
+
+  .linkList li {
+    padding-bottom: var(--gl-space-7);
+  }
+
+  /* --------------------------------------------------------------------
+     Connect, as one line.
+
+     Three stacked rows of icon-plus-word is the tallest cell in the footer
+     and the least informative — the glyphs alone identify these three
+     services to anyone who would click them. With the words dropped and the
+     three laid out in one row under the eyebrow, the cell goes from roughly
+     160px to two short lines, which is the whole of the saving at the
+     bottom of a long phone page.
+     -------------------------------------------------------------------- */
+  /* The eyebrow keeps its own line, as it does in every other cell — it is
+     the column's title, not a label sitting inline with the row. Only the
+     three links below it collapse from a stack into a row. */
+  .cell:last-child .columnTitle {
+    margin-bottom: var(--gl-space-9);
+  }
+
+  .socialList {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--gl-space-13);
+    margin-top: 0;
+  }
+
+  /* The words go from the page but NOT from the accessible name: a link
+     whose only content is a decorative-by-default glyph has nothing to
+     announce, so the label is clipped to a 1px box rather than set to
+     `display: none`, which would take it out of the tree along with the
+     pixels. */
+  .socialLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Bigger, now that each glyph is the whole of its link and has to be a
+     comfortable tap target rather than a mark beside a word. */
+  .socialGlyph {
+    width: 26px;
+    height: 26px;
+  }
+
+  .legalBar {
+    padding: var(--gl-space-9);
+    text-align: center;
   }
 }

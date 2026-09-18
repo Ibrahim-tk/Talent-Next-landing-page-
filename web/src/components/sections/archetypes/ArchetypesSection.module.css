@@ -143,6 +143,33 @@
   color: var(--gl-color-text-inverse);
 }
 
+/* "Explore more", as a white button on the accent.
+
+   On the lit band the CTA was reversed-out type with an arrow and nothing
+   else — the same weight as the sentence at the other end of the row, so the
+   one thing in the band you can act on looked like the end of the caption.
+   Filling it white gives it an edge and makes it the brightest object on the
+   accent, which is what a call to action at the close of the section should
+   be.
+
+   Only inside `.footerFill`, because that is the only layer with a ground to
+   sit on: the base layer beneath is the band on white, where a white button
+   would be an invisible box, and there the ghost link is still right. On
+   touch the fill is always on (see the `hover: none` rule above), so the
+   phone gets the button and never the ghost.
+
+   Painted by retargeting the ghost tokens the button already reads, plus the
+   one value it hardcodes — its transparent background. The hover pair is set
+   to the same white so the button does not flicker when the pointer crosses
+   the base layer's copy underneath. */
+.footerFill a {
+  --gl-color-action-ghost-fg: var(--gl-color-accent);
+  --gl-color-action-ghost-fg-hover: var(--gl-color-accent);
+  --gl-color-action-ghost-bg-hover: var(--gl-neutral-0);
+  background-color: var(--gl-neutral-0);
+  color: var(--gl-color-accent);
+}
+
 /* `:focus-within` alongside the hover so a keyboard reader tabbing onto
    "Explore more" gets the same band lit, not a bare link on white. */
 .footerRow:hover .footerFill,
@@ -246,5 +273,13 @@
     flex-direction: column;
     align-items: flex-start;
     padding: var(--gl-space-9);
+  }
+
+  /* Accent by default on a phone. The `hover: none` rule above already does
+     this for touch-only pointers, but a phone that reports a hover-capable
+     pointer would otherwise rest on the unfilled white band — which is the
+     one state this row should never be in. */
+  .footerFill {
+    opacity: 1;
   }
 }

@@ -417,7 +417,7 @@
    object doing the same job at the other end: the seam between a section that
    draws the grid and one that does not.
 
-   Pinned `left top` so the cells sit on the canvas's two vertical rules, and
+   Pinned at `-1px -1px` so the cells sit on the canvas's two vertical rules, and
    sized off `--gl-blueprint-cell` rather than a literal so it stays a whole
    number of rows at every viewport. The hairline is on its TOP edge and not
    its bottom: the module itself already rules its bottom, and the edge that
@@ -426,7 +426,7 @@
   height: calc(2 * var(--gl-blueprint-cell));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
@@ -464,6 +464,21 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Tighter under the panel heading — 24px reads as a gap on a phone, where
+     the heading and its paragraph have to hold together as one block. */
+  .panelHeading {
+    margin-bottom: var(--gl-space-7);
+  }
+
+  /* The two-row mesh spacer goes. It is texture above the band, and on a
+     phone it is two rows of graph paper the reader has to scroll past
+     before anything is said. */
+  .gridBox {
+    display: none;
+  }
+}
+
 @media (max-width: 620px) {
   /* Spelled out rather than shorthanded to one value, so the band keeps the
      unequal block padding it has at every other width — more mesh above the
@@ -472,9 +487,13 @@
     padding: var(--gl-space-20) var(--gl-space-11) var(--gl-space-15);
   }
 
+  /* 24px all round rather than 32/24: on a phone the card is nearly the
+     width of the window, so its block padding is the largest single piece
+     of empty space on screen. Square padding also stops the tab row sitting
+     further from the card's top edge than from its sides. */
   .card {
     border-radius: var(--gl-radius-xl);
-    padding: var(--gl-space-13) var(--gl-space-11);
+    padding: var(--gl-space-11);
   }
 
   /* The tab glyphs go. Three equal columns on a phone leave each tab barely

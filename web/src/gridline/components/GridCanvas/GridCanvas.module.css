@@ -19,3 +19,19 @@
     var(--gl-color-border-rule);
   position: relative;
 }
+
+/* Phones — no rules, and nothing held out at the edges.
+
+   The two verticals are the system's signature, but they are a signature
+   written in the margin: they mark where the page stops and the window
+   carries on. On a phone the page and the window are the same thing (the
+   frame is 100vw down here — see semantic.css), so the rules would land on
+   the first and last pixel column of the screen, which is not a margin mark
+   but a pair of scratches down the edge of the display. They come off, and
+   the content runs wall to wall on its own gutters. */
+@media (max-width: 768px) {
+  .root {
+    border-left: none;
+    border-right: none;
+  }
+}

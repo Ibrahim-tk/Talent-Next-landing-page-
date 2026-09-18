@@ -60,10 +60,6 @@ export function InterviewSection() {
           </div>
         ))}
       </div>
-
-      {/* A closing row below the grid, same shape as the Archetypes
-          section's own footer bar — left empty until there's copy for it. */}
-      <div className={styles.footerRow} />
     </GridModule>
   );
 }

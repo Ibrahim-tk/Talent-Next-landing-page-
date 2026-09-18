@@ -356,18 +356,30 @@
    plain vertically-stacked divs. No sticky, no drift, no wipe, no fades.
    -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
+  /* The band's vertical breathing room moves OFF the track and onto the
+     stage. The two sitewide rules are reinstated on `.stage` — they have to
+     be, because the track's full-bleed dark paints over the canvas's own
+     pair — so any padding held out here is dark band with no rules running
+     through it, and the rules appeared to stop short of the section's own
+     edges at both ends. Padding the stage instead puts that space inside
+     the bordered box, and the pair runs the full height of the dark. */
   .scrollTrack {
     height: auto;
-    padding: var(--gl-space-20) 0;
+    padding: 0;
   }
 
+  /* NO SIDE PADDING. The gutter moves off the section and onto each block
+     inside it (`.headingBar`, `.mobileCopy`), which is what lets the stage
+     images run the full width of the window while the type they belong to
+     still sits on the same margin every other section uses. */
   .stage {
     grid-template-columns: 1fr;
     gap: var(--gl-space-15);
-    padding: 0 var(--gl-space-9);
+    padding: var(--gl-space-20) 0;
     height: auto;
     position: static;
   }
+
 
   .tabs {
     display: none;
@@ -377,12 +389,38 @@
     display: none;
   }
 
+  /* `overflow: hidden` is what was stopping the rail from sticking: a
+     sticky element is clipped to its nearest ancestor with a scroll
+     container, so any `overflow` other than `visible` anywhere above it
+     cancels the stick entirely. It exists on desktop to trim a fixed-height
+     group inside a one-screen panel; down here the panel is auto-height and
+     there is nothing to trim, so it comes off and the rail holds under the
+     header for the whole run of stages. */
   .content {
     padding-left: 0;
+    height: auto;
+    overflow: visible;
+
+    /* `min-width: 0` is load-bearing, not tidying. This is a grid item, and
+       a grid item's `min-width` defaults to `auto` — it refuses to become
+       narrower than its own content. The rail inside it is a flex row of
+       five tabs that together measure well over 1000px, so without this the
+       track is sized to THAT, the section grows far wider than the window,
+       and the whole page gets a horizontal scroll it was never meant to
+       have. `overflow-x: auto` on the rail cannot help: the rail is only
+       allowed to scroll once something above it refuses to grow. */
+    min-width: 0;
   }
 
+  /* No rule under the intro. The tab rail sits directly beneath it and
+     carries its own bottom hairline, so the two were stacking into a pair
+     of lines a few rows apart with nothing between them but dark. The rail
+     is the divider here. */
   .headingBar {
     margin-bottom: var(--gl-space-16);
+    padding: 0 var(--gl-space-9);
+    padding-bottom: 0;
+    border-bottom: none;
   }
 
   .row {
@@ -432,5 +470,208 @@
   .captionFadeTop,
   .captionFadeBottom {
     display: none;
+  }
+}
+
+
+/* The reinstated pair goes with the canvas's own. `.stage` carries these
+   two only because this section's full-bleed dark paints over the rules
+   GridCanvas draws; with no rules to put back at phone widths (see
+   GridCanvas), they would be the only verticals on the page. */
+@media (max-width: 768px) {
+  .stage {
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The phone layout — a rail and five blocks.
+
+   Inert above the breakpoint: these boxes have no layout at all, so the
+   IntersectionObserver in the component never fires and the rail costs
+   nothing on a desktop render.
+   -------------------------------------------------------------------------- */
+.mobileRail,
+.mobileStages {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* The desktop row — one stacked image frame beside a stepping caption
+     column — is what the scroll timeline drives, and the timeline does not
+     run down here. It goes, and the blocks below replace it. */
+  .row {
+    display: none;
+  }
+
+  /* ------------------------------------------------------------------
+     The rail.
+
+     Five stages, each now carrying a full-width image, make a section far
+     longer than a phone can hold in its head. The rail is the map: it
+     sticks under the header for the whole of the section, always shows
+     which stage is in view, and gets you to any other one in a tap.
+
+     It sticks to `--gl-header-height` and not to 0 because the site header
+     is itself sticky — the two would otherwise occupy the same strip and
+     the rail would slide underneath it.
+     ------------------------------------------------------------------ */
+  /* A bar of cells, not a row of chips. No gap and no padding, so the tabs
+     meet each other edge to edge and the rail reads as one continuous strip
+     across the window — the section has no side padding of its own now, so
+     it already runs wall to wall without breaking out. */
+  .mobileRail {
+    display: flex;
+    /* Same reason as `.content` above, one level down: as a flex item this
+       box would also size to its content and hand the overflow straight
+       back up. Between the two, the rail is finally free to scroll. */
+    min-width: 0;
+    max-width: 100%;
+    position: sticky;
+    top: var(--gl-header-height);
+    z-index: var(--gl-z-decoration);
+
+    /* Flush onto the first image. The rail's own bottom hairline is the
+       edge between the two; any margin here left a band of bare dark that
+       read as the rail floating above the content it indexes. */
+    margin-bottom: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    /* The header's own dark treatment, repeated: the same 85% ink and the
+       same 12px blur SiteHeader uses when it inverts over this section. The
+       two are stacked directly on top of each other, so anything else would
+       read as two different bars rather than as one strip of chrome in two
+       rows — and the images running underneath show through the rail the
+       same way the page shows through the header. */
+    background-color: rgba(17, 17, 17, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    /* Bottom only. A rule along the top as well would double with the
+       header's own edge directly above it and read as a seam. */
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-inverse);
+  }
+
+  .mobileRail::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* One hairline down the right of each cell is what divides them — the
+     same idiom the footer's cells and the HowItWorks matrix use, rather
+     than a box drawn around every tab. The last cell drops its rule so the
+     strip does not end on a dangling vertical. */
+  .railTab {
+    flex: 0 0 auto;
+    padding: var(--gl-space-7) var(--gl-space-9);
+    border-right: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-inverse);
+    background-color: transparent;
+    /* Dimmer than the inverse-secondary tone the rest of the band uses.
+       Every cell shares one ground now, so the ONLY thing separating the
+       active tab from its neighbours is type weight-of-colour plus the
+       underline — which means the inactive cells have to sit back further
+       than "secondary" would put them. */
+    color: rgb(255 255 255 / 45%);
+    font-family: var(--gl-font-sans);
+    font-size: var(--gl-scale-small);
+    letter-spacing: var(--gl-tracking-normal);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--gl-duration-fast) var(--gl-ease-standard),
+      color var(--gl-duration-fast) var(--gl-ease-standard),
+      box-shadow var(--gl-duration-fast) var(--gl-ease-standard);
+  }
+
+  .railTab:last-child {
+    border-right: none;
+  }
+
+  /* The active cell is lifted off the rail rather than filled: a faint warm
+     grey ground, full-strength type, and an underline sat ON the rail's own
+     bottom rule.
+
+     The underline is an inset `box-shadow` and not a `border-bottom`,
+     because a border would add 2px to this one cell's height and push the
+     whole strip taller as the active tab moved along it. A shadow is drawn
+     inside the box it belongs to and changes no geometry. */
+  /* No ground of its own — every cell is the same translucent dark, so the
+     active one is marked by its type going to full white and by the rule
+     under it, and by nothing else. The grey wash that used to be here was
+     doing the same job twice and made the strip look like a segmented
+     control rather than a set of tabs.
+
+     The underline is an inset `box-shadow` and not a `border-bottom`
+     because a border would add its height to this one cell and make the
+     whole strip grow and shrink as the active tab travelled along it. */
+  .railTabActive {
+    color: var(--gl-color-text-inverse);
+    box-shadow: inset 0 calc(var(--gl-border-width-thick) * -1) 0
+      var(--gl-color-text-inverse);
+  }
+
+  /* ------------------------------------------------------------------
+     The blocks — image, heading, paragraph, per stage.
+     ------------------------------------------------------------------ */
+  .mobileStages {
+    display: block;
+  }
+
+  .mobileStage {
+    /* What a tapped rail link lands on. The header and the rail both sit
+       over the top of the document, so a block scrolled to `block: start`
+       would arrive underneath them without this. */
+    scroll-margin-top: calc(var(--gl-header-height) + 4rem);
+  }
+
+  /* No dividing rule between stages. Each block opens on a full-bleed
+     image, which is a harder division than a hairline could be, and the
+     rule was drawing a line across the top of a picture that runs to both
+     edges of the window. With it gone the padding that was holding the two
+     apart goes too — only the gap between them is left. */
+  /* The gap between stages is now `.mobileCopy`'s own 48px of bottom
+     padding and nothing else. Stacking a 64px margin on top of that as
+     well put a screen-and-a-half of dark between one paragraph and the
+     next picture. */
+  .mobileStage + .mobileStage {
+    margin-top: 0;
+  }
+
+  /* The gutter every block that is not the image sits on. */
+  /* The generous bottom padding is what separates one stage's paragraph
+     from the next stage's full-bleed image — there is no rule between them
+     any more, so the space has to do that work on its own. */
+  .mobileCopy {
+    padding: 0 var(--gl-space-9) var(--gl-space-17);
+  }
+
+  /* Smaller than the square desktop frame in proportion to its column: a
+     4:3 landscape box rather than a 1:1 one, so five of these in a row do
+     not turn the section into five screens of picture. The artwork inside
+     is the same pair — gradient plate under a contained mockup — laid out
+     by `.layerBackground` and `.layerCard`, which are shared with the
+     desktop frame and need no phone-specific copy. */
+  /* Edge to edge. The stage carries no side padding any more, so `100%`
+     here IS the window — no breakout needed, and no margin left over on
+     either side of a picture that is strong enough to run the full width. */
+  .mobileFrame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: var(--gl-space-11);
+    overflow: hidden;
+    background-color: var(--gl-color-surface-inverse);
+  }
+
+  /* The mockup takes a little more of the frame back: `--card-inset` is a
+     percentage of a box that is now wider and shorter, so the per-stage
+     values tuned against a square frame leave the card smaller than
+     intended here. */
+  .mobileFrame .layerCard {
+    padding: var(--card-inset, 6%);
   }
 }

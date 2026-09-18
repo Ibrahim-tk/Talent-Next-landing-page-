@@ -18,10 +18,10 @@
   inset: 0;
   background-image: var(--gl-gradient-blueprint);
   /* Columns as a share of the box, rows in px — see the token block. The
-     box is the full width of the canvas column, so `left top` starts the
+     box is the full width of the canvas column, so `-1px -1px` starts the
      lattice on the left rule and the 25th column closes on the right one. */
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: left top;
+  background-position: -1px -1px;
   pointer-events: none;
   z-index: var(--gl-z-base);
   mask-image: var(--gl-mask-blueprint);
@@ -157,7 +157,32 @@
 }
 
 @media (max-width: 768px) {
+  /* The hero is held to one screen on a phone and laid out from the bottom
+     up: the photograph closes on the bottom edge of the viewport (the
+     section's own bottom padding goes to zero, and the image is the last
+     child), and `.content` takes every pixel that is left, centring the
+     copy inside it. */
   .section {
     padding-top: var(--gl-space-17);
+    padding-bottom: 0;
+    /* The header is sticky and sits ABOVE this module in flow, so a plain
+       `100svh` here made the hero one screen PLUS the header — the ~120vh
+       that was showing. Subtracting the header height is what makes the
+       photograph's bottom edge land on the bottom of the viewport. */
+    min-height: calc(100vh - var(--gl-header-height));
+    min-height: calc(100svh - var(--gl-header-height));
+  }
+
+  .content {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  /* The mesh drifts up behind the copy rather than running the full box —
+     at this width the bottom of the section is all photograph, and the
+     lattice reading over the top of it was the thing to fix. */
+  .blueprint {
+    inset: -10% 0 auto 0;
+    height: 75%;
   }
 }

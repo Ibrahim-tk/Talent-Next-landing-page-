@@ -71,6 +71,22 @@
   color: var(--gl-color-text-inverse);
 }
 
+/* The drawer opens directly below the bar and over whatever the bar is
+   inverted for, so it inverts with it — the same pair of rules the blur
+   theme carries further down, and for the same reason: left alone it drops
+   a sheet of canvas white out of a dark nav. This matters on the two
+   sections that now claim the dark theme on a phone (Get Started's gradient
+   and the footer), where the drawer is the only navigation there is. */
+:global(html[data-nav-theme="dark"]) .drawer {
+  background-color: rgba(17, 17, 17, 0.96);
+  border-top-color: var(--gl-color-border-inverse);
+}
+
+:global(html[data-nav-theme="dark"]) .drawerLink {
+  color: var(--gl-color-text-inverse);
+  border-bottom-color: var(--gl-color-border-inverse);
+}
+
 /* --------------------------------------------------------------------------
    Overlay theme — set by `useDarkNavRegion(ref, "overlay")` while a
    full-bleed image hero is on screen (currently variation 3's). The bar
