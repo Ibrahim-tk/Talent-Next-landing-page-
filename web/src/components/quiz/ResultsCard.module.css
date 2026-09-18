@@ -84,7 +84,7 @@
 .roleDescription {
   margin: 0;
   line-height: var(--gl-leading-relaxed);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
 }
 
 /* --------------------------------------------------------------------------
@@ -237,7 +237,7 @@
   margin: 0;
   max-width: 680px;
   line-height: var(--gl-leading-relaxed);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
 }
 
 .actionTilesGrid {

@@ -144,7 +144,7 @@
      from 0.84 alongside the greys above: Regular reversed out of black
      holds far better than Light did, so the tier can sit off full white
      and read as secondary again instead of matching the headline. */
-  --gl-color-text-inverse-secondary: rgba(255, 255, 255, 0.74);
+  --gl-color-text-inverse-secondary: #ffffffbd;
   --gl-color-text-accent: var(--gl-rose-600);
   --gl-color-text-decoration: var(--gl-neutral-500);
   --gl-color-text-success: var(--gl-green-600);

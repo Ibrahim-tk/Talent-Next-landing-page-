@@ -178,11 +178,28 @@
     justify-content: center;
   }
 
-  /* The mesh drifts up behind the copy rather than running the full box —
-     at this width the bottom of the section is all photograph, and the
-     lattice reading over the top of it was the thing to fix. */
+  /* On a phone the lattice belongs at the BOTTOM of the hero — it gathers
+     just above the photograph and fades out going up, so it is gone by the
+     time the headline starts. The radial mask is replaced by a linear one
+     read from the bottom edge upward, which is the only direction that
+     reads correctly once the copy is centred and the image closes the
+     section. The photograph paints above this layer, so the band can run
+     to the section's bottom edge and simply be covered where the image
+     begins. */
   .blueprint {
-    inset: -10% 0 auto 0;
-    height: 75%;
+    inset: 0;
+    height: auto;
+    mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0) 68%
+    );
+    -webkit-mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0) 68%
+    );
   }
 }

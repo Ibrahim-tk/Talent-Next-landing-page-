@@ -59,32 +59,35 @@
    the next thing added to it inherits.
    -------------------------------------------------------------------------- */
 .panel {
-  /* One number, read by the pill, by its buttons and by the negative margin
-     that pulls the card up under it. The straddle only works while the three
-     agree, so they are not allowed to be three numbers. */
-  /* The switcher's whole geometry, in one place. The tiles, the gap between
-     them, the neck that drops from the selected one into the card and the
-     two fillets that flare it into the card's top edge all read these, and
-     the joint only looks like a joint while they agree — so they are not
-     allowed to be five numbers scattered through the file. */
-  /* The segmented control's one piece of geometry: the inset the thumb sits
-     at inside its track. The track's padding and the thumb's own offsets and
-     width all derive from it, so the thumb can never be a pixel out of the
-     groove it runs in. */
-  --agent-tab-pad: var(--gl-space-1); /* 4 */
+  /* THREE COLUMNS, and only three. The band drew a full lattice for a
+     while — a coarse blueprint mesh with the white poured into its middle
+     cells — and a grid that dense is texture competing with the card rather
+     than structure holding it. What is left is the structure on its own: a
+     margin column, the content, a margin column, and one hairline down each
+     side of the middle, closed across the top of the card by a single
+     horizontal one.
+
+     The three columns are REAL grid tracks, not padding that happens to
+     measure the same. They were padding for a version, and the moment the
+     horizontal rule had to bleed past the gutters to reach both edges of
+     the band that broke down: a percentage padding on the panel and a
+     percentage margin on a child resolve against two different widths, so
+     the bleed could only be made to line up by arithmetic nobody would be
+     able to read later. As tracks, the rule simply spans `1 / -1` and the
+     card sits in the middle column, and there is no arithmetic at all. */
+  --agent-gutter: 10%;
+  --agent-cell: calc(var(--gl-frame-max-width) / 10);
 
   --agent-card-bg: var(--gl-neutral-0);
 
 
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Belt and braces with the equal padding above: if the section is ever
-     given a floor taller than its content — a `min-height`, a neighbouring
-     module forcing it — the slack splits evenly instead of piling up
-     underneath the card. */
-  justify-content: center;
+  display: grid;
+  /* The margin column, the content, the margin column. */
+  grid-template-columns:
+    var(--agent-gutter)
+    minmax(0, 1fr)
+    var(--agent-gutter);
   width: 100%;
   /* Keeps the mesh's oversized drifting layers inside the panel rather than
      letting them add horizontal scroll to the page or spill past the
@@ -118,10 +121,48 @@
      the extra height was the standoff it needed. The switcher moved inside
      the card and the asymmetry was never revisited, which left the card
      pushed down the section by the difference. */
-  padding: clamp(3rem, 6vh, 5rem) clamp(2rem, 6vw, 6.5rem);
+  /* The inline halves ARE the two margin columns — the same percentage the
+     rules are drawn at, so the content starts exactly on the left rule and
+     ends exactly on the right one. */
+  /* Block only. The inline halves are the two margin columns now, so
+     padding here would inset the content twice. */
+  padding: calc(var(--agent-cell) * 0.75) 0;
   /* A new stacking context, so the z-indexes below are scoped to the panel
      and cannot compete with the sticky nav. */
   isolation: isolate;
+}
+
+/* The two column rules. They live on the panel rather than as borders on the
+   card, which is the whole point of the arrangement: a border belongs to the
+   card and stops where the card stops, where these run the full height of the
+   band and the content is what sits between them. It also keeps the card
+   free of any edge of its own, so nothing can double up against a rule and
+   read as a thick grey line. */
+.panel::before,
+.panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--gl-border-width-hairline);
+  background-color: var(--gl-color-border-rule);
+  pointer-events: none;
+}
+
+/* Both rules are pulled a hairline clear of the middle column, so they sit in
+   the LAST pixel of the margin column rather than the first pixel of the
+   content one. At the track boundary itself the card's white painted straight
+   over them — the card is the middle column, so anything drawn at its edge is
+   drawn underneath it. Translated out by their own width they are beside the
+   card rather than under it, and all four lines stay visible. */
+.panel::before {
+  left: var(--agent-gutter);
+  transform: translateX(-100%);
+}
+
+.panel::after {
+  right: var(--agent-gutter);
+  transform: translateX(100%);
 }
 
 .sectionHeading,
@@ -129,6 +170,32 @@
 .card {
   position: relative;
   z-index: var(--gl-z-content);
+}
+
+/* The heading runs the whole band — it is the section's title, not something
+   sitting in the middle column — and centres itself on the page rather than
+   on the card. */
+.sectionHeading {
+  grid-column: 1 / -1;
+}
+
+/* The card sits in the middle column, which is what puts its two edges
+   exactly on the two vertical rules. */
+.card {
+  grid-column: 2;
+}
+
+/* The two horizontal rules, one above the card and one below it, each running
+   out to both edges of the band. They are real elements rather than borders on
+   the card because they have to be WIDER than it: they cross the two margin
+   columns as well, which — with the verticals beside it — is what leaves the
+   card sitting in the middle of four lines rather than inside a box of its
+   own. Nothing overlaps: each rule has a grid row to itself, so the white
+   begins where the line ends. */
+.cardRule {
+  grid-column: 1 / -1;
+  height: var(--gl-border-width-hairline);
+  background-color: var(--gl-color-border-rule);
 }
 
 /* The band's heading, on the ground above the card.
@@ -152,114 +219,81 @@
 }
 
 /* --------------------------------------------------------------------------
-   The switcher — a segmented control at the head of the copy column.
+   The switcher — a tab strip across the head of the card.
 
-   It has been four things, and each move was away from "a set of buttons"
+   It has been five things, and each move was away from "a set of buttons"
    and towards "a control that belongs to something". A round pill straddling
-   the card's top edge; four separate squircle tiles joined to the card by a
-   filleted neck; three circles in a rounded container standing off the card;
-   and now this — a segmented control INSIDE the card, at the top of the
-   column it navigates.
+   the card's top edge; four squircle tiles joined by a filleted neck; three
+   circles standing off the card; a segmented control inside the copy column;
+   and now this — three tabs running the card's full width along its top
+   edge, which is what the card became once it stopped being a floating
+   object and turned into filled cells of the lattice. A recessed pill on a
+   block of white set into a grid read as a control borrowed from some other
+   surface; a tab strip reads as the block's own top edge.
 
-   The position is what changed the design. Floating above the card it was an
-   object in its own right and could be as loud as it liked. Sitting at the
-   head of a column of copy it is a label for what is underneath, so almost
-   all of it is quiet: a recessed track and two muted labels.
-
-   The exception is the thumb, which is FILLED with the accent and carries a
-   white label. It was white-on-grey for a while, on the argument that the
-   whole control should sit back — and it sat back so far that the open tab
-   stopped reading as open. What settles it is that the band advances BY
-   ITSELF every eight seconds: a reader who looks up mid-cycle has to be able
-   to see which of the three is showing without hunting for it, and the one
-   element that can say so is the indicator. The tagline this used to fight
-   for the accent is long gone from the column beneath it.
-
-   A thumb that TRANSLATES, not three buttons that change colour. The band
-   turns itself over every eight seconds, and a control whose indicator
-   travels tells you which way it went; one that simply relights somewhere
-   else does not. It is also the only thing that makes the automatic advance
-   legible as an advance rather than as the card having been replaced.
+   The open tab is marked by being FILLED with the accent and carrying a
+   white label. The band advances on its own clock, so a reader looking up
+   mid-cycle has to see which of the three is showing without hunting for it,
+   and a filled tab says so from across the room where an underline does not.
+   The other two are quiet but live: the clock is the default way through the
+   three, not the only one, and they answer a click and the arrow keys.
    -------------------------------------------------------------------------- */
 .switcher {
-  position: relative;
+  /* Across both columns — this is the card's top edge, not the copy
+     column's heading. */
+  grid-column: 1 / -1;
   display: grid;
   /* Columns from the content, not from a hardcoded three: `agentBehaviours`
-     is allowed to grow, and `--agent-tab-count` below keeps the thumb's
-     width in step with it. */
+     is allowed to grow and the strip stays end to end either way. */
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  align-self: start;
-  max-width: 26rem;
-  margin-bottom: var(--gl-space-13);
-  padding: var(--agent-tab-pad);
-  border-radius: var(--gl-radius-lg);
-  /* The track is a recess, not a raised object: the hairline token at half
-     strength, which on the card's white reads as a groove cut into it. */
-  background-color: color-mix(
-    in srgb,
-    var(--gl-color-border-rule) 50%,
-    transparent
-  );
+  /* The rule the open tab's marker sits on. The strip closes itself; the
+     card does not rule it from outside, so the two can never disagree. */
+  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
-/* The thumb. Its width is one column of the track and its travel is one
-   whole width per step, so the arithmetic is `index x 100%` and there is not
-   a pixel anywhere in it — which is why it survives the control being any
-   width, on any viewport, with any number of tabs. */
-.thumb {
-  position: absolute;
-  top: var(--agent-tab-pad);
-  bottom: var(--agent-tab-pad);
-  left: var(--agent-tab-pad);
-  width: calc(
-    (100% - var(--agent-tab-pad) * 2) / var(--agent-tab-count, 3)
-  );
-  border-radius: var(--gl-radius-md);
-  /* THE ACCENT, filled. The thumb was white on a barely-grey track, which is
-     the quietest indicator the system has: at a glance across a card of
-     near-white surfaces the open tab did not read as open. This band turns
-     itself over on a timer, so the one thing the control has to do is
-     announce a change nobody asked for, and a filled thumb does it from
-     across the room where a white one never could. */
-  background-color: var(--gl-color-accent);
-  /* The lift is now tinted with the fill rather than with slate. A neutral
-     shadow under a saturated red reads as grey smudge around the edge of it;
-     the accent's own hue at low alpha reads as the colour sitting on the
-     card. Kept light for the same reason as before — the thumb sits in a
-     groove a few pixels deep, so the shadow only has to lift it out of
-     that, and anything heavier makes a 32px control float over the card
-     rather than run along it. */
-  box-shadow:
-    0 1px 2px rgba(249, 66, 58, 0.18),
-    0 4px 14px rgba(249, 66, 58, 0.16);
-  transform: translate3d(calc(var(--agent-tab-index, 0) * 100%), 0, 0);
-  /* Slower than the site's `fast`, and eased out hard. The thumb is the one
-     thing on the card that has to be watchable — it is what says the band
-     moved on by itself — and 150ms is under the threshold at which travel
-     registers as travel at all. */
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
-}
-
-/* Above the thumb, or the thumb paints over the label it is meant to be
-   sitting behind. */
+/* A tab. Full height of the strip and full width of its column, so the whole
+   cell is the target rather than the label inside it. */
 .tab {
   position: relative;
-  z-index: var(--gl-z-base);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--gl-space-3);
-  padding: var(--gl-space-4) var(--gl-space-5);
+  /* A fixed 56px, not block padding. The strip runs the full width of the
+     card and its height is a thing the layout is measured by, so it is set
+     rather than left to fall out of whatever the label happens to be — and
+     with `align-items: center` above, the label sits on the middle of it at
+     any size. */
+  height: 56px;
+  padding: 0 var(--gl-space-5);
   border: none;
-  border-radius: var(--gl-radius-md);
+  border-radius: 0;
   background-color: transparent;
-  font-size: var(--gl-size-caption);
+  font-family: var(--gl-font-sans);
+  /* The site's body step, not the caption step it sat at as a segmented
+     control. These are the only labels on the card's top edge and they are
+     read from across the band, not scanned inside a pill. */
+  font-size: var(--gl-size-body-base);
+  font-weight: var(--gl-weight-regular);
   white-space: nowrap;
   color: var(--gl-color-text-muted);
-  cursor: pointer;
-  transition: color var(--gl-transition-fast);
+  transition:
+    color var(--gl-transition-fast),
+    background-color var(--gl-transition-fast);
+}
+
+/* The divider between one tab and the next, in the same hairline the band's
+   own rules are drawn in. Without it the three ran together as one bar with
+   three labels on it and only the filled one read as a thing you could
+   press; cut apart, all three read as buttons whether they are lit or not.
+
+   On the first tab there is nothing to divide from, hence the sibling
+   selector — and the open tab drops its own, because a grey line laid
+   against a saturated fill reads as a seam in the fill rather than as the
+   edge between two controls. */
+.tab + .tab {
+  border-left: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
 /* Never let the glyph carry the shrink. The tabs are equal grid columns, so
@@ -270,43 +304,47 @@
   flex: none;
 }
 
-.tab:hover:not([aria-selected="true"]) {
-  color: var(--gl-color-text-secondary);
+/* The two that are not open — quiet, and pressable. */
+.tab:not([aria-selected="true"]) {
+  color: var(--gl-color-text-muted);
+  cursor: pointer;
 }
 
-/* The selected tab is told apart by INK alone — the thumb behind it is
-   already carrying the state, and a second signal on top of it (a fill, a
-   ring, a weight) would be the same fact said twice.
+.tab:not([aria-selected="true"]):hover {
+  color: var(--gl-color-text-secondary);
+  background-color: var(--gl-color-surface-hover);
+}
 
-   The ink is WHITE, because the thumb underneath it is now the accent (see
-   `.thumb`). The state lives in the fill; the label's only job is to stay
-   legible on it, and through `currentColor` the icon comes with it.
-
-   This went through accent-on-white first, which was the right instinct
-   applied to the wrong layer — it put the brand colour on a word while
-   leaving the indicator itself the palest thing on the card. Colouring the
-   thumb says the same thing with the element that was already carrying the
-   state, and leaves the label doing what a label does.
-
-   Still a single signal. The other two tabs keep their muted grey on the
-   bare track: nothing is added to them, and nothing beyond the fill is added
-   here — no ring, no weight change, no second accent anywhere in the
-   control. */
+/* The open tab — filled with the accent, label reversed out of it and set a
+   step heavier. Medium and not Bold: the fill is already carrying the state
+   from across the room, and the weight is only there so the label holds its
+   own against a saturated ground, where Regular reversed out of red goes
+   slightly thin. Through `currentColor` the icon comes with the label. */
 .tab[aria-selected="true"] {
+  background-color: var(--gl-color-accent);
   color: var(--gl-color-text-inverse);
+  font-weight: var(--gl-weight-medium);
+  /* The divider on this tab's left goes: a grey line laid against a
+     saturated fill reads as a seam in the fill rather than as the edge
+     between two controls. */
+  border-left-color: transparent;
+  cursor: default;
 }
 
 /* --------------------------------------------------------------------------
-   The card — the one true white surface in the section.
+   The card — no longer a card, strictly. It is the lattice's middle cells
+   filled in with white.
 
-   It was a warm off-white on a near-black panel, which is the reference's
-   arrangement. With the ground now a pale rose wash the relationship has to
-   invert: the card is the LIGHTEST thing here and the mesh is what it sits
-   on, so it takes flat `--gl-neutral-0` and the tint stays outside it.
+   It was a rounded, shadowed rectangle floating on a washed ground, and the
+   shadow was doing the work of saying "this is an object on a surface". The
+   band now draws its own coarse grid and the white is poured into it
+   instead: square corners, a hairline on all four edges, no lift at all. The
+   grid is the structure and the white is what has been filled into part of
+   it, which is why the block runs edge to edge between two of the panel's
+   own vertical lines rather than sitting at a measured inset from them.
 
-   The panel no longer redeclares any text token, so there is nothing for
-   this block to put back — everything in the card inherits the page's own
-   light tiers, which is what it wants.
+   Everything in it inherits the page's light text tiers — the panel
+   redeclares none.
    -------------------------------------------------------------------------- */
 .card {
   display: grid;
@@ -318,7 +356,10 @@
      top, the tagline starts in the same place whichever panel is open, so
      the only thing that appears to change when the band turns is the words. */
   align-items: start;
-  gap: clamp(1.5rem, 3.5vw, 3.5rem);
+  /* No gap. The strip across the top has to meet both side walls, and the
+     two columns are separated by their own padding — a grid gap would open a
+     stripe of the lattice straight through the middle of the white. */
+  gap: 0;
   width: 100%;
   /* Capped, and centred by the panel's `align-items: center`. The card was
      taking the full width the panel's padding left it, which at the frame's
@@ -326,39 +367,23 @@
      headline and the summary beside it stopped reading as one object and
      started reading as two columns that happen to share a background. This
      is roughly the measure at which the pair still scans as a single card. */
-  max-width: 68rem; /* 1088 */
-  padding: clamp(2rem, 3.5vw, 3.5rem);
-  border-radius: var(--gl-radius-2xl);
+  /* No cap and no inset. The block's width is decided by the panel's
+     cell-wide padding, so its edges are grid lines. */
+  padding: 0;
+  /* Square, because the grid it is filling is square. */
+  border-radius: 0;
   background-color: var(--agent-card-bg);
-  /* Two shadows, and both are load-bearing on a ground this pale. The
-     upward one separates the card's top edge — the edge the pill sits on —
-     from the mesh above it; the downward one is what stops a white card on
-     a near-white field from looking like a hole. Both are cool and weak:
-     the card should look lifted, not cut out.
-
-     Wide and faint, and the rule the pair follows is that the further a
-     shadow is thrown the softer AND the fainter it gets — which is why the
-     cast one is three times the blur of the contact one at not quite twice
-     the alpha.
-
-     PULLED DOWN IN TWO DIMENSIONS, over three passes. The geometry went to
-     0.8x and then to 0.7x of that, so every offset and radius is 0.56x what
-     it started at; the alphas then went to 0.7x on top, which is the lever
-     that actually changes how much shadow you SEE — shortening a soft
-     shadow mostly moves the darkness around, where thinning it removes it.
-     What is left is about as faint as a shadow can be and still be doing its
-     job, which on a ground this pale is to stop a white card reading as a
-     hole rather than to lift it off the page.
-
-     Both shadows are scaled together at every pass, on purpose: they are one
-     light, and changing only the cast one would put the light source
-     somewhere else.
-
-     The tint stays cool — `15, 23, 42` is a blue-black, not a neutral one.
-     A grey shadow on a warm white goes muddy; a cool one stays a shadow. */
-  box-shadow:
-    0 -1.4px 19.6px rgba(15, 23, 42, 0.021),
-    0 16.8px 50.4px rgba(15, 23, 42, 0.035);
+  /* NO BORDER. The panel's two column rules already run down both sides of
+     this block; an edge of its own would land on top of them and a hairline
+     drawn twice a pixel apart reads as one thick, darker line. The card is
+     the fill and the rules are the structure — they are not the same mark
+     and only one of them draws. */
+  border: none;
+  /* No shadow. It had two, and both existed to separate a white card from a
+     near-white ground; the hairline and the lattice around it now do that
+     job, and a lift under a block that is meant to be set INTO the grid
+     reads as the block having come loose from it. */
+  box-shadow: none;
 }
 
 /* Both columns remount on every tab switch (see the component's note on
@@ -373,6 +398,16 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  /* The inset moved off the card and onto the two columns, because the tab
+     strip above them has to run the full width while they do not. Held to
+     the band's own cell so the copy starts on the same rhythm everything
+     else in the section is measured by. */
+  padding: calc(var(--agent-cell) * 0.42) calc(var(--agent-cell) * 0.38);
+}
+
+.cardVisual {
+  padding: calc(var(--agent-cell) * 0.42) calc(var(--agent-cell) * 0.38);
+  padding-left: 0;
 }
 
 .copyBody,
@@ -438,23 +473,16 @@
      reading order already, so nothing is reordered. */
   .card {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--gl-space-block-sm);
   }
 
   .panelBody {
     max-width: none;
   }
 
-  /* The pill goes to the middle once the card is one column. Left-aligned it
-     was reading as a control belonging to a left-hand column that no longer
-     exists — the mock under it is centred on the card, so a switcher pinned
-     to the left edge is the only thing on the panel off the centre line.
-     Full width up to its own cap, so the three tabs also stop being squeezed
-     into whatever the widest label needs. */
-  .switcher {
-    align-self: center;
-    justify-self: center;
-    width: 100%;
+  /* Stacked, the visual's column padding has no left wall to sit against. */
+  .cardVisual {
+    padding-left: calc(var(--agent-cell) * 0.38);
+    padding-top: 0;
   }
 
   /* The visual is the taller of the two columns on one column, and the
@@ -484,16 +512,87 @@
      unequal block padding it has at every other width — more mesh above the
      pill than below the card. */
   .panel {
-    padding: var(--gl-space-20) var(--gl-space-11) var(--gl-space-15);
+    padding: var(--gl-space-14) var(--gl-space-11);
+    background-color: var(--gl-neutral-0);
   }
 
-  /* 24px all round rather than 32/24: on a phone the card is nearly the
-     width of the window, so its block padding is the largest single piece
-     of empty space on screen. Square padding also stops the tab row sitting
-     further from the card's top edge than from its sides. */
+  /* The margin columns go with the card. At this width there is no room to
+     give a tenth of the window away to each side, so the tracks collapse
+     and both rules and the horizontal one go with them. */
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel::before,
+  .panel::after,
+  .cardRule {
+    display: none;
+  }
+
   .card {
-    border-radius: var(--gl-radius-xl);
-    padding: var(--gl-space-11);
+    grid-column: 1;
+  }
+
+  /* The card is gone on a phone. At this width it was a white rectangle on
+     a near-white band, inset from a window it very nearly filled — the lift
+     it exists to give was invisible, and all it did was spend twenty-odd
+     pixels of horizontal room on each side that the copy and the mock both
+     wanted. The band is plain white here and the panel's contents sit
+     directly on it; the switcher is the only framed object left, which is
+     enough to say where the demonstration starts. */
+  .card {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  /* With the white block gone the columns have nothing to be inset from. */
+  .cardCopy,
+  .cardVisual {
+    padding-inline: 0;
+  }
+
+  /* The section heading keeps its own inset once the panel's has been
+     narrowed for the card's benefit — it is a line of display type and
+     should not run to the window's edge the way the panel's contents now
+     do. */
+  .sectionHeading {
+    padding-inline: var(--gl-space-11);
+  }
+
+  /* 20px. At the inherited setting the tab's headline was the second-largest
+     type on screen after the section heading, and with the card gone it has
+     the full window width to run in — so it takes fewer lines at a smaller
+     size and stops competing with the heading above it. */
+  .panelHeading {
+    font-size: 1.25rem;
+  }
+
+  /* Edge to edge. The strip breaks out of the panel's gutter to the full
+     window, so the tabs meet both screen edges rather than sitting inset on
+     the white — inset, the row read as three buttons floating above the
+     copy instead of as the band's own top edge. Ruled top as well as
+     bottom, so it is a closed strip at both ends. */
+  .switcher {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: -50vw;
+    border-radius: 0;
+    border-top: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+    /* 36px of air under the strip. Flush to the window on both sides it
+       sits much closer to the copy than it did inset, and the tab headline
+       was starting directly under the rule. */
+    margin-bottom: var(--gl-space-14);
+  }
+
+  /* Shorter cells and a smaller label. At 56px and the body step the three
+     tabs were the heaviest thing on the screen, and the filled one read as
+     a button rather than as the open tab of a strip. */
+  .tab {
+    height: 44px;
+    font-size: 0.875rem;
   }
 
   /* The tab glyphs go. Three equal columns on a phone leave each tab barely
@@ -525,10 +624,4 @@
     transform: none;
   }
 
-  /* The thumb jumps to the selected tab instead of travelling. It still
-     MOVES — it has to, it is the only thing marking which tab is open — but
-     it stops being an animation. */
-  .thumb {
-    transition: none;
-  }
 }

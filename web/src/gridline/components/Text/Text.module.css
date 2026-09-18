@@ -96,21 +96,21 @@
   font-size: var(--gl-type-body-lg-size);
   line-height: var(--gl-type-body-lg-leading);
   font-weight: var(--gl-type-body-lg-weight);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
 }
 
 .bodyMd {
   font-size: var(--gl-type-body-md-size);
   line-height: var(--gl-type-body-md-leading);
   font-weight: var(--gl-type-body-md-weight);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
 }
 
 .bodySm {
   font-size: var(--gl-type-body-sm-size);
   line-height: var(--gl-type-body-sm-leading);
   font-weight: var(--gl-type-body-sm-weight);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
 }
 
 .caption {

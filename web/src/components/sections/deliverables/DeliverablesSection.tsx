@@ -622,6 +622,19 @@ export function DeliverablesSection() {
                   }}
                   className={styles.mobileStage}
                 >
+                  {/* The copy is what carries the gutter now — the section
+                      itself is edge to edge on a phone so the image can be,
+                      so every block that is NOT the image holds itself off
+                      the window edges on its own. */}
+                  <div className={styles.mobileCopy}>
+                    {/* No title on the stage itself. The tab strip above the
+                        track already names the stage that is showing, and
+                        repeating that same label directly under its image
+                        said the thing twice in two type sizes. */}
+                    <Text variant="bodyMd" tone="inverseSecondary">
+                      {stage.description}
+                    </Text>
+                  </div>
                   <div className={styles.mobileFrame}>
                     <Image
                       src={stage.background}
@@ -648,22 +661,6 @@ export function DeliverablesSection() {
                     ) : null}
                   </div>
 
-                  {/* The copy is what carries the gutter now — the section
-                      itself is edge to edge on a phone so the image can be,
-                      so every block that is NOT the image holds itself off
-                      the window edges on its own. */}
-                  <div className={styles.mobileCopy}>
-                    <Text
-                      variant="headingSm"
-                      tone="inverse"
-                      className={styles.captionHeading}
-                    >
-                      {stage.tabLabel}
-                    </Text>
-                    <Text variant="bodyMd" tone="inverseSecondary">
-                      {stage.description}
-                    </Text>
-                  </div>
                 </article>
               ))}
             </div>

@@ -135,8 +135,8 @@
      footer later reverses correctly without a matching override here. */
   --gl-color-text-primary: var(--gl-color-text-inverse);
   --gl-color-text-heading: var(--gl-color-text-inverse);
-  --gl-color-text-secondary: var(--gl-color-text-inverse);
-  --gl-color-text-body: var(--gl-color-text-inverse);
+  --gl-color-text-secondary: var(--gl-color-text-inverse-secondary);
+  --gl-color-text-body: var(--gl-color-text-inverse-secondary);
   --gl-color-text-muted: var(--gl-color-text-inverse-secondary);
   --gl-color-action-ghost-fg: var(--gl-color-text-inverse);
   --gl-color-action-ghost-fg-hover: var(--gl-color-text-inverse);
@@ -248,7 +248,10 @@
 
   .wrapper {
     padding-top: var(--gl-space-14);
-    padding-bottom: var(--gl-space-14);
+    /* Nothing under the band on a phone. The accent row is the section's
+       closing edge here, and the padding left a strip of white between it
+       and the module rule that read as a gap rather than as margin. */
+    padding-bottom: 0;
   }
 
   /* The pin (and with it, the 100vh sizing that makes `.header` flexible)
@@ -261,7 +264,7 @@
 
   .header {
     flex: none;
-    padding: var(--gl-space-9);
+    padding: var(--gl-space-11);
   }
 
   .viewport {
@@ -271,8 +274,9 @@
 
   .footerInner {
     flex-direction: column;
-    align-items: flex-start;
-    padding: var(--gl-space-9);
+    align-items: center;
+    text-align: center;
+    padding: var(--gl-space-11);
   }
 
   /* Accent by default on a phone. The `hover: none` rule above already does

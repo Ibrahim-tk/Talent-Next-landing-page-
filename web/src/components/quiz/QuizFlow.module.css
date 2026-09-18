@@ -94,7 +94,7 @@
 .questionSubtitle {
   font-size: var(--gl-size-body-base);
   line-height: var(--gl-leading-normal);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
   margin: 0;
 }
 
@@ -155,9 +155,11 @@
    Step 13: Personal Info Form (No big heading, description only)
    -------------------------------------------------------------------------- */
 .formDescription {
-  font-size: 1.125rem;
+  /* Description body sits at the system's 16px step like every other
+     non-heading paragraph on a white surface. */
+  font-size: var(--gl-size-body-base);
   line-height: var(--gl-leading-relaxed);
-  color: var(--gl-color-text-secondary);
+  color: var(--gl-color-text-body);
   margin: 0 0 var(--gl-space-8);
   max-width: 58ch;
 }

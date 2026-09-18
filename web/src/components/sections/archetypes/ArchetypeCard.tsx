@@ -31,7 +31,7 @@ export function ArchetypeCard({ archetype }: ArchetypeCardProps) {
         <Text variant="title" className={styles.title}>
           {archetype.name}
         </Text>
-        <Text variant="caption" tone="secondary">
+        <Text variant="bodyMd" tone="body" className={styles.description}>
           {archetype.description}
         </Text>
       </div>

@@ -279,7 +279,7 @@
   }
 
   .cell {
-    padding: var(--gl-space-15) var(--gl-space-9);
+    padding: var(--gl-space-15) var(--gl-space-11);
   }
 
   .cell:not(:last-child) {
@@ -290,7 +290,7 @@
      footer's own padding is already holding it off the section above. */
   .brandCell {
     grid-column: 1 / -1;
-    padding: var(--gl-space-11) var(--gl-space-9) var(--gl-space-13);
+    padding: var(--gl-space-11) var(--gl-space-11) var(--gl-space-13);
 
     /* Every cell draws a top rule so the row reads as a set of divided
        panels. The brand cell is the first one down here, so its rule has no
@@ -364,15 +364,18 @@
     border: 0;
   }
 
-  /* Bigger, now that each glyph is the whole of its link and has to be a
-     comfortable tap target rather than a mark beside a word. */
+  /* Bigger than the inline mark beside a word, now that each glyph is the
+     whole of its link — but trimmed to 0.8x of the 26px it was first set
+     at: three marks that size read as buttons in a row of their own rather
+     than as the quiet last line of the footer. The link's hit area is
+     unaffected; it is the row's own gap that gives the tap target. */
   .socialGlyph {
-    width: 26px;
-    height: 26px;
+    width: 21px;
+    height: 21px;
   }
 
   .legalBar {
-    padding: var(--gl-space-9);
+    padding: var(--gl-space-11);
     text-align: center;
   }
 }

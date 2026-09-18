@@ -332,7 +332,7 @@
   --gl-space-23: 6rem; /* 96 */
 
   /* Fluid space — the module gutters that hold the architectural frame */
-  --gl-space-gutter-sm: clamp(1.25rem, 3.5vw, 3rem); /* 20 → 48 */
+  --gl-space-gutter-sm: clamp(1.5rem, 3.5vw, 3rem); /* 24 → 48 */
   --gl-space-gutter-md: clamp(1.5rem, 4vw, 3rem); /* 24 → 48 */
   --gl-space-gutter-lg: clamp(2rem, 4vw, 4rem); /* 32 → 64 */
   --gl-space-gutter-xl: clamp(2rem, 5vw, 6rem); /* 32 → 96 */

@@ -103,9 +103,14 @@ export function HowItWorksSection() {
         </div>
       </div>
 
-      {/* A closing row below the grid, same shape as the shared section's
-          own footer bar — left empty until there's copy for it. */}
-      <div className={styles.footerRow} />
+      {/* The band that closes the section, and the same two rows of
+          blueprint the section opened with. It was a plain 48px gap with a
+          rule on top — a closing bar borrowed from the shared section, left
+          empty because there was never copy for it. An empty bar reads as
+          something missing; the lattice reads as the page's own structure
+          showing through between two sections, which is what this space
+          actually is. AgentSection, directly below, closes the same way. */}
+      <div className={styles.gridBoxFoot} aria-hidden="true" />
     </GridModule>
   );
 }

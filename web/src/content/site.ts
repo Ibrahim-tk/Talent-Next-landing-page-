@@ -28,7 +28,6 @@ export const primaryNav: readonly NavItem[] = [
   { label: "How It Works", href: "/#how-it-works" },
   { label: "What You’ll Get", href: "/#what-youll-get" },
   { label: "See It in Action", href: "/#see-it-in-action" },
-  { label: "Get Started", href: "/#get-started" },
 ];
 
 /** Landing-page anchors the header's own controls point at. */

@@ -91,6 +91,14 @@
   margin-bottom: var(--gl-space-3);
 }
 
+/* The card's description steps down from the sitewide 16px body to 14px:
+   the cards sit four-up in a narrow column, and at 16px the paragraph
+   crowds the title and runs to too many lines for the tile. The colour
+   stays the standard body grey. */
+.description {
+  font-size: 0.875rem;
+}
+
 @media (max-width: 768px) {
   /* Below the pin breakpoint the heading's flex-centered padding doesn't
      exist (ArchetypesSection resets `.header` to `flex: none`), so there's

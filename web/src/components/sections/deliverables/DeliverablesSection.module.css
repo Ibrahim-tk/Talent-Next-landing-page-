@@ -375,7 +375,10 @@
   .stage {
     grid-template-columns: 1fr;
     gap: var(--gl-space-15);
-    padding: var(--gl-space-20) 0;
+    /* Nothing underneath. Each stage now ends on its full-bleed picture,
+       so any bottom padding here is a strip of bare dark between that
+       image and the mesh panel that closes the section. */
+    padding: var(--gl-space-20) 0 0;
     height: auto;
     position: static;
   }
@@ -418,7 +421,7 @@
      is the divider here. */
   .headingBar {
     margin-bottom: var(--gl-space-16);
-    padding: 0 var(--gl-space-9);
+    padding: 0 var(--gl-space-11);
     padding-bottom: 0;
     border-bottom: none;
   }
@@ -550,8 +553,13 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 
-    /* Bottom only. A rule along the top as well would double with the
-       header's own edge directly above it and read as a seam. */
+    /* Ruled top and bottom, so the strip is a closed band. Unstuck — which
+       is how it is first seen, sitting under the intro copy — a bottom rule
+       on its own left the tabs' top edge open against the dark above them
+       and the row read as type floating over the band rather than as a
+       bar. */
+    border-top: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-inverse);
     border-bottom: var(--gl-border-width-hairline) solid
       var(--gl-color-border-inverse);
   }
@@ -642,11 +650,15 @@
   }
 
   /* The gutter every block that is not the image sits on. */
-  /* The generous bottom padding is what separates one stage's paragraph
-     from the next stage's full-bleed image — there is no rule between them
-     any more, so the space has to do that work on its own. */
+  /* The paragraph now comes FIRST in each stage and its picture follows,
+     so it is padded on both sides: above, it is holding itself off the
+     previous stage's full-bleed image; below, off its own. There is no rule
+     anywhere in the stack, so the space is doing that work on its own. */
   .mobileCopy {
-    padding: 0 var(--gl-space-9) var(--gl-space-17);
+    /* Less underneath than above: the space below is only holding the copy
+       off its OWN picture, where the space above has to separate it from
+       the previous stage entirely. */
+    padding: var(--gl-space-15) var(--gl-space-11) var(--gl-space-12);
   }
 
   /* Smaller than the square desktop frame in proportion to its column: a
@@ -662,16 +674,32 @@
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 3;
-    margin-bottom: var(--gl-space-11);
+    /* No margin. The picture is the last thing in its stage now that the
+       copy comes first, so this was a strip of bare dark under every image
+       — including the last one, between it and the mesh that closes the
+       section. The next stage's copy carries its own padding. */
     overflow: hidden;
     background-color: var(--gl-color-surface-inverse);
   }
 
-  /* The mockup takes a little more of the frame back: `--card-inset` is a
-     percentage of a box that is now wider and shorter, so the per-stage
-     values tuned against a square frame leave the card smaller than
-     intended here. */
+  /* The mockup takes the frame back. `--card-inset` is a percentage of a
+     box that is now wider and shorter, so the per-stage values tuned
+     against a square desktop frame leave the card smaller than intended
+     here — and on a phone the card IS the stage, with no second column
+     beside it to carry the point.
+
+     Halving the inset rather than scaling the image: `object-fit: contain`
+     sizes the picture to its padding box, so the padding is the one control
+     that can grow it without pushing any of it past the frame and into
+     `overflow: hidden`. A `scale()` would have clipped the four stages that
+     sit at a 6% inset, where the artwork is already 88% of the frame.
+
+     It lands hardest where it is needed most. "Highlights from your
+     interview" is cropped tight to its own content and carries a 17.5%
+     inset for it; halved, the artwork goes from 65% of the frame to 82.5%,
+     which is the 1.2x that stage was asked for. The other four move from
+     88% to 94% — a smaller step, because they had far less room to give. */
   .mobileFrame .layerCard {
-    padding: var(--card-inset, 6%);
+    padding: calc(var(--card-inset, 6%) * 0.5);
   }
 }

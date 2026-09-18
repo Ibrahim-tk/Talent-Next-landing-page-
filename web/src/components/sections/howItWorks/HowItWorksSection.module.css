@@ -167,15 +167,27 @@
 }
 
 /* --------------------------------------------------------------------------
-   Footer row — full-bleed width only, NOT full-screen height, the same
-   pattern the shared section and InterviewSection both use.
+   The closing band — the opening spacer again, at the other end.
+
+   This was a full-bleed 48px row with a hairline on top, empty since it was
+   written. The lattice replaces the emptiness: the same two rows the section
+   opens with, so the band brackets its content instead of trailing off into
+   a gap, and the seam into AgentSection below — which closes with this very
+   same box — reads as one continuous piece of graph paper rather than as
+   two sections that happen to be adjacent.
+
+   Canvas width, not the old 100vw breakout: the lattice is pinned to the
+   page's two vertical rules and drawing it past them would put cells in the
+   margin where nothing else on the page goes. The rule is on the TOP edge
+   only — the module already draws its own bottom — and the lattice is
+   anchored at `-1px -1px` so it does not redraw that rule as its first row
+   (see semantic.css).
    -------------------------------------------------------------------------- */
-.footerRow {
-  position: relative;
-  left: 50%;
-  width: 100vw;
-  margin-left: -50vw;
-  padding: var(--gl-space-17);
+.gridBoxFoot {
+  height: calc(2 * var(--gl-blueprint-cell));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: -1px -1px;
   border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
@@ -192,16 +204,55 @@
 }
 
 @media (max-width: 768px) {
-  /* The closing row is an empty full-bleed band with a rule on it — on a
-     phone that is a strip of nothing between this section and the next. */
-  .footerRow {
-    display: none;
-  }
+  /* The closing band stays on a phone now that it carries the lattice. It
+     was hidden here while it was an empty full-bleed row with a rule on it,
+     which at this width was a strip of nothing between two sections; two
+     rows of graph paper are the texture the section opened with, and
+     SeeItInActionSection brackets itself the same way down here. */
 
   /* The rule under the heading reads as an underline at this width, where
      the header row is barely wider than the headline itself. The mesh panel
      above it is already dividing this section from the one before. */
   .headerRow {
     border-bottom: none;
+    /* 24px of gutter and 36px above, the same pair every block in this
+       section sits on at phone width. */
+    padding: var(--gl-space-14) var(--gl-space-11) 0;
+  }
+
+  /* On a phone each step is a tall stack, and the space between one step's
+     last line and the next step's title was reading as the same interval as
+     the title-to-body gap inside a step. The air now sits ABOVE the heading
+     instead of below it, so a title stays attached to the copy it
+     introduces and the separation lands where the step actually changes. */
+  .step + .step {
+    margin-top: var(--gl-space-12);
+    padding-top: var(--gl-space-12);
+  }
+
+  /* No rule above the first step, and the list starts close under the
+     heading. A hairline there boxed the heading in, and the space it was
+     holding open pushed the whole list down the screen — the section
+     heading is the thing the first step belongs to, so the two sit
+     together and the rules stay as dividers BETWEEN steps only. */
+  .stepsCell {
+    /* 24px of gutter, matching the header row above it. */
+    padding: var(--gl-space-block-sm) var(--gl-space-11);
+    /* No rule between the last step and the stage below it. Stacked, the
+       steps and the image are one continuous column, and the hairline read
+       as a lid over the artwork rather than a seam between two cells. */
+    border-bottom: none;
+  }
+
+  .stepHeading {
+    margin-bottom: var(--gl-space-3);
+  }
+
+  /* 24px on three sides and 36px underneath. The stage is the last thing in
+     the section on a phone, so its bottom inset is also the gap between the
+     artwork and whatever module follows — it needs to be the larger of the
+     two. */
+  .stage {
+    padding: var(--gl-space-11) var(--gl-space-11) var(--gl-space-14);
   }
 }

@@ -51,7 +51,7 @@
 }
 
 .description {
-  color: #ffffff;
+  color: var(--gl-color-text-inverse-secondary);
   font-family: var(--gl-font-sans);
   font-size: clamp(1.05rem, 1.9vw, 1.2rem);
   font-weight: var(--gl-weight-regular);
@@ -105,7 +105,7 @@
   .bleed {
     min-height: 48vh;
     min-height: 48svh;
-    padding: var(--gl-space-16) var(--gl-space-7);
+    padding: var(--gl-space-16) var(--gl-space-11);
   }
 
   .heading {

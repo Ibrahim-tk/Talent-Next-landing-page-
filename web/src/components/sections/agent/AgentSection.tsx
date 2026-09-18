@@ -6,7 +6,6 @@ import {
   useId,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
 } from "react";
 
@@ -290,6 +289,11 @@ export function AgentSection() {
           {agentCopy.headingAfter}
         </Text>
 
+        {/* The rule across the top of the card, and out past it to both
+            edges of the band — see `.cardRule`. Its twin closes the card
+            underneath. */}
+        <div className={styles.cardRule} aria-hidden="true" />
+
         <div
           className={styles.card}
           id={panelId(active.id)}
@@ -299,82 +303,68 @@ export function AgentSection() {
              reachable, and a focusable wrapper would add a stop that
              announces nothing. */
         >
-          {/* The copy column: the switcher, then the words. Only the words
-              are keyed — see the switcher's own note. */}
+          {/* The switcher, and it is a row of tabs across the HEAD OF THE
+              CARD now — end to end, both columns — rather than a segmented
+              pill tucked into the copy column. On a card that is a block of
+              white filled into the lattice rather than a floating object,
+              a recessed pill read as a control borrowed from somewhere
+              else; a full-width tab strip reads as the card's own top edge.
+
+              It sits OUTSIDE the keyed block below, deliberately. The copy
+              remounts on every switch to replay its entrance; the strip has
+              to stay put so the underline travels rather than being rebuilt
+              at its new position. */}
+          <div
+            className={styles.switcher}
+            role="tablist"
+            aria-label={agentCopy.tablistLabel}
+            /* The pointer pause, and it lives on the control rather than on
+               the band. It used to be the whole panel, which meant that
+               resting the pointer anywhere over the card — which is where
+               it sits while you read — stopped the rotation for as long as
+               it stayed there, and the band the page is meant to turn by
+               itself simply never turned. */
+            onPointerEnter={() => setEngaged(true)}
+            onPointerLeave={() => setEngaged(false)}
+          >
+            {agentBehaviours.map((behaviour, index) => {
+              const selected = behaviour.id === active.id;
+
+              return (
+                <button
+                  key={behaviour.id}
+                  type="button"
+                  ref={(node) => {
+                    tabRefs.current[behaviour.id] = node;
+                  }}
+                  id={tabId(behaviour.id)}
+                  className={styles.tab}
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={panelId(behaviour.id)}
+                  /* Every tab is live. They were `disabled` for a version,
+                     on the reading that the band turning itself over made
+                     them redundant — but a tab strip that cannot be pressed
+                     is a label pretending to be a control, and the clock is
+                     meant to be a default rather than the only way through.
+                     Both work now: the timer advances the band on its own,
+                     and a click takes it wherever it is pointed.
+
+                     Roving tabindex: one stop for the whole group, and the
+                     arrow keys move within it. */
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => choose(behaviour.id)}
+                  onKeyDown={(event) => onTabKeyDown(event, index)}
+                >
+                  <Icon name={behaviour.icon} size={18} />
+                  <span className={styles.tabLabel}>{behaviour.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* The copy column. */}
           <div className={styles.cardCopy}>
-            {/* The switcher, and it lives HERE now — inside the card, at
-                the head of the copy column — rather than floating above the
-                card as a separate object. Two things follow from the move.
-
-                It is a segmented control and not a row of icon buttons: at
-                this size and in this position it is reading as navigation
-                for the column under it, and navigation gets a label. The
-                filled accent disc is gone with it — a saturated red circle
-                was the loudest thing on a card whose whole job is to be
-                read, and it was competing with the accent inside the copy
-                directly beneath it.
-
-                It also sits OUTSIDE the keyed block below, deliberately. The
-                copy remounts on every switch to replay its entrance; if the
-                switcher remounted with it, the sliding thumb would be
-                rebuilt at its new position every time instead of travelling
-                there, which is the whole point of a thumb. */}
-            <div
-              className={styles.switcher}
-              role="tablist"
-              aria-label={agentCopy.tablistLabel}
-              /* The pointer pause, and it lives on the control rather than on
-                 the band. It used to be the whole panel, which meant that
-                 resting the pointer anywhere over the card — which is where
-                 it sits while you read — stopped the rotation for as long as
-                 it stayed there, and the band the page is meant to turn by
-                 itself simply never turned. Over the switcher it still does
-                 the job it was added for: someone reaching for a tab is not
-                 shown a different one under their finger. */
-              onPointerEnter={() => setEngaged(true)}
-              onPointerLeave={() => setEngaged(false)}
-              /* The thumb's position, handed to CSS as an index. One
-                 declaration in the stylesheet turns it into a translation,
-                 so nothing here has to know a pixel. */
-              style={
-                {
-                  "--agent-tab-index": agentBehaviours.findIndex(
-                    (behaviour) => behaviour.id === active.id,
-                  ),
-                  "--agent-tab-count": agentBehaviours.length,
-                } as CSSProperties
-              }
-            >
-              <span className={styles.thumb} aria-hidden="true" />
-
-              {agentBehaviours.map((behaviour, index) => {
-                const selected = behaviour.id === active.id;
-
-                return (
-                  <button
-                    key={behaviour.id}
-                    type="button"
-                    ref={(node) => {
-                      tabRefs.current[behaviour.id] = node;
-                    }}
-                    id={tabId(behaviour.id)}
-                    className={styles.tab}
-                    role="tab"
-                    aria-selected={selected}
-                    aria-controls={panelId(behaviour.id)}
-                    /* Roving tabindex: one stop for the whole group, and the
-                       arrow keys move within it. */
-                    tabIndex={selected ? 0 : -1}
-                    onClick={() => choose(behaviour.id)}
-                    onKeyDown={(event) => onTabKeyDown(event, index)}
-                  >
-                    <Icon name={behaviour.icon} size={15} />
-                    <span className={styles.tabLabel}>{behaviour.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
             {/* A headline and a paragraph, and nothing else. Three things
                 have been stripped from over and under this block in turn: a
                 glyph tile, a "Learn more" link, and now the accent tagline
@@ -402,6 +392,8 @@ export function AgentSection() {
             <AgentPanelVisual behaviourId={active.id} />
           </div>
         </div>
+
+        <div className={styles.cardRule} aria-hidden="true" />
       </div>
 
       {/* Two whole rows of the sitewide blueprint lattice, closing the band.

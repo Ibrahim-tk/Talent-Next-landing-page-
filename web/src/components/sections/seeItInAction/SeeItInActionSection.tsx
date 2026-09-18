@@ -129,6 +129,11 @@ export function SeeItInActionSection({
             />
           </div>
 
+          {/* Phone only — see `.gridBoxMid`. The twin of the closing panel,
+              so on a phone the video is bracketed by the same two rows of
+              graph paper above and below. */}
+          <div className={styles.gridBoxMid} aria-hidden="true" />
+
           <div className={styles.body}>
             <div className={styles.plate}>
               {/* A click-to-load facade rather than an iframe that is always

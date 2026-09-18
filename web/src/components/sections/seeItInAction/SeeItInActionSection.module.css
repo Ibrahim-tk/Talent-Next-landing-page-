@@ -209,6 +209,7 @@
 .toneInverse {
   --gl-color-text-primary: var(--gl-color-text-inverse);
   --gl-color-text-secondary: var(--gl-color-text-inverse-secondary);
+  --gl-color-text-body: var(--gl-color-text-inverse-secondary);
   --gl-color-text-heading: var(--gl-color-text-inverse);
   --gl-color-border-rule: var(--gl-color-border-inverse);
 }
@@ -346,6 +347,20 @@
   .footerRow {
     display: none;
   }
+
+  /* Centred between the two mesh panels. The header component's own block
+     padding is deliberately top-heavy — `block-lg` above, `block-sm` below —
+     which is right where a header opens a section on plain ground. Bracketed
+     by graph paper top and bottom it simply read as having sagged, so the
+     pad above it goes and the header's own two halves are equalised. */
+  .headerPad {
+    padding-top: 0;
+  }
+
+  .headerPad > * {
+    padding-top: var(--gl-space-17);
+    padding-bottom: var(--gl-space-17);
+  }
 }
 
 /* Same reason as DeliverablesSection's own pair: these two exist to put the
@@ -364,6 +379,41 @@
    Mobile only: at wider widths the footer row is what closes the section. */
 .gridBoxFoot {
   display: none;
+}
+
+/* The mesh panel between the intro copy and the video — the twin of
+   `.gridBoxFoot` at the other end of the band. Mobile only, for the same
+   reason: at wider widths the plate's own texture and padding already set
+   the video apart from the copy above it. */
+.gridBoxMid {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .gridBoxMid {
+    display: block;
+    height: calc(2 * var(--gl-blueprint-cell));
+    background-image: var(--gl-gradient-blueprint);
+    background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+    background-position: -1px -1px;
+    border-top: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+    border-bottom: var(--gl-border-width-hairline) solid
+      var(--gl-color-border-rule);
+  }
+
+  .toneInverse .gridBoxMid {
+    background-image: var(--gl-gradient-blueprint-inverse);
+    border-top-color: var(--gl-color-border-inverse);
+    border-bottom-color: var(--gl-color-border-inverse);
+  }
+
+  /* The mesh sits ON the video's top edge. Its own bottom hairline is the
+     line between the two, so any padding here would leave a strip of empty
+     dark under the lattice and break the joint. */
+  .body {
+    padding-top: 0;
+  }
 }
 
 @media (max-width: 768px) {

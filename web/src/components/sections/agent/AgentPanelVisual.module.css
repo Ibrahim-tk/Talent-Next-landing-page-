@@ -481,11 +481,14 @@
      adapt to the card rather than the card to the mocks. */
   height: 21.35rem; /* 342 */
   overflow: hidden;
-  /* Doubled, deliberately. The mocks are pictures of a product rather than a
-     product, and at half this the type ran to within a few pixels of the
-     card's edge — which is the one thing that reads as a screenshot pasted
-     into a box instead of as a surface with something laid out on it. */
-  padding: clamp(2rem, 3.6vw, 3rem);
+  /* Pulled back to roughly two thirds of what it was. It had been doubled on
+     the argument that a mock needs room around it to read as a surface
+     rather than as a screenshot pasted into a box — still true, but at the
+     doubled setting the card was mostly its own margin, and the summary
+     inside it sat in a pool of white wide enough to make the whole right
+     column look emptier than the copy beside it. This is the least inset
+     that still keeps the type clear of the edge. */
+  padding: clamp(1.25rem, 2.4vw, 2rem);
   border-radius: var(--gl-radius-xl);
   background-color: var(--gl-neutral-0);
   /* Softer and fainter than the system's `md`, which is tuned for a card on
