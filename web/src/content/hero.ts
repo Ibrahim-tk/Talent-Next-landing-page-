@@ -22,7 +22,7 @@ export const heroCopy = {
        the largest rendition anyone sees. The hyphenated filename is the
        other half of it: a space in a public path survives `next/image`'s own
        encoding but not much else that touches a URL. */
-    src: "/assets/hero-section.jpg",
+    src: "/assets/herosection-2400.jpg",
     alt: "A young professional at their desk, turning to face the camera",
     width: 2400,
     height: 1600,
