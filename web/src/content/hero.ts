@@ -14,17 +14,24 @@ export const heroCopy = {
    * drifts on scroll.
    */
   image: {
-    /* Served from a 2400px re-encode rather than from the 8256px, 12MB
-       original that was dropped in (`hero section.jpeg`, kept alongside it).
-       Next's optimiser would happily resize the original on request, but it
-       would do that work against a 45-megapixel source, and nothing on this
-       page is ever served wider than the canvas — 2400 is already over twice
-       the largest rendition anyone sees. The hyphenated filename is the
-       other half of it: a space in a public path survives `next/image`'s own
-       encoding but not much else that touches a URL. */
-    src: "/assets/herosection-2400.jpg",
-    alt: "A young professional at their desk, turning to face the camera",
-    width: 2400,
-    height: 1600,
+    /* A 3:1 letterbox plate, and the aspect is the composition: one person
+       standing still and level with the camera while the crowd around them
+       is dragged into motion blur. That is the headline's claim as a
+       picture, and it only reads at this ratio — cropped to something
+       nearer square the blurred figures either side fall out of frame and
+       the subject is just a portrait.
+
+       At canvas width the plate stands about 470px tall, which is inside
+       `HeroImage`'s height cap, so nothing is trimmed on a desktop and the
+       cap is only there for very wide windows. See that stylesheet for what
+       the ratio changes about the mobile crop.
+
+       PNG as supplied. `next/image` re-encodes to AVIF/WebP per request, so
+       what ships is a fraction of the 1.6MB on disk and no re-encode of the
+       source is needed the way the previous 12MB original required one. */
+    src: "/assets/talent-next-hero-image.png",
+    alt: "A young professional standing still and facing the camera, the crowd moving around them blurred",
+    width: 2172,
+    height: 724,
   },
 } as const;

@@ -15,31 +15,42 @@
   line-height: 0;
 }
 
-/* `cover` against a capped height: the plate is a 3:2 photograph, so at full
-   canvas width its natural height would push the fold well past the headline
-   — more so than the 16:9 frame that was here before, which is why the cap
-   matters more now, not less.
+/* `cover` against a capped height. The plate is a 3:1 letterbox now, not the
+   3:2 that was here before, so at canvas width it stands about 470px tall and
+   the cap is slack on an ordinary desktop — it only engages on a very wide
+   window, where it stops the band growing into a horizon.
 
-   The crop stays anchored to the top edge. The subject's head clears the top
-   of the frame by only a few percent of its height, so a centred crop takes
-   the cap's trim out of both ends and cuts into it; anchored top, everything
-   the cap removes comes off the bottom, where the photograph has desk and
-   floor to give away. */
+   The crop is CENTRED, where the 3:2 plate's was anchored to the top edge.
+   That anchor existed because the old subject's head cleared the top of the
+   frame by a few percent and a centred crop cut into it. This photograph is
+   composed the other way round: the subject stands dead centre with the
+   blurred crowd running out to both edges, and every pixel the cap removes
+   should come off the ceiling and the floor evenly. Anchored top, a trim
+   would take the whole of it out of the bottom and cut the subject off at
+   the chest. */
 .image {
   width: 100%;
   height: auto;
   max-height: clamp(340px, 56vh, 640px);
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
   display: block;
 }
 
 /* The photograph takes the bottom ~35% of the screen on a phone; the copy
    above it gets whatever is left (~45% after the sticky header), centred in
-   it by HeroSection's own mobile rules. */
+   it by HeroSection's own mobile rules.
+
+   An EXPLICIT height, not a cap. With the old 3:2 plate the natural height at
+   phone width was far taller than 35vh and the cap did the work; a 3:1 plate
+   at the same width is only about 130px tall, so a cap would never engage and
+   the hero would close on a thin strip with a band of white beneath it. Set
+   as a height, `cover` crops the sides instead — which this photograph can
+   afford, because the subject is centred and the edges are motion blur. */
 @media (max-width: 768px) {
   .image {
-    max-height: 35vh;
-    max-height: 35svh;
+    height: 35vh;
+    height: 35svh;
+    max-height: none;
   }
 }
