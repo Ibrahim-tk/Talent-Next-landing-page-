@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tal — Summary blob</title>
+
+<!--
+  ============================================================================
+  TAL — THE SUMMARY BLOB, AS ONE STANDALONE FILE
+  ----------------------------------------------------------------------------
+  A self-contained export of the "Summary by Tal" mock: the rose plate with
+  its bar marquee, the white card, Tal's mark, and the summary typing itself
+  out with its phrases highlighting as they are written.
+
+  No build step, no framework, no network requests — open it straight in a
+  browser or drop it in an <iframe>. Everything below is the real thing:
+  the token values, the plate's four-layer mesh, the orb's blade geometry and
+  the typewriter's half-chip trick are all carried over from the React
+  component rather than re-approximated by eye.
+
+  THE TOKENS ARE RESOLVED, NOT IMPORTED. The site reads its colours and
+  spacing from Gridline's token sheets; this file has no access to those, so
+  every value is written out as the literal it resolves to, with the token it
+  came from named beside it. That is the one difference from the component,
+  and it is what makes the file portable.
+  ============================================================================
+-->
+
+<style>
+  /* ==========================================================================
+     Tokens — resolved values, named by the token they came from
+     ========================================================================== */
+  :root {
+    /* Brand */
+    --rose-500: #ff6e60;            /* --gl-rose-500 */
+    --rose-600: #f9423a;            /* --gl-rose-600 — THE accent */
+    --rose-700: #bf3629;            /* --gl-rose-700 */
+
+    /* Neutrals */
+    --neutral-0: #ffffff;           /* --gl-neutral-0 */
+    --text-primary: #1a1d23;        /* --gl-color-text-primary */
+    --text-body: #5f6672;           /* --gl-neutral-675 — body copy */
+
+    /* The read plate's four grounds */
+    --plate-read-50: #fff7f6;       /* base wash */
+    --plate-read-100: #feeae8;      /* pool A */
+    --plate-read-150: #fff2f0;      /* pool B */
+    --plate-read-200: #f9d6d4;      /* the bars */
+
+    /* Space */
+    --space-5: 0.75rem;             /* 12 */
+    --space-7: 1rem;                /* 16 */
+    --space-9: 1.25rem;             /* 20 */
+    --space-17: 3rem;               /* 48 */
+
+    /* Radius */
+    --radius-sm: 2px;
+    --radius-xl: 12px;
+    --radius-2xl: 20px;
+    --radius-full: 9999px;
+
+    /* Type */
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --size-caption: 0.8rem;         /* 12.8px */
+    --size-body-md: 1rem;           /* 16px */
+    --leading-relaxed: 1.55;
+
+    /* Misc */
+    --border-width-thick: 2px;
+    --duration-moderate: 300ms;
+    --ease-standard: ease-out;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    /* Zero tracking everywhere, as the type system specifies. */
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Only so the export has somewhere to stand when opened on its own. Delete
+     this rule and the plate will sit wherever you put it. */
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    background-color: #f4f5f7;
+  }
+
+  /* ==========================================================================
+     The plate — the tinted mount the card floats on
+     --------------------------------------------------------------------------
+     THE MESH IS FOUR LAYERS, painted back to front, because a single linear
+     ramp between two near-white colours is a gradient you can describe but
+     not see. A shader-style ground is colour arriving from PLACES rather than
+     from a direction: two pools bleeding in from two corners, a directional
+     fall underneath tying them together, and a base wash under all of it.
+
+     Layer order is the opposite of the reading order — `background-image`
+     paints its first layer on top:
+
+       1  pool A     a soft ellipse in one corner, the hue that names the tone
+       2  pool B     a second ellipse in another corner, the hue it falls to
+       3  the fall   a wide ramp carrying A into B so the pools read as one
+                     surface and not as two stains
+       4  base wash  `background-color`, and the fallback if gradients drop
+
+     Both ellipses are far wider than they are tall and run off the plate's
+     edge, which keeps them reading as light on a surface rather than as
+     circles someone drew. The fall's middle stop is transparent at 46%: the
+     white card covers the middle, so the ramp is only ever seen in the two
+     margins, and holding the centre open stops colour piling up exactly where
+     it would be covered anyway.
+     ========================================================================== */
+  .plate {
+    --plate-ground: var(--plate-read-50);
+    --plate-pool-a: var(--plate-read-100);
+    --plate-pool-b: var(--plate-read-150);
+    --plate-line: var(--plate-read-200);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: min(1100px, 100%);
+    /* Equal on all four sides — a plate is a mount, and an uneven mount reads
+       as a mistake however well argued. */
+    padding: clamp(1.25rem, 3.4vw, 3.25rem);
+    border-radius: var(--radius-2xl);
+    background-color: var(--plate-ground);
+    background-image:
+      radial-gradient(124% 68% at 4% 0%, var(--plate-pool-a) 0%, transparent 62%),
+      radial-gradient(116% 74% at 98% 100%, var(--plate-pool-b) 0%, transparent 64%),
+      linear-gradient(152deg, var(--plate-pool-a) 0%, transparent 46%, var(--plate-pool-b) 100%);
+  }
+
+  /* --------------------------------------------------------------------------
+     The bar marquee behind the card.
+
+     A strip a third of the plate's height, centred on it, running right to
+     left forever. A third and centred is what makes it read as a horizon
+     rather than as wallpaper — at full height it fills the margins top to
+     bottom and fights the card for the eye, where a band level with the
+     card's middle passes behind it and comes out the other side.
+
+     Three identical runs laid end to end and translated by exactly one run's
+     width: at that distance run 2 sits precisely where run 1 began, so the
+     loop has no seam. The bar heights are authored rather than random —
+     what the eye must not catch is the joint, and an authored sequence is the
+     only way to be sure the first and last marks do not rhyme.
+     -------------------------------------------------------------------------- */
+  .plate__art {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 33%;
+    transform: translateY(-50%);
+    overflow: hidden;
+    /* A short fade at each outer edge only — long enough that the marks are
+       not sliced off square at the corners, short enough that the margins,
+       which is all of this anyone actually sees, stay drawn. */
+    mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .plate__track {
+    --art-runs: 3;
+    display: flex;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
+    animation: plate-art 54s linear infinite;
+  }
+
+  .plate__run {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: var(--space-5);
+  }
+
+  .plate__mark {
+    flex: none;
+    width: var(--border-width-thick);
+    border-radius: var(--radius-full);
+    background-color: var(--plate-line);
+  }
+
+  @keyframes plate-art {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(calc(-100% / var(--art-runs)), 0, 0); }
+  }
+
+  /* ==========================================================================
+     The card — the one thing here with a hard edge
+     ========================================================================== */
+  .surface {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-content: safe center;
+    gap: var(--space-9);
+    /* One value, every width — the mock adapts to the card, not the card to
+       the mock. */
+    height: 21.35rem; /* 342px */
+    overflow: hidden;
+    padding: clamp(1.25rem, 2.4vw, 2rem);
+    border-radius: var(--radius-xl);
+    background-color: var(--neutral-0);
+    /* Softer and fainter than a card on white would take: this one sits on a
+       plate a few percent darker than itself, so it needs far less shadow to
+       separate — any more and it reads as cut out of the plate rather than
+       laid on it. */
+    box-shadow: 0 14px 44px rgba(15, 23, 42, 0.05);
+  }
+
+  /* The summary is taller than the card on a narrow window; this is the fade
+     that stops it ending on a sliced line of type. */
+  .surface::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--space-17);
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--neutral-0) 78%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+    animation: mock-in var(--duration-moderate) var(--ease-standard) both;
+  }
+
+  @keyframes mock-in {
+    from { opacity: 0; transform: translate3d(0, 6px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+
+  /* The byline. The orb's diameter is a variable on this row rather than a
+     value on the orb, because the size is a response to the viewport — which
+     the stylesheet can see and a component cannot. */
+  .summary__head {
+    --orb-size: 50px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin: 0;
+    font-size: var(--size-caption);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .summary__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    /* Eight lines' worth: the longest of the three summaries is seven at this
+       measure, so one line of slack means a wrap that lands differently cannot
+       change the card's height mid-cycle. `em`, so it tracks the type. */
+    min-height: 13em;
+  }
+
+  /* 16px, and the only type in the mock that gets it. The summary is the thing
+     the panel exists to show being written — a step smaller and it reads as a
+     caption, which is a demonstration of Tal reading your screen that you
+     cannot comfortably read yourself. */
+  .summary__body {
+    margin: 0;
+    font-size: var(--size-body-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* --------------------------------------------------------------------------
+     The typewriter
+     --------------------------------------------------------------------------
+     THE WHOLE SENTENCE IS IN THE DOM FROM THE FIRST FRAME. Only the un-typed
+     tail is hidden — `visibility: hidden`, not removed — so every line break
+     is settled before the first character appears. A typewriter that appends
+     text reflows on almost every frame: words jump to the line above, the
+     block grows a line, and the card grows with it. That jitter is the whole
+     difference between this reading as a considered effect and as a loading
+     state.
+
+     A HIGHLIGHTED PHRASE IS DRAWN AS TWO HALVES while it is mid-typed — the
+     typed part in a chip with its right edge squared off, the rest in a
+     hidden chip with its left edge squared off. The two together occupy
+     exactly the width of the finished chip, so the highlight fills in place
+     instead of the chip growing sideways and shoving the rest of the line.
+     -------------------------------------------------------------------------- */
+  .ghost { visibility: hidden; }
+
+  .accent {
+    font-weight: 500;
+    color: var(--rose-700);
+    background-color: color-mix(in srgb, var(--rose-600) 6%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 1px 4px;
+    margin: 0 -1px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .accent--open {
+    padding-right: 0;
+    margin-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .accent--close {
+    padding-left: 0;
+    margin-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .caret {
+    display: inline-block;
+    width: var(--border-width-thick);
+    height: 1.05em;
+    margin-left: 1px;
+    margin-right: -3px;
+    vertical-align: -0.16em;
+    background-color: var(--rose-600);
+    animation: caret 1s steps(2, start) infinite;
+  }
+
+  @keyframes caret { to { opacity: 0; } }
+
+  /* Read out once, in full, for assistive tech. The animated copy above is
+     `aria-hidden`: half of it is invisible at any moment, so a screen reader
+     arriving mid-animation would be given a sentence that stops in the middle
+     of a word. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ==========================================================================
+     Tal's mark — the orb, in its static byline state
+     --------------------------------------------------------------------------
+     The live component animates through listening / thinking / speaking
+     states. At byline size it holds still on purpose: the states differ by
+     the angle of three blades, and a switch landing mid-sentence makes the
+     mark appear to twitch for no reason a viewer can connect to anything. The
+     panel says what is happening in words; the mark only has to say who is
+     talking, and it says that best by not moving.
+
+     Every length is a calc() off `--orb-size`, so it scales cleanly to any
+     diameter from the one variable on the byline row.
+     ========================================================================== */
+  .orb {
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--orb-size);
+    height: var(--orb-size);
+    border-radius: var(--radius-full);
+    /* The body: rose at the top-left corner falling to near-white at the
+       bottom-right, which is what gives a flat circle its roundness without a
+       single shadow being drawn. */
+    background: linear-gradient(
+      145deg,
+      var(--rose-500) 0%,
+      color-mix(in srgb, var(--rose-500) 78%, #fff) 26%,
+      color-mix(in srgb, var(--rose-500) 52%, #fff) 52%,
+      color-mix(in srgb, var(--rose-500) 32%, #fff) 74%,
+      color-mix(in srgb, var(--rose-500) 20%, #fff) 100%
+    );
+  }
+
+  /* The three blades sit in a box half the orb's width, centred. */
+  .orb__mark {
+    position: relative;
+    width: calc(var(--orb-size) * 0.5);
+    height: calc(var(--orb-size) * 0.5);
+    z-index: 2;
+  }
+
+  /* Each blade is a white box clipped to one chevron. The polygons are the
+     brand geometry, carried over verbatim — they are drawn at percentages, so
+     they hold at any size. */
+  .orb__blade {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+  }
+
+  .orb__blade--a { clip-path: polygon(29.56% 22.88%, 18.77% 23.14%, 42.67% 49.87%, 2.57% 95.12%, 13.37% 95.12%, 53.21% 49.87%); }
+  .orb__blade--b { clip-path: polygon(62.21% 35.22%, 51.67% 35.48%, 64.52% 49.87%, 24.68% 95.12%, 35.22% 95.12%, 75.06% 50.13%); }
+  .orb__blade--c { clip-path: polygon(46.79% 4.37%, 86.38% 49.87%, 64.78% 74.55%, 75.58% 74.55%, 96.92% 49.61%, 57.07% 4.37%); }
+
+  /* ==========================================================================
+     Reduced motion — the summary arrives whole, the marquee stops
+     --------------------------------------------------------------------------
+     The point being made is that Tal reads the page; the typing is how that
+     is dramatised, and a reader who asked for less motion has not asked to be
+     told less. The pages still cycle.
+     ========================================================================== */
+  @media (prefers-reduced-motion: reduce) {
+    .plate__track,
+    .caret,
+    .summary { animation: none; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="plate">
+  <div class="plate__art" aria-hidden="true">
+    <div class="plate__track" id="art-track"></div>
+  </div>
+
+  <div class="surface">
+    <div class="summary">
+      <p class="summary__head">
+        <span class="orb" aria-hidden="true">
+          <span class="orb__mark">
+            <span class="orb__blade orb__blade--a"></span>
+            <span class="orb__blade orb__blade--b"></span>
+            <span class="orb__blade orb__blade--c"></span>
+          </span>
+        </span>
+        Summary by Tal
+      </p>
+
+      <div class="summary__text">
+        <div id="summary-visible" aria-hidden="true"></div>
+        <p class="sr-only" id="summary-spoken"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   The content
+   ----------------------------------------------------------------------------
+   Three pages, each read back as two paragraphs: what is true, then what to do
+   about it. A paragraph is a list of runs, and `accent: true` marks the
+   handful of phrases that highlight as they are typed.
+
+   Segments rather than one string because the highlight has to be part of the
+   typing: a phrase that lights up only once the sentence has finished reads as
+   formatting applied afterwards, where one that fills inside its own chip
+   reads as Tal deciding, mid-sentence, that this is the part you needed.
+   ============================================================================ */
+const PAGES = [
+  {
+    id: "overview",
+    summary: [
+      [
+        { text: "You've run " },
+        { text: "128 sessions this week", accent: true },
+        { text: ", up fourteen, and " },
+        { text: "91% of them finished", accent: true },
+        { text: " — three points better than last week." },
+      ],
+      [
+        { text: "Eleven are still awaiting review", accent: true },
+        { text: ", and nine have been sitting longer than your usual two days. Clearing those is the one move worth making today." },
+      ],
+    ],
+  },
+  {
+    id: "candidates",
+    summary: [
+      [
+        { text: "Thirty-four candidates are in progress", accent: true },
+        { text: ", running a " },
+        { text: "median session of 28 minutes", accent: true },
+        { text: ". Drop-offs are down two, to six." },
+      ],
+      [
+        { text: "Four of those six stopped at the same question", accent: true },
+        { text: ", so following them up — and taking another look at that question — is the next move." },
+      ],
+    ],
+  },
+  {
+    id: "reports",
+    summary: [
+      [
+        { text: "Twenty-three reports are ready to send", accent: true },
+        { text: ", and the ones already out are " },
+        { text: "opening at 78%", accent: true },
+        { text: " — six points up on last week." },
+      ],
+      [
+        { text: "The oldest has been waiting nine days", accent: true },
+        { text: ". Send the twenty-three today and the backlog is clear before the week turns." },
+      ],
+    ],
+  },
+];
+
+/* The authored bar sequence behind the card. Heights are percentages of the
+   strip, and the run is laid end to end — so what matters is that the first
+   and last marks do not rhyme. */
+const BARS = [38, 72, 54, 90, 46, 66, 100, 58, 34, 78, 62, 44, 86, 50, 70, 40, 94, 56];
+const BAR_RUNS = 3;
+
+/** Milliseconds per character. Fast enough that the longest summary finishes
+    inside five seconds, slow enough that words arrive as words. */
+const MS_PER_CHAR = 18;
+
+/** How long a finished summary is held before the loop moves on. Typing a
+    sentence and whipping it away is a worse demonstration than not typing it.*/
+const HOLD_MS = 2500;
+
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* -- the marquee ----------------------------------------------------------- */
+(function buildArt() {
+  const track = document.getElementById("art-track");
+  track.style.setProperty("--art-runs", String(BAR_RUNS));
+
+  for (let copy = 0; copy < BAR_RUNS; copy += 1) {
+    const run = document.createElement("div");
+    run.className = "plate__run";
+    BARS.forEach((height) => {
+      const mark = document.createElement("span");
+      mark.className = "plate__mark";
+      mark.style.height = height + "%";
+      run.appendChild(mark);
+    });
+    track.appendChild(run);
+  }
+})();
+
+/* -- the typewriter -------------------------------------------------------- */
+const visible = document.getElementById("summary-visible");
+const spoken = document.getElementById("summary-spoken");
+
+function lengthOf(summary) {
+  return summary.reduce(
+    (sum, runs) => sum + runs.reduce((count, run) => count + run.text.length, 0),
+    0,
+  );
+}
+
+/**
+ * Draw `summary` with the first `shown` characters typed.
+ *
+ * One cursor is walked across every run of every paragraph: `left` is how many
+ * characters of the budget are still unspent when a run is reached, and the
+ * caret belongs to the run that spends the last of them.
+ */
+function render(summary, shown) {
+  const total = lengthOf(summary);
+  const typing = shown < total;
+  let left = shown;
+  let caretPlaced = false;
+
+  visible.textContent = "";
+
+  summary.forEach((runs) => {
+    const p = document.createElement("p");
+    p.className = "summary__body";
+
+    const caret = () => {
+      const el = document.createElement("span");
+      el.className = "caret";
+      p.appendChild(el);
+      caretPlaced = true;
+    };
+
+    runs.forEach((run) => {
+      const length = run.text.length;
+      const take = Math.max(0, Math.min(length, left));
+      const here = !caretPlaced && typing && left > 0 && left <= length;
+
+      if (run.accent) {
+        if (take <= 0) {
+          // Not reached yet: the finished chip, held invisible, so the line
+          // it belongs to has already been broken where it will finally break.
+          p.insertAdjacentHTML("beforeend",
+            '<b class="accent ghost">' + escapeHtml(run.text) + "</b>");
+        } else if (take >= length) {
+          p.insertAdjacentHTML("beforeend",
+            '<b class="accent">' + escapeHtml(run.text) + "</b>");
+          if (here) caret();
+        } else {
+          // Mid-phrase: two halves that together measure exactly the finished
+          // chip, so the highlight fills in place rather than growing sideways.
+          p.insertAdjacentHTML("beforeend",
+            '<b class="accent accent--open">' + escapeHtml(run.text.slice(0, take)) + "</b>");
+          if (here) caret();
+          p.insertAdjacentHTML("beforeend",
+            '<b class="accent accent--close ghost">' + escapeHtml(run.text.slice(take)) + "</b>");
+        }
+      } else {
+        if (take > 0) p.appendChild(document.createTextNode(run.text.slice(0, take)));
+        if (here) caret();
+        if (take < length) {
+          p.insertAdjacentHTML("beforeend",
+            '<span class="ghost">' + escapeHtml(run.text.slice(take)) + "</span>");
+        }
+      }
+
+      left -= length;
+    });
+
+    // Nothing typed yet: the caret sits in front of the first character rather
+    // than nowhere.
+    if (typing && !caretPlaced) {
+      const el = document.createElement("span");
+      el.className = "caret";
+      p.insertBefore(el, p.firstChild);
+      caretPlaced = true;
+    }
+
+    visible.appendChild(p);
+  });
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"]/g, (ch) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+}
+
+/**
+ * The loop. The dwell is the summary's own length plus a beat rather than a
+ * fixed interval: the three summaries are different lengths, and a fixed tick
+ * would leave the short one sitting finished while the long one was cut off
+ * mid-sentence.
+ *
+ * Paced off elapsed time, not off frames, so a dropped frame costs a character
+ * rather than a stall and the summary takes the same time on any machine.
+ */
+let pageIndex = 0;
+
+function play() {
+  const page = PAGES[pageIndex % PAGES.length];
+  const total = lengthOf(page.summary);
+
+  spoken.textContent = page.summary
+    .map((runs) => runs.map((run) => run.text).join(""))
+    .join(" ");
+
+  const next = () => {
+    pageIndex += 1;
+    play();
+  };
+
+  if (reduced) {
+    render(page.summary, total);
+    window.setTimeout(next, HOLD_MS);
+    return;
+  }
+
+  let start = null;
+
+  const tick = (now) => {
+    if (start === null) start = now;
+    const typed = Math.floor((now - start) / MS_PER_CHAR);
+
+    if (typed >= total) {
+      render(page.summary, total);
+      window.setTimeout(next, HOLD_MS);
+      return;
+    }
+
+    render(page.summary, typed);
+    window.requestAnimationFrame(tick);
+  };
+
+  render(page.summary, 0);
+  window.requestAnimationFrame(tick);
+}
+
+play();
+</script>
+
+</body>
+</html>

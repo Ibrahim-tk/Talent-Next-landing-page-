@@ -1,0 +1,442 @@
+/* ==========================================================================
+   StorySection — the /maaz scroll story
+   --------------------------------------------------------------------------
+   One pinned screen carries the whole sequence: the hero copy, the stage the
+   photograph opens into, the standing section heading, and the six archetype
+   cards that ride over it.
+
+   Everything that moves is a transform, an opacity or a clip — the pinned box
+   itself never changes size, so no scroll frame touches layout.
+
+   Below `769px` (the system's pin breakpoint) none of this applies: the pin
+   is skipped in JS, and the rules at the bottom of this file unwind the
+   absolute positioning so the same markup stacks as an ordinary hero
+   followed by six ordinary cards.
+   ========================================================================== */
+
+.module {
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   The pinned screen
+   -------------------------------------------------------------------------- */
+.pin {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--gl-header-height));
+  min-height: calc(100vh - var(--gl-header-height));
+  /* Visible, deliberately. The stage below breaks out of this box on three
+     sides to reach the real viewport, and its own `clip-path` is what holds
+     it in — an `overflow: hidden` here would crop the full-screen frame back
+     to the canvas column, which is exactly what it exists to escape. */
+  overflow: visible;
+  /* Explicit, and below the sticky nav — GSAP switches this to
+     position: fixed while pinned, and a fixed element with no z-index of its
+     own stacks ambiguously against z-index:auto siblings. */
+  z-index: var(--gl-z-base);
+  background-color: var(--gl-color-surface-raised);
+}
+
+/* --------------------------------------------------------------------------
+   Beat 1 — the hero, as the first frame
+   -------------------------------------------------------------------------- */
+.intro {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gl-z-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--gl-space-block-xl) var(--gl-space-11) 0 var(--gl-space-11);
+  will-change: transform, opacity;
+}
+
+.blueprint {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
+  background-position: -1px -1px;
+  pointer-events: none;
+  z-index: var(--gl-z-below);
+  mask-image: var(--gl-mask-blueprint);
+  -webkit-mask-image: var(--gl-mask-blueprint);
+}
+
+.copy {
+  position: relative;
+  z-index: var(--gl-z-content);
+  max-width: var(--gl-measure-hero);
+  text-align: center;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The headline settings are the hero's own, kept here rather than imported so
+   this page's sequence can be tuned without touching the shared hero. */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--gl-space-9);
+  max-width: 1180px;
+  --hero-type-trim: 0.78;
+}
+
+.headlineLead {
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    calc(var(--gl-scale-h3) * var(--hero-type-trim)),
+    calc(4.06vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-h1) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+}
+
+.headline .headlineAccent {
+  display: inline-block;
+  font-family: var(--gl-font-sans);
+  font-size: clamp(
+    calc(var(--gl-scale-2xl) * var(--hero-type-trim)),
+    calc(11.25vw * var(--hero-type-trim)),
+    calc(var(--gl-scale-5xl) * var(--hero-type-trim))
+  );
+  font-weight: var(--gl-weight-regular);
+  letter-spacing: var(--gl-tracking-normal);
+  line-height: 0.9;
+  margin-block: 0.04em;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .headline .headlineAccent {
+    background-image: var(--gl-image-accent-plate);
+    background-size: 200% 200%;
+    background-position: right top;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.body {
+  max-width: 720px;
+  margin-bottom: var(--gl-space-13);
+}
+
+.ctaDock {
+  margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+/* The band the photograph opens FROM. Pushed to the bottom of the intro by
+   `margin-top: auto`, ruled edge to ruled edge (the intro pads its copy in by
+   `--gl-space-11`; the negative margin takes this box back out to the canvas
+   rules), so the opening starts on exactly the strip the ordinary hero puts
+   its photograph in.
+
+   On desktop it is a measuring box only — it paints nothing. The stage above
+   is what carries the picture. */
+.slot {
+  margin-top: auto;
+  width: calc(100% + var(--gl-space-11) * 2);
+  margin-inline: calc(var(--gl-space-11) * -1);
+  height: clamp(220px, 34vh, 400px);
+  flex: none;
+}
+
+/* --------------------------------------------------------------------------
+   Beat 2 — the stage
+   --------------------------------------------------------------------------
+   Already full-bleed at rest; the clip inset written by the timeline is what
+   holds it down to the slot's band at the start. Starting it full size and
+   clipping in is what keeps the opening off the layout path entirely — no
+   width, height or offset is animated on a scroll frame.
+   -------------------------------------------------------------------------- */
+.stage {
+  position: absolute;
+  /* FULL SCREEN, not full container. The canvas column is capped at
+     `--gl-frame-max-width` and ruled on both sides, and the pinned box starts
+     below the sticky header — so `inset: 0` would open the photograph to a
+     letterboxed panel with white margins, not to the screen. The stage
+     therefore breaks out of its parent on three sides: `100vw` centred on the
+     column for the width, and a negative top offset the height of the header
+     so the picture runs behind the nav to the top edge of the window. Its
+     bottom stays on the pinned box's own bottom, which is already the bottom
+     of the viewport while pinned.
+
+     `body` sets `overflow-x: hidden`, so the `100vw` breakout can never put a
+     horizontal scrollbar on the page. */
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  top: calc(-1 * var(--gl-header-height));
+  bottom: 0;
+  z-index: var(--gl-z-stage);
+  overflow: hidden;
+  background-color: var(--gl-neutral-900, #111);
+  /* The resting value: the band the timeline's first frame also starts on,
+     so the stage is already sitting where the hero photograph belongs before
+     any JavaScript has run and there is no jump when the timeline takes over
+     and writes its own measured inset inline. */
+  clip-path: inset(66% 0 0 0);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+/* The hero frame is the one that starts lit. */
+.slide[data-lead="true"] {
+  opacity: 1;
+}
+
+.slideImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* A wash along the left edge and the bottom, so the white card and the
+   heading hold against whatever the photograph happens to be doing under
+   them. Angled from the left because that is the side the card sits on. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.28) 38%,
+      rgba(0, 0, 0, 0) 68%
+    ),
+    linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 32%);
+}
+
+/* --------------------------------------------------------------------------
+   The standing heading, over the opened stage
+   -------------------------------------------------------------------------- */
+.stageHeading {
+  position: absolute;
+  top: var(--gl-space-15);
+  left: var(--gl-space-gutter-lg);
+  right: var(--gl-space-gutter-lg);
+  z-index: var(--gl-z-floating);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.stageHeadingText {
+  color: var(--gl-color-text-inverse);
+  max-width: 700px;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   Beat 3 — the cards
+   --------------------------------------------------------------------------
+   All six occupy the same box, stacked; the timeline brings exactly one
+   forward at a time. Left-aligned and vertically centred, so the photograph
+   keeps the right two thirds of the screen to itself.
+   -------------------------------------------------------------------------- */
+.cards {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gl-z-content);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--gl-space-gutter-lg);
+}
+
+.card {
+  position: absolute;
+  left: var(--gl-space-gutter-lg);
+  /* Sized to hold its own against a full-screen photograph. At the previous
+     setting the panel read as a caption pinned to the corner of the picture;
+     at this one it is the other half of the composition, which is what the
+     letter and the heading inside it are scaled for. */
+  width: clamp(440px, 40vw, 680px);
+  background-color: var(--gl-color-surface-raised);
+  opacity: 0;
+  will-change: transform, opacity;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.28);
+}
+
+/* Desktop takes its art from the stage behind the card, never from here. */
+.cardArt {
+  display: none;
+}
+
+.cardBody {
+  padding: var(--gl-space-17) var(--gl-space-16);
+  display: flex;
+  flex-direction: column;
+}
+
+/* The letter. Set at the top of the scale in accent — it is the one thing on
+   the card that has to be readable from across a room, and it is what carries
+   T-A-L-E-N-T across the six beats.
+
+   Medium rather than the system's Regular, for the same reason the archetype
+   card's letter is: at this size a Regular cut goes thin and stops reading as
+   a stamp. */
+.cardLetter {
+  font-family: var(--gl-font-sans);
+  font-size: clamp(var(--gl-scale-2xl), 9vw, var(--gl-scale-4xl));
+  font-weight: var(--gl-weight-medium);
+  line-height: var(--gl-leading-flat);
+  color: var(--gl-color-accent);
+  margin-bottom: var(--gl-space-7);
+}
+
+/* Stepped up from the heading role's own setting: the card is now large
+   enough that `headingLg` alone left the archetype's name looking small in
+   it, next to a letter this size. */
+.cardTitle {
+  margin-bottom: var(--gl-space-9);
+  font-size: clamp(var(--gl-scale-h3), 2.6vw, var(--gl-scale-h1));
+  line-height: var(--gl-leading-tight);
+}
+
+/* The description stays at the sitewide 16px body grey — a bigger card is a
+   reason for a bigger name, not for body copy that breaks the type scale. */
+.cardCopy {
+  max-width: 46ch;
+}
+
+/* --------------------------------------------------------------------------
+   The readout
+   --------------------------------------------------------------------------
+   A hairline along the bottom edge of the pinned screen, running left to
+   right as the sequence plays. `scaleX` from a left origin rather than a
+   width: this is written on every scroll frame, so it stays composited.
+   -------------------------------------------------------------------------- */
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--gl-border-width-thick);
+  background-color: var(--gl-color-accent);
+  transform: scaleX(var(--story-progress, 0));
+  transform-origin: left center;
+  z-index: var(--gl-z-decoration);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The closing note, in ordinary flow under the sequence
+   -------------------------------------------------------------------------- */
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gl-space-7);
+  padding: var(--gl-space-11) var(--gl-space-gutter-lg);
+  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+/* --------------------------------------------------------------------------
+   Static fallback — no pin, no scrub
+   --------------------------------------------------------------------------
+   Below the pin breakpoint, and wherever reduced motion is asked for, the
+   same markup has to stand on its own. The stage is taken out (its clipped
+   resting state already hides it), the intro returns to ordinary flow with
+   the hero photograph painted into the slot, and the cards stack.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce), (max-width: 768px) {
+  .pin {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .intro {
+    position: static;
+    padding: var(--gl-space-17) var(--gl-space-11) 0 var(--gl-space-11);
+  }
+
+  .blueprint {
+    mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0) 68%
+    );
+    -webkit-mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0) 68%
+    );
+  }
+
+  /* The slot stops being a measuring box and becomes the picture. A
+     background image, not the stage's `next/image` — the stage is display:none
+     here, and a background on a shown box is the one copy of the art this
+     layout actually fetches. */
+  .slot {
+    margin-top: var(--gl-space-15);
+    height: 35vh;
+    height: 35svh;
+    background-image: url("/assets/talent-next-hero-image.png");
+    background-size: cover;
+    background-position: top center;
+  }
+
+  .stage,
+  .progress {
+    display: none;
+  }
+
+  .stageHeading {
+    position: static;
+    opacity: 1;
+    padding: var(--gl-space-15) var(--gl-space-11) 0 var(--gl-space-11);
+  }
+
+  .stageHeadingText {
+    color: var(--gl-color-text-heading);
+    text-shadow: none;
+  }
+
+  .cards {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gl-space-13);
+    padding: var(--gl-space-13) var(--gl-space-11);
+    pointer-events: auto;
+  }
+
+  .card {
+    position: static;
+    width: 100%;
+    opacity: 1;
+    box-shadow: none;
+    border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  }
+
+  .cardArt {
+    display: block;
+    width: 100%;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .cardBody {
+    padding: var(--gl-space-13) var(--gl-space-11);
+  }
+}
