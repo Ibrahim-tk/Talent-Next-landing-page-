@@ -28,7 +28,15 @@
   height: calc(11 * var(--gl-blueprint-cell));
   min-height: 610px;
   background-color: var(--gl-color-surface-raised);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  /* Only the bottom and right edges are drawn here. The lattice paints its
+     line in the last pixel BEFORE each cell boundary, so the card's top and
+     left edges already sit on a line — a hairline there stacked against it
+     and read as a doubled, thickened edge. The bottom and right have no such
+     line beside them, so they need their own. */
+  border: none;
+  border-right: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  border-bottom: var(--gl-border-width-hairline) solid
+    var(--gl-color-border-rule);
   border-radius: 0;
   box-shadow: none;
   padding: clamp(2rem, 3.5vw, 3.25rem) clamp(2rem, 4vw, 3.5rem);
@@ -57,13 +65,13 @@
   text-transform: uppercase;
   letter-spacing: var(--gl-tracking-wider);
   color: var(--gl-color-text-muted);
-  font-weight: var(--gl-weight-semibold);
+  font-weight: var(--gl-weight-regular);
 }
 
 .questionNumberText {
   font-size: var(--gl-size-caption);
   color: var(--gl-color-text-secondary);
-  font-weight: var(--gl-weight-medium);
+  font-weight: var(--gl-weight-regular);
   letter-spacing: var(--gl-tracking-normal);
 }
 
@@ -84,7 +92,7 @@
 
 .questionTitle {
   font-size: clamp(1.65rem, 3vw, 2.15rem);
-  font-weight: var(--gl-weight-bold);
+  font-weight: var(--gl-weight-regular);
   line-height: var(--gl-leading-tight);
   color: var(--gl-color-text-primary);
   letter-spacing: -0.015em;
@@ -111,11 +119,15 @@
   align-items: center;
   width: 100%;
   text-align: left;
-  padding: 16px 22px;
-  background-color: var(--gl-color-surface-sunken);
+  padding: 14px 22px;
+  /* One step lighter than the sunken token: the option rows should read as a
+     faint tint on the card, not as a filled tray. */
+  background-color: var(--gl-color-surface-hover);
   border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   border-radius: 0;
-  color: var(--gl-color-text-primary);
+  /* Unselected options sit back in body grey; only the chosen one comes
+     forward, in accent. */
+  color: var(--gl-color-text-body);
   font-size: 1.05rem;
   font-family: var(--gl-font-sans);
   cursor: pointer;
@@ -127,7 +139,9 @@
 }
 
 .pillButton:hover:not(.pillButtonSelected) {
-  background-color: var(--gl-color-surface-hover);
+  /* Rest is now the lighter hover tint, so hover steps DOWN to sunken to
+     stay distinguishable. */
+  background-color: var(--gl-color-surface-sunken);
   border-color: var(--gl-color-border-interactive);
 }
 
@@ -136,7 +150,7 @@
   border: 1.5px solid var(--gl-color-accent);
   color: var(--gl-color-accent);
   background-color: rgba(249, 66, 58, 0.15);
-  font-weight: var(--gl-weight-medium);
+  font-weight: var(--gl-weight-regular);
 }
 
 /* --------------------------------------------------------------------------

@@ -1,22 +1,33 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Button, Icon, ProgressTrack } from "@gridline";
 import { quizQuestions } from "@/content/quizQuestions";
-import { saveQuizData, getQuizData } from "@/lib/quizStorage";
+import { saveQuizData, getQuizData, clearQuizData } from "@/lib/quizStorage";
 
 import styles from "./QuizFlow.module.css";
 
 export function QuizFlow() {
   const router = useRouter();
 
-  // Initialize with any previously saved answers/contact
+  /* Contact details are worth keeping — someone who lands back here after
+     the OTP step should not retype them. The answers are not: the quiz
+     always opens on question 1, and restoring them meant every question
+     arrived with last attempt's choice already selected. Entering the flow
+     starts a fresh set of answers. */
   const initialData = typeof window !== "undefined" ? getQuizData() : null;
 
   const [isFormStep, setIsFormStep] = useState(false);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
-  const [answers, setAnswers] = useState<Record<string, string>>(initialData?.answers || {});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    clearQuizData();
+    if (initialData?.contact) saveQuizData({ contact: initialData.contact });
+    // Once, when the flow is entered.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [contact, setContact] = useState({
     firstName: initialData?.contact.firstName || "",
@@ -92,9 +103,6 @@ export function QuizFlow() {
 
             <div className={styles.questionHeader}>
               <h1 className={styles.questionTitle}>{currentQuestion.question}</h1>
-              {currentQuestion.subtitle && (
-                <p className={styles.questionSubtitle}>{currentQuestion.subtitle}</p>
-              )}
             </div>
 
             {/* Options list: NO circle icon, selected has accent border, accent text, 15% red bg fill */}
@@ -135,7 +143,6 @@ export function QuizFlow() {
                 variant={currentAnswer ? "primary" : "secondary"}
                 size="md"
                 onClick={handleNextQuestion}
-                disabled={!currentAnswer}
                 iconAfter={<Icon name="arrowRight" size={14} />}
               >
                 {questionIndex === totalQuestions - 1 ? "Next: Final Info" : "Next"}

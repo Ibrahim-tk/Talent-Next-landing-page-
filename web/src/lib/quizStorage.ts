@@ -26,6 +26,16 @@ export function saveQuizData(data: Partial<StoredQuizData>): void {
   }
 }
 
+/** Wipes the stored attempt, so re-entering the quiz starts clean. */
+export function clearQuizData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage/security errors
+  }
+}
+
 export function getQuizData(): StoredQuizData {
   if (typeof window === "undefined") {
     return {
