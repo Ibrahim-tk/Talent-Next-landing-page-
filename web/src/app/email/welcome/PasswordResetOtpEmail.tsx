@@ -1,60 +1,28 @@
-import {
-  BODY,
-  CodeBlock,
-  EmailRule,
-  EmailShell,
-  FONT,
-  INK,
-  MUTED,
-} from "./EmailShell";
+import { BODY, CodeBlock, EmailRule, EmailShell, FONT, INK } from "./EmailShell";
 
 /**
- * Password reset, by code.
+ * Password reset. The only one — a link version stood beside this while it
+ * was undecided which the product would send, and it has been removed.
  *
- * This replaced a mobile verification template — a phone-number confirmation
- * with the SMS printed underneath it. There is no such send: the product
- * verifies a reset by emailing a six-digit code to the address on file, and
- * a template demonstrating an SMS nobody sends was showing reviewers a flow
- * that does not exist.
+ * The copy is the supplied product copy, with the six-digit code standing
+ * where the link version put its button. Where that one named the mechanism
+ * this one names the code: "this code can be used once and expires in 60
+ * minutes", and a closing promise about the code rather than about a link.
+ * The paste-this-URL fallback went with the button, there being no URL.
  *
- * It is the code half of the reset. `PasswordResetEmail` is the link half,
- * and the two are alternative mechanics for the same request rather than two
- * steps of one: whichever the product actually sends, the other should come
- * out rather than sit in the set as a template someone might wire up by
- * mistake.
- *
- * Written to the conventions a reset is held to, which are stricter than an
- * ordinary transactional mail:
- *
- *   - The code, and nothing else that could be acted on. No button and no
- *     link, so there is nothing in the sheet for a forwarded copy to be
- *     clicked through.
- *   - A neutral tone. It never suggests the account was compromised — the
- *     request is usually routine, and alarm is what phishing imitates.
- *   - A short, stated expiry and an explicit single-use note.
- *   - The "you didn't ask for this" line says plainly that nothing has
- *     changed yet and that ignoring the mail is a complete response.
- *   - NO sign-in context. The link reset carries a time/location/device
- *     table and the super admin code carries a fuller one, because there the
- *     reader is being asked to judge a request before acting on it. Here they
- *     are not: a code they did not request is answered by ignoring it, and
- *     three rows of metadata above that instruction is a paragraph of reading
- *     between the reader and the six digits they opened the mail for.
- *   - A standing promise that support never asks for the code, which gives
- *     the recipient a rule to judge the next mail by.
+ * No button and no link anywhere on the sheet, which is the real advantage
+ * of resetting by code: a forwarded copy has nothing in it to click.
  */
 
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "dsngr.og@company.com";
+const username = "{username}";
 
 /**
- * SIX DIGITS, UNBROKEN. It used to be written "482 913" — a literal space
- * splitting it into two groups of three. Grouping is a convention for numbers
- * that are read aloud or copied by hand, and this one is neither: it is
- * selected, copied and pasted into a single field, and the space travels with
- * it and fails validation. The `CodeBlock` sets it at wide tracking, which is
- * what keeps the digits separable by eye without putting a character between
- * them.
+ * SIX DIGITS, UNBROKEN. A grouping space travels with the code when it is
+ * selected and pasted, and fails validation at the other end. `CodeBlock`
+ * sets it at wide tracking, which is what keeps the digits separable by eye
+ * without putting a character between them.
  */
 const code = "482913";
 
@@ -62,24 +30,11 @@ export function PasswordResetOtpEmail() {
   return (
     <EmailShell recipientEmail={recipientEmail}>
       <tr>
-        <td className="tn-pad" style={{ padding: "48px 40px 0" }}>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: FONT,
-              fontSize: "11px",
-              lineHeight: "16px",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: MUTED,
-            }}
-          >
-            Password reset
-          </p>
+        <td className="tn-pad" style={{ padding: "28px 40px 0" }}>
           <h1
             className="tn-h1"
             style={{
-              margin: "14px 0 0",
+              margin: 0,
               fontFamily: FONT,
               fontSize: "36px",
               lineHeight: "44px",
@@ -88,7 +43,7 @@ export function PasswordResetOtpEmail() {
               color: INK,
             }}
           >
-            Your reset code.
+            Reset your password
           </h1>
           <p
             className="tn-lead"
@@ -100,15 +55,57 @@ export function PasswordResetOtpEmail() {
               color: BODY,
             }}
           >
-            Enter this code to set a new password. It expires in 10 minutes
-            and works once.
+            Hi {username},
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            We received a request to reset your TALENTnext password.
+            <br />
+            If you made this request, choose a new password below.
           </p>
         </td>
       </tr>
 
+      {/* Where the link version puts its button. */}
       <tr>
-        <td className="tn-pad" style={{ padding: "32px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <CodeBlock code={code} />
+        </td>
+      </tr>
+
+      <tr>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            This code can be used once and expires in 60 minutes.
+          </p>
+          <p
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            If you didn&rsquo;t request a password reset, you can safely ignore
+            this email. Your password will remain unchanged.
+          </p>
         </td>
       </tr>
 
@@ -124,13 +121,12 @@ export function PasswordResetOtpEmail() {
             style={{
               margin: 0,
               fontFamily: FONT,
-              fontSize: "14px",
-              lineHeight: "22px",
-              color: MUTED,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
             }}
           >
-            Didn&rsquo;t ask for this? Ignore this email &mdash; nothing has
-            changed. We will never ask you to share this code.
+            We will never ask you for your password or this code.
           </p>
         </td>
       </tr>

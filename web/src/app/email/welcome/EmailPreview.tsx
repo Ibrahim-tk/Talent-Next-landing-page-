@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { AdminOtpEmail } from "./AdminOtpEmail";
-import { PasswordResetEmail } from "./PasswordResetEmail";
 import { PasswordResetOtpEmail } from "./PasswordResetOtpEmail";
 import { WelcomeEmail } from "./WelcomeEmail";
 
@@ -15,12 +14,13 @@ import { WelcomeEmail } from "./WelcomeEmail";
  * supplies its own frame. They exist so the templates can be compared side by
  * side, at both widths, before the markup is lifted into the sending provider.
  *
- * All four share `EmailShell` — the rose cap, the ruled masthead and the
+ * All three share `EmailShell` — the rose cap, the ruled masthead and the
  * black footer.
  *
- * Two of them are alternative password resets, by link and by code. That is
- * deliberate for review, not for sending: whichever mechanic the product
- * actually uses, the other should come out of the set.
+ * There used to be two password resets here, by link and by code, kept side
+ * by side while it was undecided which the product would send. It sends the
+ * code, so the link version is gone: a template nobody sends is one somebody
+ * eventually wires up by mistake.
  *
  * EACH TEMPLATE IS RENDERED INSIDE AN IFRAME. That is the whole reason the
  * mobile switch can be trusted. An email's responsive behaviour is a
@@ -36,8 +36,7 @@ import { WelcomeEmail } from "./WelcomeEmail";
 
 const TABS = [
   { id: "welcome", label: "Welcome / verify" },
-  { id: "reset", label: "Password reset (link)" },
-  { id: "otp", label: "Password reset (code)" },
+  { id: "otp", label: "Password reset" },
   { id: "admin", label: "Super admin OTP" },
 ] as const;
 
@@ -286,7 +285,6 @@ export function EmailPreview() {
             than re-using a document sized for the last combination. */}
         <EmailFrame key={`${active}-${viewport}`} width={width}>
           {active === "welcome" && <WelcomeEmail />}
-          {active === "reset" && <PasswordResetEmail />}
           {active === "otp" && <PasswordResetOtpEmail />}
           {active === "admin" && <AdminOtpEmail />}
         </EmailFrame>

@@ -5,7 +5,6 @@ import {
   EmailShell,
   FONT,
   INK,
-  MUTED,
 } from "./EmailShell";
 
 /**
@@ -43,24 +42,11 @@ export function AdminOtpEmail() {
   return (
     <EmailShell recipientEmail={recipientEmail}>
       <tr>
-        <td className="tn-pad" style={{ padding: "48px 40px 0" }}>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: FONT,
-              fontSize: "11px",
-              lineHeight: "16px",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: MUTED,
-            }}
-          >
-            Super admin
-          </p>
+        <td className="tn-pad" style={{ padding: "28px 40px 0" }}>
           <h1
             className="tn-h1"
             style={{
-              margin: "14px 0 0",
+              margin: 0,
               fontFamily: FONT,
               fontSize: "36px",
               lineHeight: "44px",
@@ -69,7 +55,7 @@ export function AdminOtpEmail() {
               color: INK,
             }}
           >
-            Your TALENTnext sign-in code
+            Your sign-in code
           </h1>
           <p
             className="tn-lead"
@@ -144,9 +130,9 @@ export function AdminOtpEmail() {
             style={{
               margin: 0,
               fontFamily: FONT,
-              fontSize: "14px",
-              lineHeight: "22px",
-              color: MUTED,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
             }}
           >
             We will never ask you to read this code out or forward it. There

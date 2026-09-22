@@ -5,7 +5,6 @@ import {
   EmailShell,
   FONT,
   INK,
-  MUTED,
 } from "./EmailShell";
 
 /**
@@ -32,7 +31,7 @@ export function WelcomeEmail() {
   return (
     <EmailShell recipientEmail={recipientEmail}>
       <tr>
-        <td className="tn-pad" style={{ padding: "56px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "28px 40px 0" }}>
           <h1
             className="tn-h1"
             style={{
@@ -70,17 +69,7 @@ export function WelcomeEmail() {
             }}
           >
             Welcome to TALENTnext.
-          </p>
-          <p
-            className="tn-lead"
-            style={{
-              margin: "20px 0 0",
-              fontFamily: FONT,
-              fontSize: "16px",
-              lineHeight: "26px",
-              color: BODY,
-            }}
-          >
+            <br />
             Your account is ready. Set your password to activate your account.
           </p>
         </td>
@@ -121,9 +110,9 @@ export function WelcomeEmail() {
             style={{
               margin: 0,
               fontFamily: FONT,
-              fontSize: "14px",
-              lineHeight: "22px",
-              color: MUTED,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
             }}
           >
             This link expires in 24 hours. If the button doesn&rsquo;t open:
@@ -140,9 +129,9 @@ export function WelcomeEmail() {
             style={{
               margin: "16px 0 0",
               fontFamily: FONT,
-              fontSize: "14px",
-              lineHeight: "22px",
-              color: MUTED,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
             }}
           >
             If you weren&rsquo;t expecting this email, you can safely ignore

@@ -405,7 +405,7 @@ export function EmailShell({
               .tn-sheet { width: 100% !important; }
               .tn-pad { padding-left: 24px !important; padding-right: 24px !important; }
               .tn-h1 { font-size: 27px !important; line-height: 34px !important; }
-              .tn-lead { font-size: 15px !important; line-height: 24px !important; }
+              .tn-lead { line-height: 24px !important; }
               .tn-code {
                 font-size: 30px !important;
                 line-height: 38px !important;
@@ -520,7 +520,7 @@ export function EmailShell({
                   <tr>
                     <td
                       className="tn-pad"
-                      style={{ padding: "22px 40px 4px" }}
+                      style={{ padding: "22px 40px 0" }}
                     >
                       <img
                         src="/img/talentnext-logo-black.svg"
