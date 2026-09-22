@@ -34,21 +34,33 @@ import {
 
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "admin@talentnext.com";
-const code = "748 210";
+/* Six digits, unbroken — the space that used to group them travels with the
+   code when it is copied and fails validation at the other end. `CodeBlock`'s
+   tracking is what keeps them separable by eye. */
+const code = "748210";
 
+/**
+ * Three rows: when, where, what from.
+ *
+ * It listed five. The IP address and the console hostname came out because
+ * neither is a fact the reader can judge — an admin looking at 203.0.113.42
+ * cannot tell whether it is theirs, and the console is the same value on
+ * every one of these sends, so it was a constant printed as if it were
+ * evidence. Time, place and device are the three a person can check against
+ * their own morning, and the shorter table is read where the longer one was
+ * skipped.
+ */
 const attemptMeta = [
   ["Attempted", "21 Sep 2026, 14:32 GMT"],
-  ["IP address", "203.0.113.42"],
   ["Approximate location", "Lahore, Pakistan"],
   ["Device", "Chrome 141 on macOS"],
-  ["Console", "admin.talentnext.com"],
 ];
 
 export function AdminOtpEmail() {
   return (
     <EmailShell recipientEmail={recipientEmail}>
       <tr>
-        <td style={{ padding: "48px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "48px 40px 0" }}>
           <p
             style={{
               margin: 0,
@@ -60,9 +72,10 @@ export function AdminOtpEmail() {
               color: MUTED,
             }}
           >
-            Super admin &middot; Sign-in code
+            Super admin
           </p>
           <h1
+            className="tn-h1"
             style={{
               margin: "14px 0 0",
               fontFamily: FONT,
@@ -76,6 +89,7 @@ export function AdminOtpEmail() {
             Your sign-in code.
           </h1>
           <p
+            className="tn-lead"
             style={{
               margin: "20px 0 0",
               fontFamily: FONT,
@@ -84,14 +98,14 @@ export function AdminOtpEmail() {
               color: BODY,
             }}
           >
-            Enter this in the window you already have open. It expires in five
-            minutes and works once.
+            Enter this in the window you already have open. Expires in five
+            minutes.
           </p>
         </td>
       </tr>
 
       <tr>
-        <td style={{ padding: "32px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "32px 40px 0" }}>
           <CodeBlock code={code} />
         </td>
       </tr>
@@ -99,7 +113,7 @@ export function AdminOtpEmail() {
       {/* The attempt, in full — the reason this mail is worth reading even
           when the code is expected. */}
       <tr>
-        <td style={{ padding: "36px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <table
             role="presentation"
             cellPadding={0}
@@ -112,6 +126,7 @@ export function AdminOtpEmail() {
               {attemptMeta.map(([term, value]) => (
                 <tr key={term}>
                   <td
+                    className="tn-meta-term"
                     style={{
                       borderTop: `1px solid ${RULE}`,
                       padding: "13px 0",
@@ -126,6 +141,7 @@ export function AdminOtpEmail() {
                   </td>
                   <td
                     align="right"
+                    className="tn-meta-value"
                     style={{
                       borderTop: `1px solid ${RULE}`,
                       padding: "13px 0",
@@ -145,7 +161,7 @@ export function AdminOtpEmail() {
       </tr>
 
       <tr>
-        <td style={{ padding: "32px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "32px 40px 0" }}>
           <p
             style={{
               margin: 0,
@@ -155,9 +171,8 @@ export function AdminOtpEmail() {
               color: BODY,
             }}
           >
-            <span style={{ color: INK }}>If this wasn&rsquo;t you</span>, treat
-            it as an attempt on the console: don&rsquo;t enter the code, lock
-            the account from any signed-in session, and tell security now at{" "}
+            <span style={{ color: INK }}>If this wasn&rsquo;t you</span>,
+            don&rsquo;t enter the code &mdash; tell security now at{" "}
             <a
               href="mailto:security@talentnext.com"
               className="tn-link"
@@ -171,13 +186,13 @@ export function AdminOtpEmail() {
       </tr>
 
       <tr>
-        <td style={{ padding: "44px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "44px 40px 0" }}>
           <EmailRule />
         </td>
       </tr>
 
       <tr>
-        <td style={{ padding: "24px 40px 48px" }}>
+        <td className="tn-pad" style={{ padding: "24px 40px 48px" }}>
           <p
             style={{
               margin: 0,
@@ -187,10 +202,8 @@ export function AdminOtpEmail() {
               color: MUTED,
             }}
           >
-            This code is required at every sign-in to the admin console. No one
-            at TALENTnext will ever ask you to read it out, forward it or type
-            it into a page reached from a link. There is deliberately no link
-            in this email.
+            We will never ask you to read this code out or forward it. There
+            is deliberately no link in this email.
           </p>
         </td>
       </tr>

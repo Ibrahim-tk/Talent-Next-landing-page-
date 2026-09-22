@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 /**
  * The chrome every transactional email shares: the rose cap, the ruled
@@ -11,8 +11,8 @@ import type { ReactNode } from "react";
  *
  * It is the site's design language rebuilt in that constrained vocabulary:
  * a white sheet, hairline rules at #F0F0F2, ink headings that are dark but
- * never black, body copy at 16px/#5F6672, the rose accent spent sparingly,
- * and the black bar the site uses for its primary action.
+ * never black, body copy at 16px/#5F6672, and the rose accent carrying the
+ * one action each email is sent to get.
  */
 
 /* The palette, flattened from the Gridline tokens an email cannot read. */
@@ -23,8 +23,8 @@ export const MUTED = "#69707C"; /* --gl-neutral-640, captions */
 export const RULE = "#F0F0F2"; /* --gl-color-border-rule */
 export const SUNKEN = "#F8F9FA"; /* --gl-color-surface-sunken */
 export const BLACK = "#000000"; /* --gl-color-action-primary-bg */
+export const ROSE_PRESSED = "#BF3629"; /* --gl-rose-700, the accent's hover step */
 const FOOTER = "#111111"; /* --gl-neutral-900, inverse surface */
-const FOOTER_RULE = "#1E1E1E"; /* --gl-color-border-inverse */
 export const FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 /* The social row. Glyphs are inline SVG so the preview needs no assets; for
@@ -53,7 +53,25 @@ const socials = [
   },
 ];
 
-/** The black primary action, as a table so Outlook renders the fill. */
+/**
+ * The primary action, as a table so Outlook renders the fill.
+ *
+ * ROSE AT REST, not on hover. It was a black bar that turned rose when
+ * pointed at, which is the site's own primary button — but a page has a
+ * dozen things to look at and an email has one. Black is the site's
+ * "somewhere to click" and rose is its "this is the thing"; in a sheet
+ * containing exactly one action, that is the same statement made twice, and
+ * the quieter of the two was winning. More practically, half of what opens
+ * these never renders a hover at all — touch has no pointer, and Gmail's
+ * mobile apps strip the <style> block the hover lives in — so an accent that
+ * only exists on hover is an accent most readers never see.
+ *
+ * SMALLER, for the same reason it is now coloured. At 17px/40px of padding
+ * the bar ran most of the sheet's width and had the weight of a banner; a
+ * button that is the only coloured object on a white page does not need to
+ * be large as well, and the trimmed size reads as a considered control
+ * rather than as a strip of colour.
+ */
 export function EmailButton({ href, label }: { href: string; label: string }) {
   return (
     <table
@@ -65,17 +83,21 @@ export function EmailButton({ href, label }: { href: string; label: string }) {
     >
       <tbody>
         <tr>
-          <td align="center" style={{ backgroundColor: BLACK }}>
+          {/* The fill is set on the cell AND on the anchor: Outlook paints the
+              td and ignores a background on the <a>, everything else does the
+              reverse. Both have to be the accent or the button arrives
+              two-tone in one client and correct in the other. */}
+          <td align="center" style={{ backgroundColor: ROSE }}>
             <a
               href={href}
               className="tn-btn"
               style={{
                 display: "block",
-                backgroundColor: BLACK,
-                padding: "17px 40px",
+                backgroundColor: ROSE,
+                padding: "13px 28px",
                 fontFamily: FONT,
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: "14px",
+                lineHeight: "18px",
                 color: "#FFFFFF",
                 textDecoration: "none",
               }}
@@ -125,6 +147,117 @@ export function EmailRule() {
  * a code rendered as a picture cannot be copied and is invisible when images
  * are blocked — which is the default in most clients.
  */
+/**
+ * The copy button, in the code block's lower-right corner.
+ *
+ * IT ONLY EXISTS WHERE IT CAN WORK. Copying to the clipboard needs
+ * JavaScript, and every email client on earth strips <script> — so in an
+ * actual inbox this control could never do anything. Rendering it there would
+ * be worse than leaving it out: a button that looks pressable, gets pressed,
+ * and does nothing is a defect, where a plain selectable code is simply how
+ * codes have always been copied.
+ *
+ * So it is gated on `mounted`, which is only ever true after hydration in a
+ * real browser. Two consequences, both wanted:
+ *
+ *   - In the preview it appears and works, which is where you are reviewing.
+ *   - Rendered to static HTML for the sending provider, it is absent from the
+ *     markup entirely — no dead button, no stray markup for a client to
+ *     mangle.
+ *
+ * If these templates are ever also served as a web page ("view in browser"),
+ * this is live there too, for free.
+ *
+ * NO CONTAINER AT REST. The glyph sits directly on the code block's own
+ * ground, and the neutral pill only appears under hover, focus or the moment
+ * after a copy — see `.tn-copy` in the stylesheet. A button-shaped box parked
+ * permanently in the corner competes with the six digits it belongs to, which
+ * are the one thing on this sheet anybody opened it for.
+ */
+function CopyButton({ code }: { code: string }) {
+  const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  if (!mounted) return null;
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+    } catch {
+      /* Clipboard denied (an insecure origin, or a browser that wants a
+         different gesture). Say nothing and leave the code selectable — the
+         reader has lost a convenience, not the code. */
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className={`tn-copy${copied ? " tn-copy--done" : ""}`}
+      aria-label={copied ? "Code copied" : "Copy code"}
+      style={{
+        position: "absolute",
+        right: "-8px",
+        bottom: "-14px",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "30px",
+        height: "30px",
+        padding: 0,
+        border: 0,
+        borderRadius: "7px",
+        backgroundColor: "transparent",
+        color: copied ? ROSE : MUTED,
+        cursor: "pointer",
+        /* The glyph is drawn at the code's own optical weight, not the
+           body's — it belongs to the block, not to the paragraph above it. */
+        lineHeight: 0,
+      }}
+    >
+      {copied ? (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M20 6 9 17l-5-5"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ) : (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect
+            x="9"
+            y="9"
+            width="11"
+            height="11"
+            rx="2.5"
+            stroke="currentColor"
+            strokeWidth="1.9"
+          />
+          <path
+            d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"
+            stroke="currentColor"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+          />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 export function CodeBlock({ code, tone = "ink" }: { code: string; tone?: "ink" | "rose" }) {
   return (
     <table
@@ -139,6 +272,7 @@ export function CodeBlock({ code, tone = "ink" }: { code: string; tone?: "ink" |
         <tr>
           <td
             align="center"
+            className="tn-code"
             style={{
               backgroundColor: SUNKEN,
               border: `1px solid ${RULE}`,
@@ -153,7 +287,14 @@ export function CodeBlock({ code, tone = "ink" }: { code: string; tone?: "ink" |
               color: tone === "rose" ? ROSE : INK,
             }}
           >
-            {code}
+            {/* The positioning context for the copy button. A <div> inside the
+                cell rather than `position: relative` on the <td> itself: a
+                positioned table cell is unreliable across engines, and this
+                wrapper is inert markup that no email client can get wrong. */}
+            <div style={{ position: "relative" }}>
+              {code}
+              <CopyButton code={code} />
+            </div>
           </td>
         </tr>
       </tbody>
@@ -179,8 +320,129 @@ export function EmailShell({
         dangerouslySetInnerHTML={{
           __html: `
             a.tn-link:hover { color: ${ROSE} !important; }
-            a.tn-btn:hover { background-color: ${ROSE} !important; }
+            a.tn-btn:hover { background-color: ${ROSE_PRESSED} !important; }
             a.tn-social:hover svg path { fill: ${ROSE} !important; }
+
+            /* THE COPY BUTTON'S GROUND.
+
+               Nothing at rest — the glyph sits straight on the code block —
+               and a neutral pill fades in under hover, under keyboard focus,
+               and for the moment after a copy lands. That last one matters:
+               a copy made by keyboard, or by a pointer that has already moved
+               away, still needs to show that something happened, and the
+               colour change on the glyph alone is easy to miss at 15px.
+
+               Only ever in a browser. The button is not rendered into the
+               markup a sending provider receives, so these rules have nothing
+               to match in an inbox.
+
+               No !important here: the inline style sets the transparent rest
+               state and these are pseudo-class rules, which lose to a style
+               attribute — so the rest colour is repeated as a variable-free
+               declaration on .tn-copy itself and the states override it by
+               specificity of state, not of weight. */
+            /* HIDDEN UNTIL THE BLOCK IS POINTED AT, on a pointer device. The
+               code is what the sheet is for; a control parked beside it at
+               rest is a second thing to look at in the one place there should
+               only be one. Hovering the block is also the gesture someone is
+               already making on their way to select the digits by hand, so
+               the button arrives exactly when it becomes useful.
+
+               Opacity, not display: the button keeps its box, so nothing
+               shifts when it appears and a keyboard tab can still reach it —
+               which is what the :focus-within pair below is for.
+
+               It stays PERMANENTLY VISIBLE on touch, where there is no hover
+               to reveal it with and a hidden control is simply a missing one.
+               Two guards for that, because they catch different devices: the
+               phone breakpoint further down, and hover: none here for any
+               touch screen wide enough to miss it. */
+            .tn-code .tn-copy {
+              opacity: 0;
+              transition: opacity 120ms ease-out, background-color 120ms ease-out,
+                color 120ms ease-out;
+            }
+            .tn-code:hover .tn-copy,
+            .tn-code:focus-within .tn-copy,
+            .tn-copy--done { opacity: 1 !important; }
+
+            @media (hover: none) {
+              .tn-code .tn-copy { opacity: 1 !important; }
+            }
+
+            .tn-copy { transition: background-color 120ms ease-out, color 120ms ease-out; }
+            .tn-copy:hover { background-color: #ECEEF1 !important; color: ${INK} !important; }
+            .tn-copy:focus-visible {
+              background-color: #ECEEF1 !important;
+              color: ${INK} !important;
+              outline: 2px solid ${ROSE};
+              outline-offset: 1px;
+            }
+            .tn-copy--done { background-color: #ECEEF1 !important; }
+
+            /* THE PHONE LAYOUT.
+
+               Every style in these templates is inline, because that is what
+               an email client understands — but an inline style cannot carry
+               a media query, so the handful of values that must change on a
+               narrow screen are overridden here by class. That is also why
+               each rule is !important: it is competing with a style attribute,
+               which otherwise wins outright.
+
+               Keyed at 600px, the sheet's own width. Clients that strip
+               <style> (a few Outlooks) simply get the desktop sheet scaled
+               down, which is legible — nothing here is load-bearing, it is the
+               difference between comfortable and cramped.
+
+               Only four things move: the side padding, which at 40px eats a
+               fifth of a 390px screen; the headline, which at 36px wraps a
+               three-word sentence onto three lines; the code block, whose
+               wide tracking pushes six digits past the sheet edge; and the
+               two-column metadata tables, which stack. */
+            @media only screen and (max-width: 600px) {
+              /* The sheet's own 600px is a fixed width AND an HTML width
+                 attribute; below the breakpoint it gives both up. */
+              .tn-sheet { width: 100% !important; }
+              .tn-pad { padding-left: 24px !important; padding-right: 24px !important; }
+              .tn-h1 { font-size: 27px !important; line-height: 34px !important; }
+              .tn-lead { font-size: 15px !important; line-height: 26px !important; }
+              .tn-code {
+                font-size: 30px !important;
+                line-height: 38px !important;
+                letter-spacing: 0.14em !important;
+                text-indent: 0.14em !important;
+                padding: 22px 12px !important;
+              }
+              /* The two-column rows become one column: a 42%/58% split at this
+                 width leaves "Approximate location" wrapping to three lines
+                 against a value that fits on one.
+
+                 The width is auto, NOT 100%. These cells carry 24px of
+                 horizontal padding in one of the templates, and a block-level
+                 box is content-box by default — so 100% resolved to the full
+                 sheet width and then ADDED the 48px of padding on top, pushing
+                 every one of those rows past the right edge and putting a
+                 horizontal scrollbar on the whole email. Auto lets a block
+                 fill its parent and subtract its own padding, which is the
+                 behaviour that was wanted; border-box is belt and braces for
+                 any client that resolves a stray width against the padding
+                 box anyway.
+
+                 NOTE, since this bit me: this comment lives inside a JS
+                 template literal, so it can contain no backticks. */
+              .tn-meta-term,
+              .tn-meta-value {
+                display: block !important;
+                width: auto !important;
+                box-sizing: border-box !important;
+                text-align: left !important;
+              }
+              .tn-meta-term { padding-bottom: 0 !important; border-bottom: 0 !important; }
+              .tn-meta-value { padding-top: 0 !important; border-top: 0 !important; }
+              .tn-foot { padding-left: 20px !important; padding-right: 20px !important; }
+              /* No hover to reveal it with — see the note on .tn-code .tn-copy. */
+              .tn-code .tn-copy { opacity: 1 !important; }
+            }
           `,
         }}
       />
@@ -201,6 +463,7 @@ export function EmailShell({
                 cellSpacing={0}
                 border={0}
                 width={600}
+                className="tn-sheet"
                 style={{
                   borderCollapse: "collapse",
                   width: "600px",
@@ -225,12 +488,20 @@ export function EmailShell({
                     </td>
                   </tr>
 
+                  {/* The masthead. No rule under it: the logo sits directly
+                      above the first line of the message now.
+
+                      The hairline was drawing a box the content did not need.
+                      The rose cap three pixels above it is already the sheet's
+                      top edge, and a second horizontal a few millimetres below
+                      it made a band of chrome out of what should read as one
+                      sheet of paper with a mark at the top. Every template
+                      opens on generous white space, which separates the logo
+                      from the message better than a line does. */}
                   <tr>
                     <td
-                      style={{
-                        padding: "28px 40px",
-                        borderBottom: `1px solid ${RULE}`,
-                      }}
+                      className="tn-pad"
+                      style={{ padding: "22px 40px 4px" }}
                     >
                       <img
                         src="/img/talentnext-logo-black.svg"
@@ -253,20 +524,21 @@ export function EmailShell({
                   <tr>
                     <td
                       align="center"
+                      className="tn-foot"
                       style={{
                         backgroundColor: FOOTER,
-                        padding: "36px 40px 32px",
+                        padding: "28px 32px 26px",
                       }}
                     >
                       <img
                         src="/img/talentnext-logo-white.svg"
                         alt="TALENTnext"
-                        width={112}
-                        height={26}
+                        width={96}
+                        height={22}
                         style={{
                           display: "block",
                           border: 0,
-                          width: "112px",
+                          width: "96px",
                           height: "auto",
                           margin: "0 auto",
                         }}
@@ -279,7 +551,7 @@ export function EmailShell({
                         border={0}
                         style={{
                           borderCollapse: "collapse",
-                          margin: "24px auto 0",
+                          margin: "18px auto 0",
                         }}
                       >
                         <tbody>
@@ -287,7 +559,7 @@ export function EmailShell({
                             {socials.map((social) => (
                               <td
                                 key={social.label}
-                                style={{ padding: "0 12px" }}
+                                style={{ padding: "0 10px" }}
                               >
                                 <a
                                   href={social.href}
@@ -296,8 +568,8 @@ export function EmailShell({
                                   style={{ display: "block", lineHeight: 0 }}
                                 >
                                   <svg
-                                    width="20"
-                                    height="20"
+                                    width="18"
+                                    height="18"
                                     viewBox="0 0 24 24"
                                     fill="#FFFFFF"
                                     aria-hidden="true"
@@ -312,37 +584,12 @@ export function EmailShell({
                         </tbody>
                       </table>
 
-                      <table
-                        role="presentation"
-                        cellPadding={0}
-                        cellSpacing={0}
-                        border={0}
-                        width="100%"
-                        style={{ borderCollapse: "collapse" }}
-                      >
-                        <tbody>
-                          <tr>
-                            <td
-                              style={{
-                                borderTop: `1px solid ${FOOTER_RULE}`,
-                                fontSize: 0,
-                                lineHeight: 0,
-                                height: "1px",
-                                padding: "28px 0 0",
-                              }}
-                            >
-                              &nbsp;
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-
                       <p
                         style={{
-                          margin: "20px 0 0",
+                          margin: "22px 0 0",
                           fontFamily: FONT,
-                          fontSize: "12px",
-                          lineHeight: "20px",
+                          fontSize: "11px",
+                          lineHeight: "18px",
                           color: "#8A909B",
                         }}
                       >

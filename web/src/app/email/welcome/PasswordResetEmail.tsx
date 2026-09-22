@@ -48,8 +48,9 @@ export function PasswordResetEmail() {
   return (
     <EmailShell recipientEmail={recipientEmail}>
       <tr>
-        <td style={{ padding: "56px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "56px 40px 0" }}>
           <h1
+            className="tn-h1"
             style={{
               margin: 0,
               fontFamily: FONT,
@@ -63,6 +64,7 @@ export function PasswordResetEmail() {
             Reset your password.
           </h1>
           <p
+            className="tn-lead"
             style={{
               margin: "20px 0 0",
               fontFamily: FONT,
@@ -72,15 +74,13 @@ export function PasswordResetEmail() {
             }}
           >
             Someone asked to reset the password for{" "}
-            <span style={{ color: INK }}>{recipientEmail}</span>. If that was
-            you, choose a new one below. The link works once and expires in 60
-            minutes.
+            <span style={{ color: INK }}>{recipientEmail}</span>.
           </p>
         </td>
       </tr>
 
       <tr>
-        <td style={{ padding: "36px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <EmailButton href={resetUrl} label="Choose a new password" />
         </td>
       </tr>
@@ -88,7 +88,7 @@ export function PasswordResetEmail() {
       {/* Request context — the panel that lets a recipient recognise their
           own request, or fail to. */}
       <tr>
-        <td style={{ padding: "36px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <table
             role="presentation"
             cellPadding={0}
@@ -105,6 +105,7 @@ export function PasswordResetEmail() {
               {requestMeta.map(([term, value], index) => (
                 <tr key={term}>
                   <td
+                    className="tn-meta-term"
                     style={{
                       padding: index === 0 ? "18px 24px 6px" : "0 24px 6px",
                       fontFamily: FONT,
@@ -117,6 +118,7 @@ export function PasswordResetEmail() {
                   </td>
                   <td
                     align="right"
+                    className="tn-meta-value"
                     style={{
                       padding: index === 0 ? "18px 24px 6px" : "0 24px 6px",
                       fontFamily: FONT,
@@ -140,7 +142,7 @@ export function PasswordResetEmail() {
       </tr>
 
       <tr>
-        <td style={{ padding: "36px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <p
             style={{
               margin: 0,
@@ -151,20 +153,19 @@ export function PasswordResetEmail() {
             }}
           >
             <span style={{ color: INK }}>Didn&rsquo;t request this?</span>{" "}
-            Ignore this email. Your password stays as it is and no one can
-            change it without the link above.
+            Ignore this email &mdash; nothing has changed.
           </p>
         </td>
       </tr>
 
       <tr>
-        <td style={{ padding: "44px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "44px 40px 0" }}>
           <EmailRule />
         </td>
       </tr>
 
       <tr>
-        <td style={{ padding: "24px 40px 48px" }}>
+        <td className="tn-pad" style={{ padding: "24px 40px 48px" }}>
           <p
             style={{
               margin: 0,
@@ -174,7 +175,7 @@ export function PasswordResetEmail() {
               color: MUTED,
             }}
           >
-            If the button doesn&rsquo;t open, paste this into your browser:
+            Expires in 60 minutes. If the button doesn&rsquo;t open:
             <br />
             <a
               href={resetUrl}
@@ -193,17 +194,7 @@ export function PasswordResetEmail() {
               color: MUTED,
             }}
           >
-            TALENTnext will never ask for your password, a reset link or a
-            verification code &mdash; not by email, phone or chat. If something
-            looks wrong, write to{" "}
-            <a
-              href="mailto:security@talentnext.com"
-              className="tn-link"
-              style={{ color: BODY }}
-            >
-              security@talentnext.com
-            </a>
-            .
+            We will never ask you for your password or this link.
           </p>
         </td>
       </tr>
