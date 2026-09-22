@@ -72,7 +72,9 @@
   color: #ffffff;
   padding: 1rem 2.25rem;
   font-size: 1rem;
-  font-weight: var(--gl-weight-medium);
+  /* Regular, not medium: the band's heading is the weight in this section,
+     and a medium button under it competed with it. */
+  font-weight: var(--gl-weight-regular);
   font-family: var(--gl-font-sans);
   text-transform: none; /* Keep "Talent" capitalized and "next" lowercase as requested */
   letter-spacing: 0.01em;

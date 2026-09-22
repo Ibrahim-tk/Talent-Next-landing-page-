@@ -309,6 +309,21 @@
   color: var(--gl-color-accent);
 }
 
+/* The header CTA is set as written, not as a caps label.
+
+   Button uppercases every label it carries, which is right for a two-word
+   action but wrong for this one: "Take TALENTnext Quiz" carries the mark's
+   own casing, and TALENTNEXT QUIZ throws that away. Tracking comes off with
+   the caps — it exists to open up uppercase — and the weight drops to
+   regular so the CTA reads as the quiet invitation it is rather than as a
+   bold slab. */
+.headerCta,
+.drawerCta {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: var(--gl-weight-regular);
+}
+
 .drawerCta {
   margin-top: var(--gl-space-11);
 }
