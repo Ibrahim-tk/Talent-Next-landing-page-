@@ -115,25 +115,8 @@ export function WelcomeEmail() {
               color: BODY,
             }}
           >
-            This link expires in 24 hours. If the button doesn&rsquo;t open:
+            This link expires in 24 hours.
             <br />
-            <a
-              href={setPasswordUrl}
-              className="tn-link"
-              style={{ color: BODY, wordBreak: "break-all" }}
-            >
-              {setPasswordUrl}
-            </a>
-          </p>
-          <p
-            style={{
-              margin: "16px 0 0",
-              fontFamily: FONT,
-              fontSize: "16px",
-              lineHeight: "26px",
-              color: BODY,
-            }}
-          >
             If you weren&rsquo;t expecting this email, you can safely ignore
             it.
           </p>
