@@ -6,8 +6,6 @@ import {
   FONT,
   INK,
   MUTED,
-  RULE,
-  SUNKEN,
 } from "./EmailShell";
 
 /**
@@ -35,14 +33,8 @@ import {
 
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "dsngr.og@company.com";
+const username = "{username}";
 const resetUrl = "https://app.talentnext.com/reset?token=RESET_TOKEN";
-
-/* Request context, filled from the request that triggered the send. */
-const requestMeta = [
-  ["Requested", "21 Sep 2026, 14:32 GMT"],
-  ["Approximate location", "Lahore, Pakistan"],
-  ["Device", "Chrome on macOS"],
-];
 
 export function PasswordResetEmail() {
   return (
@@ -61,7 +53,7 @@ export function PasswordResetEmail() {
               color: INK,
             }}
           >
-            Reset your password.
+            Reset your TALENTnext password
           </h1>
           <p
             className="tn-lead"
@@ -69,75 +61,42 @@ export function PasswordResetEmail() {
               margin: "20px 0 0",
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >
-            Someone asked to reset the password for{" "}
-            <span style={{ color: INK }}>{recipientEmail}</span>.
+            Hi {username},
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            We received a request to reset your TALENTnext password.
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            If you made this request, choose a new password below.
           </p>
         </td>
       </tr>
 
       <tr>
         <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
-          <EmailButton href={resetUrl} label="Choose a new password" />
-        </td>
-      </tr>
-
-      {/* Request context — the panel that lets a recipient recognise their
-          own request, or fail to. */}
-      <tr>
-        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
-          <table
-            role="presentation"
-            cellPadding={0}
-            cellSpacing={0}
-            border={0}
-            width="100%"
-            style={{
-              borderCollapse: "collapse",
-              backgroundColor: SUNKEN,
-              border: `1px solid ${RULE}`,
-            }}
-          >
-            <tbody>
-              {requestMeta.map(([term, value], index) => (
-                <tr key={term}>
-                  <td
-                    className="tn-meta-term"
-                    style={{
-                      padding: index === 0 ? "18px 24px 6px" : "0 24px 6px",
-                      fontFamily: FONT,
-                      fontSize: "14px",
-                      lineHeight: "22px",
-                      color: MUTED,
-                    }}
-                  >
-                    {term}
-                  </td>
-                  <td
-                    align="right"
-                    className="tn-meta-value"
-                    style={{
-                      padding: index === 0 ? "18px 24px 6px" : "0 24px 6px",
-                      fontFamily: FONT,
-                      fontSize: "14px",
-                      lineHeight: "22px",
-                      color: INK,
-                    }}
-                  >
-                    {value}
-                  </td>
-                </tr>
-              ))}
-              <tr>
-                <td colSpan={2} style={{ height: "12px", fontSize: 0 }}>
-                  &nbsp;
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <EmailButton href={resetUrl} label="Set new password" />
         </td>
       </tr>
 
@@ -148,12 +107,23 @@ export function PasswordResetEmail() {
               margin: 0,
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >
-            <span style={{ color: INK }}>Didn&rsquo;t request this?</span>{" "}
-            Ignore this email &mdash; nothing has changed.
+            This link can be used once and expires in 60 minutes.
+          </p>
+          <p
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            If you didn&rsquo;t request a password reset, you can safely ignore
+            this email. Your password will remain unchanged.
           </p>
         </td>
       </tr>
@@ -175,7 +145,7 @@ export function PasswordResetEmail() {
               color: MUTED,
             }}
           >
-            Expires in 60 minutes. If the button doesn&rsquo;t open:
+            If the button doesn&rsquo;t open:
             <br />
             <a
               href={resetUrl}

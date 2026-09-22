@@ -6,7 +6,6 @@ import {
   FONT,
   INK,
   MUTED,
-  RULE,
 } from "./EmailShell";
 
 /**
@@ -34,27 +33,11 @@ import {
 
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "admin@talentnext.com";
+const username = "{username}";
 /* Six digits, unbroken — the space that used to group them travels with the
    code when it is copied and fails validation at the other end. `CodeBlock`'s
    tracking is what keeps them separable by eye. */
 const code = "748210";
-
-/**
- * Three rows: when, where, what from.
- *
- * It listed five. The IP address and the console hostname came out because
- * neither is a fact the reader can judge — an admin looking at 203.0.113.42
- * cannot tell whether it is theirs, and the console is the same value on
- * every one of these sends, so it was a constant printed as if it were
- * evidence. Time, place and device are the three a person can check against
- * their own morning, and the shorter table is read where the longer one was
- * skipped.
- */
-const attemptMeta = [
-  ["Attempted", "21 Sep 2026, 14:32 GMT"],
-  ["Approximate location", "Lahore, Pakistan"],
-  ["Device", "Chrome 141 on macOS"],
-];
 
 export function AdminOtpEmail() {
   return (
@@ -86,7 +69,7 @@ export function AdminOtpEmail() {
               color: INK,
             }}
           >
-            Your sign-in code.
+            Your TALENTnext sign-in code
           </h1>
           <p
             className="tn-lead"
@@ -94,12 +77,23 @@ export function AdminOtpEmail() {
               margin: "20px 0 0",
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >
-            Enter this in the window you already have open. Expires in five
-            minutes.
+            Hi {username},
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            Use the code below to complete your TALENTnext admin sign-in:
           </p>
         </td>
       </tr>
@@ -110,56 +104,6 @@ export function AdminOtpEmail() {
         </td>
       </tr>
 
-      {/* The attempt, in full — the reason this mail is worth reading even
-          when the code is expected. */}
-      <tr>
-        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
-          <table
-            role="presentation"
-            cellPadding={0}
-            cellSpacing={0}
-            border={0}
-            width="100%"
-            style={{ borderCollapse: "collapse" }}
-          >
-            <tbody>
-              {attemptMeta.map(([term, value]) => (
-                <tr key={term}>
-                  <td
-                    className="tn-meta-term"
-                    style={{
-                      borderTop: `1px solid ${RULE}`,
-                      padding: "13px 0",
-                      fontFamily: FONT,
-                      fontSize: "14px",
-                      lineHeight: "22px",
-                      color: MUTED,
-                      width: "42%",
-                    }}
-                  >
-                    {term}
-                  </td>
-                  <td
-                    align="right"
-                    className="tn-meta-value"
-                    style={{
-                      borderTop: `1px solid ${RULE}`,
-                      padding: "13px 0",
-                      fontFamily: FONT,
-                      fontSize: "14px",
-                      lineHeight: "22px",
-                      color: INK,
-                    }}
-                  >
-                    {value}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </td>
-      </tr>
-
       <tr>
         <td className="tn-pad" style={{ padding: "32px 40px 0" }}>
           <p
@@ -167,20 +111,23 @@ export function AdminOtpEmail() {
               margin: 0,
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >
-            <span style={{ color: INK }}>If this wasn&rsquo;t you</span>,
-            don&rsquo;t enter the code &mdash; tell security now at{" "}
-            <a
-              href="mailto:security@talentnext.com"
-              className="tn-link"
-              style={{ color: INK }}
-            >
-              security@talentnext.com
-            </a>
-            .
+            This code expires in 5 minutes and can only be used once.
+          </p>
+          <p
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            If you didn&rsquo;t try to sign in, don&rsquo;t share or enter this
+            code. You can safely ignore this email.
           </p>
         </td>
       </tr>

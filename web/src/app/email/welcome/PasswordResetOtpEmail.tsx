@@ -96,7 +96,7 @@ export function PasswordResetOtpEmail() {
               margin: "20px 0 0",
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >

@@ -9,15 +9,24 @@ import {
 } from "./EmailShell";
 
 /**
- * Welcome / email-verification.
+ * Welcome / set your password.
  *
- * Sent the moment an account is created. One job — confirm the address —
+ * Sent the moment an account is created. One job — set the first password —
  * so there is exactly one action on the sheet.
+ *
+ * It used to be an address verification, with a "Verify email address"
+ * button. The supplied copy makes it a password set instead: the account
+ * already exists and is waiting on a password, and receiving the mail at the
+ * address is itself the proof the address is good, so a separate verification
+ * step was a click that confirmed something the next click confirms anyway.
+ *
+ * The copy in this file is supplied product copy and is reproduced verbatim.
  */
 
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "dsngr.og@company.com";
-const verifyUrl = "https://app.talentnext.com/verify?token=VERIFICATION_TOKEN";
+const username = "{username}";
+const setPasswordUrl = "https://app.talentnext.com/set-password?token=INVITE_TOKEN";
 
 export function WelcomeEmail() {
   return (
@@ -36,7 +45,7 @@ export function WelcomeEmail() {
               color: INK,
             }}
           >
-            Welcome to TALENTnext.
+            Welcome to TALENTnext
           </h1>
           <p
             className="tn-lead"
@@ -44,24 +53,64 @@ export function WelcomeEmail() {
               margin: "20px 0 0",
               fontFamily: FONT,
               fontSize: "16px",
-              lineHeight: "28px",
+              lineHeight: "26px",
               color: BODY,
             }}
           >
-            Confirm <span style={{ color: INK }}>{recipientEmail}</span> to
-            activate your account.
+            Hi {username},
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            Welcome to TALENTnext.
+          </p>
+          <p
+            className="tn-lead"
+            style={{
+              margin: "20px 0 0",
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            Your account is ready. Set your password to activate your account.
           </p>
         </td>
       </tr>
 
       <tr>
         <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
-          <EmailButton href={verifyUrl} label="Verify email address" />
+          <EmailButton href={setPasswordUrl} label="Set your password" />
         </td>
       </tr>
 
       <tr>
-        <td className="tn-pad" style={{ padding: "44px 40px 0" }}>
+        <td className="tn-pad" style={{ padding: "24px 40px 0" }}>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: FONT,
+              fontSize: "16px",
+              lineHeight: "26px",
+              color: BODY,
+            }}
+          >
+            Once your password is set, you can sign in and begin your
+            TALENTnext journey.
+          </p>
+        </td>
+      </tr>
+
+      <tr>
+        <td className="tn-pad" style={{ padding: "36px 40px 0" }}>
           <EmailRule />
         </td>
       </tr>
@@ -77,14 +126,14 @@ export function WelcomeEmail() {
               color: MUTED,
             }}
           >
-            Expires in 24 hours. If the button doesn&rsquo;t open:
+            This link expires in 24 hours. If the button doesn&rsquo;t open:
             <br />
             <a
-              href={verifyUrl}
+              href={setPasswordUrl}
               className="tn-link"
               style={{ color: BODY, wordBreak: "break-all" }}
             >
-              {verifyUrl}
+              {setPasswordUrl}
             </a>
           </p>
           <p
@@ -96,7 +145,8 @@ export function WelcomeEmail() {
               color: MUTED,
             }}
           >
-            Didn&rsquo;t sign up? Ignore this email.
+            If you weren&rsquo;t expecting this email, you can safely ignore
+            it.
           </p>
         </td>
       </tr>

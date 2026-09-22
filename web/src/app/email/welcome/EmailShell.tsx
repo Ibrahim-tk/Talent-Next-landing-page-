@@ -405,7 +405,7 @@ export function EmailShell({
               .tn-sheet { width: 100% !important; }
               .tn-pad { padding-left: 24px !important; padding-right: 24px !important; }
               .tn-h1 { font-size: 27px !important; line-height: 34px !important; }
-              .tn-lead { font-size: 15px !important; line-height: 26px !important; }
+              .tn-lead { font-size: 15px !important; line-height: 24px !important; }
               .tn-code {
                 font-size: 30px !important;
                 line-height: 38px !important;
@@ -470,6 +470,25 @@ export function EmailShell({
                   maxWidth: "100%",
                   backgroundColor: "#FFFFFF",
                   border: `1px solid ${RULE}`,
+                  /* Regular, declared once for the whole sheet. Nothing in the
+                     body ever asked for a heavier cut, but "not specified" is
+                     not the same as "400": a client with its own default, or a
+                     font stack that falls through to a face whose regular is
+                     drawn heavy, will happily render the text a step up. This
+                     is inherited by every cell below, so the one exception —
+                     the eyebrow, which sets its own — stays the only place a
+                     weight is chosen.
+
+                     The smoothing pair is the other half of why the body read
+                     heavy. Helvetica Neue subpixel-antialiased is visibly
+                     fatter than the same text greyscale-antialiased, and the
+                     site's own reset turns that on globally — so type that
+                     matched the site in Figma came out a notch bolder in an
+                     inbox. Both properties are inherited, which is why they
+                     can be declared here rather than on every paragraph. */
+                  fontWeight: 400,
+                  WebkitFontSmoothing: "antialiased",
+                  MozOsxFontSmoothing: "grayscale",
                 }}
               >
                 <tbody>

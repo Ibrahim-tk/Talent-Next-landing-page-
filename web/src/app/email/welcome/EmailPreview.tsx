@@ -101,7 +101,12 @@ function EmailFrame({ width, children }: { width: number; children: ReactNode })
            the observer below, so an inner scroller would be a second bar
            scrolling the same pixels the page already scrolls — and it would
            steal the wheel the moment the pointer crossed into the preview. */
-        "html{overflow:hidden;}</style>" +
+        "html{overflow:hidden;}" + 
+        /* The preview frame matches the site's own rendering, so what you
+           judge the weight against here is what the site shows. The sheet
+           declares this for itself too — see EmailShell — because a real
+           inbox has no reset of ours in scope. */
+        "body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}</style>" +
         "</head><body></body></html>",
     );
     doc.close();
