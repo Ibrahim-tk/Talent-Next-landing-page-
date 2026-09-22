@@ -15,8 +15,10 @@ import { SeeItInActionSection } from "@/components/sections/seeItInAction/SeeItI
  * The new landing page variation / workspace, served at `/new`.
  * Updated with the infused banner CTA just above the footer.
  */
-/** Every CTA on `/new` opens the quiz, the same route the Get Started band uses. */
+/** Most CTAs on `/new` open the quiz directly; the hero sends you to the Get Started band. */
 const QUIZ_HREF = "/new/get-started";
+/** The hero CTA scrolls to the Get Started band, which itself opens the quiz. */
+const GET_STARTED_ANCHOR = "#quiz-cta";
 
 export default function NewLandingPage() {
   return (
@@ -26,10 +28,10 @@ export default function NewLandingPage() {
       </a>
 
       <GridCanvas>
-        <SiteHeader ctaHref={QUIZ_HREF} />
+        <SiteHeader ctaHref={QUIZ_HREF} ctaLabel="Take TALENTnext Quiz" />
 
         <main id="main-content">
-          <HeroSection ctaHref={QUIZ_HREF} />
+          <HeroSection ctaHref={GET_STARTED_ANCHOR} />
           <ArchetypesSection exploreMoreHref={QUIZ_HREF} />
           <InterviewSection />
           <HowItWorksSection />

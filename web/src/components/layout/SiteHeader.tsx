@@ -19,9 +19,14 @@ import styles from "./SiteHeader.module.css";
 export interface SiteHeaderProps {
   /** Where both header CTAs point. Defaults to the homepage Get Started anchor. */
   ctaHref?: string;
+  /** Label for both header CTAs. Defaults to the shared site label. */
+  ctaLabel?: string;
 }
 
-export function SiteHeader({ ctaHref = homeAnchors.getStarted }: SiteHeaderProps = {}) {
+export function SiteHeader({
+  ctaHref = homeAnchors.getStarted,
+  ctaLabel = site.ctaLabel,
+}: SiteHeaderProps = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
@@ -57,7 +62,7 @@ export function SiteHeader({ ctaHref = homeAnchors.getStarted }: SiteHeaderProps
             size="md"
             className={styles.headerCta}
           >
-            {site.ctaLabel}
+            {ctaLabel}
           </Button>
           <button
             type="button"
@@ -96,7 +101,7 @@ export function SiteHeader({ ctaHref = homeAnchors.getStarted }: SiteHeaderProps
           className={styles.drawerCta}
           onClick={closeMenu}
         >
-          {site.ctaLabel}
+          {ctaLabel}
         </Button>
       </div>
     </header>

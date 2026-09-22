@@ -112,6 +112,17 @@
     var(--gl-color-border-rule);
 }
 
+/* The three list cells start lower than the brand cell.
+
+   Every cell shares one padding value, which put the eyebrows' cap line
+   above the top of the logo beside them: the mark is a wordmark with air
+   inside its own box, so matching the padding does not match what the eye
+   reads as the top of each column. The lists are dropped by the difference
+   so the eyebrow row lines up with the wordmark rather than with the cell. */
+.cell:not(.brandCell) {
+  padding-top: calc(clamp(2.25rem, 4.5vw, 3.5rem) + var(--gl-space-7));
+}
+
 .brandCell {
   display: flex;
   flex-direction: column;
@@ -278,7 +289,8 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .cell {
+  .cell,
+  .cell:not(.brandCell) {
     padding: var(--gl-space-15) var(--gl-space-11);
   }
 
