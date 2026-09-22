@@ -18,48 +18,27 @@ export interface ActionTile {
  */
 export const builderResultsCopy = {
   kicker: "QUIZ RESULTS",
+  traitStatLabel: "Core traits identified",
+  careerStatLabel: "Career paths matched",
+  toolkitTitle: "Your toolkit",
   headerGreeting: (name: string = "TEST") => `HEY ${name.toUpperCase()} ! YOU ARE A`,
   archetype: "BUILDER",
   roleTitle: "THE INDEPENDENT EXPERT",
-  roleDescription:
-    "You enjoy creating results through quality work, independence, and ownership. You'd rather build something than simply maintain it.",
+  roleDescription: "You'd rather build something than simply maintain it.",
   characteristicsTitle: "CHARACTERISTICS OF A BUILDER",
-  characteristics: [
-    "Values quality over complexity.",
-    "Builds trusted relationships.",
-    "Wants control over their schedule.",
-  ],
+  characteristics: ["Quality over complexity", "Trusted relationships", "Control of the schedule"],
   careerIdeasTitle: "CAREER IDEAS",
   careerIdeas: [
-    {
-      title: "Supply Chain Manager",
-      description: "Streamlines logistics and operations flow.",
-      icon: "truck" as IconName,
-    },
-    {
-      title: "Quality Assurance Manager",
-      description: "Ensures product standards and quality.",
-      icon: "shieldCheck" as IconName,
-    },
-    {
-      title: "Product Owner",
-      description: "Drives product vision and priorities.",
-      icon: "user" as IconName,
-    },
-    {
-      title: "Electrician Business Owner",
-      description: "Runs electrical services company operations.",
-      icon: "bolt" as IconName,
-    },
-    {
-      title: "Process Improvement Specialist",
-      description: "Optimizes workflows and reduces costs.",
-      icon: "gridSquares" as IconName,
-    },
+    { title: "Supply Chain Manager", description: "Logistics & operations flow.", icon: "truck" as IconName },
+    { title: "Quality Assurance Manager", description: "Standards & product quality.", icon: "shieldCheck" as IconName },
+    { title: "Product Owner", description: "Vision & priorities.", icon: "user" as IconName },
+    { title: "Electrician Business Owner", description: "Runs the trade as a business.", icon: "bolt" as IconName },
+    { title: "Process Improvement Specialist", description: "Workflows & cost.", icon: "gridSquares" as IconName },
   ],
   nextStepTitle: "YOUR NEXT STEP",
-  nextStepDescription:
-    "Download the Builder Playbook, access the Builder Toolkit, or connect with a TALENT Next Agent.",
+  nextStepDescription: "Your Builder playbook, toolkit, and an agent — all in one email.",
+  ctaEyebrow: "What you'll get",
+  ctaLabel: "Send my playbook",
   actionTiles: [
     {
       id: "playbook",

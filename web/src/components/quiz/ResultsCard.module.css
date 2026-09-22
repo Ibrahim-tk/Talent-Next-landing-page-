@@ -1,152 +1,127 @@
 /* ==========================================================================
-   ResultsCard — Diagnostic Results Layout
+   ResultsCard — Diagnostic Results Bento
    --------------------------------------------------------------------------
-   - Follows the Gridline architectural landing page design system:
-     clean white surfaces, hairlines, blueprint lattice spacers, brand accent
-     red (#F9423A), generous vertical breathing room, and zero drop shadows.
-   - Exact verbatim copy from the Builder archetype specification.
+   A tight 12-column mosaic that fills one viewport: a headline tile, a
+   two stat rows, career ideas, the
+   and the CTA. Surfaces come only from the Gridline palette —
+   raised, sunken, accent, inverse. Black, red, grey, white only.
    ========================================================================== */
 
 .root {
   width: 100%;
-  background-color: var(--gl-color-surface-raised);
+  background-color: var(--gl-color-surface-canvas);
   display: flex;
   flex-direction: column;
-}
-
-/* --------------------------------------------------------------------------
-   Blueprint Lattice Spacer
-   -------------------------------------------------------------------------- */
-.gridBox {
-  height: calc(2 * var(--gl-blueprint-cell));
-  background-image: var(--gl-gradient-blueprint);
-  background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
-  background-position: -1px -1px;
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-/* --------------------------------------------------------------------------
-   Hero Header Row — Diagnosis Announcement
-   -------------------------------------------------------------------------- */
-.headerRow {
-  padding: clamp(3.5rem, 6vw, 5.5rem) clamp(2rem, 5vw, 4.5rem);
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   box-sizing: border-box;
+
+  /* A square lattice. The cell is the blueprint cell on both axes, and the
+     frame height is rounded down to a whole number of them, so the grid
+     never ends on a part cell and never stretches into rectangles. */
+  --results-cell: var(--gl-blueprint-cell);
+
+  /* Every tile pads by the same amount and stacks on the same rhythm, so
+     the inner edges line up across the mosaic. */
+  --tile-pad: clamp(1rem, 1.5vw, 1.5rem);
+  --tile-gap: clamp(0.625rem, 1vw, 1rem);
+  height: calc(100svh - var(--gl-header-height));
+  height: round(down, calc(100svh - var(--gl-header-height)), var(--results-cell));
+  padding: calc(2 * var(--results-cell));
+  background-image: var(--gl-gradient-blueprint);
+  background-size: var(--results-cell) var(--results-cell);
+  background-position: -1px -1px;
 }
 
-.kickerRow {
+.bento {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* The seams are the grid background showing through the gaps — one
+     hairline wide, so two neighbouring tiles never read as a double rule. */
+  gap: var(--gl-border-width-hairline);
+  background-color: var(--gl-color-border-rule);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 0.3fr) minmax(0, 0.3fr) minmax(0, 0.4fr);
+}
+
+.tile {
+  background-color: var(--gl-color-surface-raised);
+  padding: var(--tile-pad);
   display: flex;
-  align-items: center;
-  margin-bottom: var(--gl-space-5);
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.kickerBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--gl-space-2);
-  padding: 6px 14px;
-  background-color: var(--gl-color-surface-accent-soft);
-  color: var(--gl-color-accent);
+/* Every card opens with the same label: uppercase, thin, widely tracked,
+   quiet grey. Hierarchy inside a tile comes from what follows it. */
+.tileEyebrow,
+.nextStepEyebrow,
+.ctaTitle {
+  margin: 0;
   font-size: var(--gl-size-caption);
-  font-weight: var(--gl-weight-semibold);
-  letter-spacing: var(--gl-tracking-wider);
+  font-weight: var(--gl-weight-regular);
   text-transform: uppercase;
-  border: var(--gl-border-width-hairline) solid rgba(249, 66, 58, 0.2);
+  letter-spacing: var(--gl-tracking-wider);
+  color: var(--gl-color-text-secondary);
+}
+
+.tileEyebrow {
+  margin-bottom: var(--tile-gap);
+}
+
+/* --------------------------------------------------------------------------
+   Identity — the headline tile (cols 1–5, rows 1–2)
+   -------------------------------------------------------------------------- */
+.identity {
+  grid-column: 1 / 6;
+  grid-row: 1 / 3;
+  justify-content: center;
+  gap: var(--tile-gap);
 }
 
 .headline {
-  margin: 0 0 var(--gl-space-6) 0;
+  margin: 0;
+  font-weight: var(--gl-weight-regular);
   text-transform: uppercase;
   letter-spacing: -0.015em;
-  line-height: 1.05;
-  color: var(--gl-color-text-primary);
-}
-
-.roleBox {
-  padding: var(--gl-space-8) var(--gl-space-9);
-  background-color: var(--gl-color-surface-sunken);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  border-left: 3px solid var(--gl-color-accent);
-  max-width: 820px;
-  box-sizing: border-box;
-}
-
-.roleTitle {
-  margin: 0 0 var(--gl-space-2) 0;
-  text-transform: uppercase;
-  letter-spacing: var(--gl-tracking-wide);
+  line-height: 1.02;
+  font-size: clamp(1.25rem, 1.75vw, 1.75rem);
   color: var(--gl-color-text-primary);
 }
 
 .roleDescription {
   margin: 0;
+  font-size: 16px;
   line-height: var(--gl-leading-relaxed);
-  color: var(--gl-color-text-body);
+  color: #5f6672;
+  max-width: 42ch;
 }
 
-/* --------------------------------------------------------------------------
-   Two-Column Matrix Grid (Characteristics & Career Ideas)
-   -------------------------------------------------------------------------- */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: stretch;
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  min-height: 480px;
-  box-sizing: border-box;
-}
-
-.leftColumn {
-  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
-  border-right: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.rightColumn {
-  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.columnEyebrow {
-  margin: 0 0 var(--gl-space-7) 0;
-  text-transform: uppercase;
-  letter-spacing: var(--gl-tracking-wider);
-  color: var(--gl-color-accent);
-  font-weight: var(--gl-weight-semibold);
-}
-
-/* Characteristics List */
-.characteristicsList {
+.traitChips {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--gl-space-5);
+  gap: 2px;
 }
 
-.characteristicItem {
+.traitChip {
   display: flex;
   align-items: center;
-  gap: var(--gl-space-4);
-  padding: var(--gl-space-5) var(--gl-space-6);
+  gap: var(--gl-space-3);
+  padding: var(--tile-gap);
   background-color: var(--gl-color-surface-sunken);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
   box-sizing: border-box;
 }
 
 .checkBadge {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background-color: var(--gl-color-surface-accent-soft);
+  background-color: var(--gl-color-surface-raised);
   color: var(--gl-color-accent);
   display: flex;
   align-items: center;
@@ -154,211 +129,168 @@
   flex-shrink: 0;
 }
 
-.characteristicText {
+.traitText {
+  font-size: 15px;
+  font-weight: var(--gl-weight-regular);
   color: var(--gl-color-text-primary);
-  font-weight: var(--gl-weight-medium);
 }
 
-/* Career Ideas List */
+/* --------------------------------------------------------------------------
+   Stat rows — stacked down the right column (cols 9–13)
+   -------------------------------------------------------------------------- */
+.statInverse,
+.statSoft {
+  grid-column: 9 / 13;
+  color: var(--gl-color-text-primary);
+}
+
+/* Figure, label and icon are one line: a single row, centred on each other,
+   with the icon pushed to the far edge. */
+.statLine {
+  display: flex;
+  align-items: center;
+  gap: var(--tile-pad);
+}
+
+.statLine svg {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.statInverse {
+  grid-row: 1 / 2;
+  background-color: var(--gl-color-surface-raised);
+}
+
+.statSoft {
+  grid-row: 2 / 3;
+  background-color: var(--gl-color-surface-sunken);
+}
+
+
+
+.statFigure {
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: var(--gl-weight-regular);
+  color: var(--gl-color-text-primary);
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.statInverse .statLabel,
+.statSoft .statLabel {
+  color: #5f6672;
+}
+
+/* --------------------------------------------------------------------------
+   Career ideas — the tall middle column (cols 6–9, rows 1–2)
+   -------------------------------------------------------------------------- */
+.careers {
+  grid-column: 6 / 9;
+  grid-row: 1 / 3;
+}
+
 .careerList {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  display: grid;
+  grid-auto-rows: 1fr;
 }
 
 .careerItem {
   display: flex;
-  align-items: flex-start;
-  gap: var(--gl-space-4);
-  padding: var(--gl-space-5) 0;
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  line-height: var(--gl-leading-normal);
-}
-
-.careerItem:first-child {
-  padding-top: 0;
-}
-
-.careerItem:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+  align-items: center;
+  gap: var(--gl-space-3);
+  min-width: 0;
 }
 
 .careerIconBadge {
-  width: 34px;
-  height: 34px;
-  background-color: var(--gl-neutral-100);
-  color: var(--gl-color-text-primary);
+  width: 26px;
+  height: 26px;
+  color: var(--gl-color-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.careerText {
-  color: var(--gl-color-text-secondary);
-  font-size: 1rem;
 }
 
 .careerTitle {
-  font-weight: var(--gl-weight-semibold);
+  font-size: 15px;
+  font-weight: var(--gl-weight-regular);
+  line-height: 1.2;
   color: var(--gl-color-text-primary);
-}
-
-.dash {
-  color: var(--gl-color-text-muted);
 }
 
 /* --------------------------------------------------------------------------
-   Next Step & Action Tiles Section
+   Next step (cols 1–8, row 3)
    -------------------------------------------------------------------------- */
-.nextStepSection {
-  display: flex;
-  flex-direction: column;
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  box-sizing: border-box;
-}
-
-.nextStepHeader {
-  padding: clamp(3rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem) var(--gl-space-7);
-}
-
-.nextStepTitle {
-  margin: 0 0 var(--gl-space-3) 0;
-  text-transform: uppercase;
-  letter-spacing: var(--gl-tracking-wider);
-  color: var(--gl-color-accent);
-}
-
-.nextStepDescription {
-  margin: 0;
-  max-width: 680px;
-  line-height: var(--gl-leading-relaxed);
-  color: var(--gl-color-text-body);
-}
-
-.actionTilesGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  border-top: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-.actionTile {
-  background: transparent;
-  border: none;
-  border-right: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  padding: clamp(2.5rem, 4vw, 3.5rem) var(--gl-space-6);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: var(--gl-space-4);
-  cursor: pointer;
-  outline: none;
-  transition:
-    background-color var(--gl-duration-fast) var(--gl-ease-standard),
-    border-color var(--gl-duration-fast) var(--gl-ease-standard);
-  font-family: inherit;
-  min-height: 160px;
-  box-sizing: border-box;
-}
-
-.actionTile:last-child {
-  border-right: none;
-}
-
-.actionTile:hover {
-  background-color: var(--gl-color-surface-hover);
-}
-
-.actionTileActive:hover {
-  background-color: var(--gl-color-surface-accent-soft);
-}
-
-.actionTileIcon {
-  color: var(--gl-color-text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.actionTileActive .actionTileIcon {
-  color: var(--gl-color-accent);
-}
-
-.actionTileText {
-  display: flex;
-  flex-direction: column;
-  font-size: 1.05rem;
-  font-weight: var(--gl-weight-medium);
-  line-height: 1.3;
-  color: var(--gl-color-text-primary);
-}
-
-.actionTileActive .actionTileText {
-  color: var(--gl-color-accent);
-  font-weight: var(--gl-weight-semibold);
-}
-
-/* --------------------------------------------------------------------------
-   Bottom Share Bar
-   -------------------------------------------------------------------------- */
-.shareRow {
-  padding: var(--gl-space-7) clamp(2rem, 5vw, 4.5rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--gl-space-4);
-  box-sizing: border-box;
-  background-color: var(--gl-color-surface-sunken);
-  border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-.sharePrompt {
-  font-style: italic;
-  color: var(--gl-color-text-secondary);
-  margin: 0;
-}
-
-.shareBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--gl-space-3);
+.nextStep {
+  grid-column: 1 / 8;
+  grid-row: 3 / 4;
   background-color: var(--gl-color-surface-raised);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-  padding: 8px 18px;
-  cursor: pointer;
-  color: var(--gl-color-text-primary);
-  font-size: var(--gl-size-caption);
-  font-weight: var(--gl-weight-semibold);
-  transition:
-    background-color var(--gl-duration-fast) var(--gl-ease-standard),
-    border-color var(--gl-duration-fast) var(--gl-ease-standard);
-  outline: none;
+  justify-content: space-between;
 }
 
-.shareBadge:hover {
-  background-color: var(--gl-color-surface-hover);
-  border-color: var(--gl-color-border-interactive);
+
+
+.nextStepLine {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.7vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--gl-color-accent);
 }
 
-.shareIcons {
-  display: inline-flex;
+/* --------------------------------------------------------------------------
+   CTA (cols 8–12, row 3)
+   -------------------------------------------------------------------------- */
+.cta {
+  grid-column: 8 / 13;
+  grid-row: 3 / 4;
+  background-color: var(--gl-color-accent);
+  color: var(--gl-color-text-inverse);
+  justify-content: space-between;
+  gap: var(--tile-gap);
+}
+
+
+.ctaTitle {
+  color: var(--gl-color-text-inverse-secondary);
+}
+
+.ctaAssets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gl-space-2) var(--gl-space-5);
+}
+
+.ctaAsset {
+  display: flex;
   align-items: center;
   gap: var(--gl-space-2);
-  color: var(--gl-color-text-secondary);
+  font-size: 15px;
+  color: var(--gl-color-text-inverse);
 }
 
-.copiedTag {
-  font-size: 0.8rem;
-  font-weight: var(--gl-weight-semibold);
-  color: var(--gl-color-accent);
-  margin-left: 4px;
+.ctaAsset svg {
+  color: var(--gl-color-text-inverse);
+  flex-shrink: 0;
+}
+
+.ctaButton {
+  width: 100%;
+  justify-content: center;
+  font-weight: var(--gl-weight-regular);
 }
 
 /* --------------------------------------------------------------------------
@@ -417,7 +349,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: var(--gl-color-surface-accent-soft);
+  background-color: var(--gl-color-surface-sunken);
   color: var(--gl-color-accent);
   display: flex;
   align-items: center;
@@ -461,27 +393,66 @@
 /* --------------------------------------------------------------------------
    Responsive Breakpoints
    -------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .bento {
+    grid-template-rows: minmax(0, 0.3fr) minmax(0, 0.3fr) minmax(0, 0.2fr) minmax(0, 0.2fr);
+  }
+
+  .identity {
+    grid-column: 1 / 8;
+    grid-row: 1 / 3;
+  }
+
+  .careers {
+    grid-column: 8 / 13;
+    grid-row: 1 / 3;
+  }
+
+  .statInverse {
+    grid-column: 1 / 7;
+    grid-row: 3 / 4;
+  }
+
+  .statSoft {
+    grid-column: 7 / 13;
+    grid-row: 3 / 4;
+  }
+
+
+  .nextStep {
+    grid-column: 1 / 8;
+    grid-row: 4 / 5;
+  }
+
+  .cta {
+    grid-column: 8 / 13;
+    grid-row: 4 / 5;
+  }
+}
+
 @media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
+  .root {
+    height: auto;
+    min-height: 0;
+    padding: var(--gl-blueprint-cell);
   }
 
-  .leftColumn {
-    border-right: none;
-    border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  .bento {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
   }
 
-  .actionTilesGrid {
-    grid-template-columns: 1fr;
+  .bento > .tile {
+    grid-column: 1 / 2 !important;
+    grid-row: auto !important;
   }
 
-  .actionTile {
-    border-right: none;
-    border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-    min-height: 120px;
+  .careerList {
+    grid-auto-rows: auto;
+    gap: var(--gl-space-3);
   }
 
-  .actionTile:last-child {
-    border-bottom: none;
+  .careerItem {
+    padding: var(--gl-space-2) 0;
   }
 }
