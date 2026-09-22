@@ -40,13 +40,13 @@ const TRAILING_SCROLL = 400;
  * inside the accent fill. Declared once so the two can never drift out of
  * alignment, which would show up as ghosting along the fill's edge.
  */
-const footerContent = (
+const renderFooterContent = (exploreMoreHref: string) => (
   <div className={styles.footerInner}>
     <Text variant="bodyMd" measure="prose">
       {archetypesCopy.footnote}
     </Text>
     <Button
-      href={archetypesCopy.exploreMoreHref}
+      href={exploreMoreHref}
       variant="ghost"
       size="md"
       iconAfter={<Icon name="arrowRight" size={14} />}
@@ -71,7 +71,15 @@ const footerContent = (
  * all: pinning for zero scroll distance would just be a dead stop with
  * nothing to show for it.
  */
-export function ArchetypesSection() {
+export interface ArchetypesSectionProps {
+  /** Where "Explore more" goes. Defaults to the homepage Get Started anchor. */
+  exploreMoreHref?: string;
+}
+
+export function ArchetypesSection({
+  exploreMoreHref = archetypesCopy.exploreMoreHref,
+}: ArchetypesSectionProps = {}) {
+  const footerContent = renderFooterContent(exploreMoreHref);
   const pinRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -195,7 +203,7 @@ export function ArchetypesSection() {
               clipped fill — so a word turns white the instant the accent edge
               passes it, rather than the whole line switching at once. The two
               layers must lay out identically for that to land, which is why
-              both render the same `footerContent` markup at the same width. */}
+              both render the same footer markup at the same width. */}
           <div className={styles.footerRow}>
             {/* The scroll readout, and the only thing in this band still tied
                 to the track: a hairline-thin accent line along the row's top

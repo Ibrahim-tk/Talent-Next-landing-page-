@@ -8,7 +8,12 @@ import styles from "./HeroSection.module.css";
  * The hero. Fully server-rendered: the stage is a single photograph ruled
  * edge to edge, with nothing layered over it and nothing animating on scroll.
  */
-export function HeroSection() {
+export interface HeroSectionProps {
+  /** Where the hero's one action goes. Defaults to the homepage anchor. */
+  ctaHref?: string;
+}
+
+export function HeroSection({ ctaHref = heroCopy.ctaHref }: HeroSectionProps = {}) {
   return (
     <GridModule
       id="hero"
@@ -39,7 +44,7 @@ export function HeroSection() {
               the one action on the page the whole hero exists to deliver, and
               the accent is already carrying the headline's key word right
               above it. */}
-          <Button href={heroCopy.ctaHref} variant="accent" size="lg">
+          <Button href={ctaHref} variant="accent" size="lg">
             {heroCopy.ctaLabel}
           </Button>
         </div>

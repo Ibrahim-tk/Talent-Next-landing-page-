@@ -16,7 +16,12 @@ import styles from "./SiteHeader.module.css";
  * hamburger button that did nothing; it now opens a real drawer and closes on
  * navigation.
  */
-export function SiteHeader() {
+export interface SiteHeaderProps {
+  /** Where both header CTAs point. Defaults to the homepage Get Started anchor. */
+  ctaHref?: string;
+}
+
+export function SiteHeader({ ctaHref = homeAnchors.getStarted }: SiteHeaderProps = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
@@ -48,7 +53,7 @@ export function SiteHeader() {
 
         <div className={styles.actions}>
           <Button
-            href={homeAnchors.getStarted}
+            href={ctaHref}
             size="md"
             className={styles.headerCta}
           >
@@ -85,7 +90,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <Button
-          href={homeAnchors.getStarted}
+          href={ctaHref}
           size="lg"
           fullWidth
           className={styles.drawerCta}
