@@ -21,11 +21,14 @@ export interface SiteHeaderProps {
   ctaHref?: string;
   /** Label for both header CTAs. Defaults to the shared site label. */
   ctaLabel?: string;
+  /** Where the wordmark points. Defaults to the homepage hero anchor. */
+  homeHref?: string;
 }
 
 export function SiteHeader({
   ctaHref = homeAnchors.getStarted,
   ctaLabel = site.ctaLabel,
+  homeHref = homeAnchors.hero,
 }: SiteHeaderProps = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
@@ -34,7 +37,7 @@ export function SiteHeader({
     <header className={styles.header} id="navbar">
       <div className={styles.inner}>
         <Link
-          href={homeAnchors.hero}
+          href={homeHref}
           className={styles.brand}
           aria-label={`${site.name} home`}
         >

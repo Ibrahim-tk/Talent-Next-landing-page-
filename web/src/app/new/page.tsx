@@ -28,7 +28,11 @@ export default function NewLandingPage() {
       </a>
 
       <GridCanvas>
-        <SiteHeader ctaHref={QUIZ_HREF} ctaLabel="Take TALENTnext Quiz" />
+        <SiteHeader
+          ctaHref={QUIZ_HREF}
+          ctaLabel="Take TALENTnext Quiz"
+          homeHref="/new"
+        />
 
         <main id="main-content">
           <HeroSection ctaHref={GET_STARTED_ANCHOR} />

@@ -23,7 +23,11 @@ export default function NewGetStartedPage() {
       </a>
 
       <GridCanvas>
-        <SiteHeader />
+        <SiteHeader
+          ctaHref="/new/get-started"
+          ctaLabel="Take TALENTnext Quiz"
+          homeHref="/new"
+        />
 
         <main id="main-content">
           <QuizFlow />
