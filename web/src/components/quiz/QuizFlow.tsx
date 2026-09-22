@@ -105,19 +105,27 @@ export function QuizFlow() {
               <h1 className={styles.questionTitle}>{currentQuestion.question}</h1>
             </div>
 
-            {/* Options list: NO circle icon, selected has accent border, accent text, 15% red bg fill */}
-            <div className={styles.optionsStack}>
+            {/* Options list: one radio row per choice — see QuizFlow.module.css
+                for the shared geometry across unselected/hover/focus/selected. */}
+            <div
+              className={styles.optionsStack}
+              role="radiogroup"
+              aria-label={currentQuestion.question}
+            >
               {currentQuestion.options.map((option) => {
                 const isSelected = currentAnswer === option.value;
                 return (
                   <button
                     key={option.value}
                     type="button"
+                    role="radio"
+                    aria-checked={isSelected}
                     onClick={() => handleSelectOption(option.value)}
                     className={`${styles.pillButton} ${
                       isSelected ? styles.pillButtonSelected : ""
                     }`}
                   >
+                    <span className={styles.pillRadio} aria-hidden="true" />
                     <span>{option.label}</span>
                   </button>
                 );

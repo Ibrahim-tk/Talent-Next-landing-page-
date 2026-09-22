@@ -113,23 +113,28 @@
   margin-bottom: auto;
 }
 
-/* Option Pill: NO circle at end */
+/* Option row.
+   --------------------------------------------------------------------------
+   Three states, one geometry. The border is always 1.5px and the radio mark
+   is always drawn, so nothing shifts by a pixel between unselected, hovered,
+   focused and selected — only colour changes. Focus is the selected/unselected
+   look plus a ring drawn OUTSIDE the box (box-shadow), never a size change. */
 .pillButton {
   display: flex;
   align-items: center;
+  gap: 14px;
   width: 100%;
   text-align: left;
   padding: 14px 22px;
-  /* One step lighter than the sunken token: the option rows should read as a
-     faint tint on the card, not as a filled tray. */
   background-color: var(--gl-color-surface-hover);
-  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  /* Transparent rather than absent: the selected state paints this same
+     1.5px, so the row never grows when it is chosen. */
+  border: 1.5px solid transparent;
   border-radius: 0;
-  /* Unselected options sit back in body grey; only the chosen one comes
-     forward, in accent. */
   color: var(--gl-color-text-body);
   font-size: 1.05rem;
   font-family: var(--gl-font-sans);
+  font-weight: var(--gl-weight-regular);
   cursor: pointer;
   outline: none;
   transition:
@@ -138,19 +143,47 @@
     color var(--gl-duration-fast) var(--gl-ease-standard);
 }
 
-.pillButton:hover:not(.pillButtonSelected) {
-  /* Rest is now the lighter hover tint, so hover steps DOWN to sunken to
-     stay distinguishable. */
-  background-color: var(--gl-color-surface-sunken);
-  border-color: var(--gl-color-border-interactive);
+/* The radio mark. Ring only when unselected; ring plus filled core when
+   selected — the core is an inset box-shadow so it needs no extra element. */
+.pillRadio {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--gl-radius-full);
+  border: 1.5px solid var(--gl-color-border-interactive);
+  background-color: transparent;
+  transition:
+    border-color var(--gl-duration-fast) var(--gl-ease-standard),
+    background-color var(--gl-duration-fast) var(--gl-ease-standard),
+    box-shadow var(--gl-duration-fast) var(--gl-ease-standard);
 }
 
-/* Selected option: Accent red border, accent red text, 15% opacity bg fill */
+.pillButton:hover:not(.pillButtonSelected) {
+  background-color: var(--gl-color-surface-sunken);
+}
+
+/* Keyboard focus: the row keeps whatever state it is in and gains a ring
+   outside its own box, so focused and unfocused rows are the same size and
+   the same colour. */
+.pillButton:focus-visible {
+  box-shadow: 0 0 0 2px var(--gl-color-surface-raised),
+    0 0 0 4px var(--gl-color-accent);
+}
+
+/* Selected: accent border, 15% accent fill, filled accent radio. The label
+   stays in the ordinary text colour — the mark and the fill carry the state,
+   so a chosen row reads no louder than the rest of the list. */
 .pillButtonSelected {
-  border: 1.5px solid var(--gl-color-accent);
-  color: var(--gl-color-accent);
+  border-color: var(--gl-color-accent);
   background-color: rgba(249, 66, 58, 0.15);
-  font-weight: var(--gl-weight-regular);
+  color: var(--gl-color-text-primary);
+}
+
+.pillButtonSelected .pillRadio {
+  border-color: var(--gl-color-accent);
+  background-color: var(--gl-color-accent);
+  /* The white gap between ring and core. */
+  box-shadow: inset 0 0 0 3px var(--gl-color-surface-raised);
 }
 
 /* --------------------------------------------------------------------------
