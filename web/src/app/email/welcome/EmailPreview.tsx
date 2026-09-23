@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
+import { AdminInviteEmail } from "./AdminInviteEmail";
 import { AdminOtpEmail } from "./AdminOtpEmail";
 import { PasswordResetOtpEmail } from "./PasswordResetOtpEmail";
 import { WelcomeEmail } from "./WelcomeEmail";
@@ -38,6 +39,7 @@ const TABS = [
   { id: "welcome", label: "Welcome / verify" },
   { id: "otp", label: "Password reset" },
   { id: "admin", label: "Super admin OTP" },
+  { id: "invite", label: "Admin invite" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -287,6 +289,7 @@ export function EmailPreview() {
           {active === "welcome" && <WelcomeEmail />}
           {active === "otp" && <PasswordResetOtpEmail />}
           {active === "admin" && <AdminOtpEmail />}
+          {active === "invite" && <AdminInviteEmail />}
         </EmailFrame>
 
         <p
