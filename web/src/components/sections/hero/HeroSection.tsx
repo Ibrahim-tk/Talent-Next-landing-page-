@@ -11,9 +11,20 @@ import styles from "./HeroSection.module.css";
 export interface HeroSectionProps {
   /** Where the hero's one action goes. Defaults to the homepage anchor. */
   ctaHref?: string;
+  /** What that action is called. Defaults to the homepage's own wording. */
+  ctaLabel?: string;
+  /**
+   * Render the label as written instead of upper-casing it — needed when the
+   * label carries the wordmark, where "TALENTnext" has its own casing.
+   */
+  ctaPreserveCase?: boolean;
 }
 
-export function HeroSection({ ctaHref = heroCopy.ctaHref }: HeroSectionProps = {}) {
+export function HeroSection({
+  ctaHref = heroCopy.ctaHref,
+  ctaLabel = heroCopy.ctaLabel,
+  ctaPreserveCase = false,
+}: HeroSectionProps = {}) {
   return (
     <GridModule
       id="hero"
@@ -44,8 +55,13 @@ export function HeroSection({ ctaHref = heroCopy.ctaHref }: HeroSectionProps = {
               the one action on the page the whole hero exists to deliver, and
               the accent is already carrying the headline's key word right
               above it. */}
-          <Button href={ctaHref} variant="accent" size="lg">
-            {heroCopy.ctaLabel}
+          <Button
+            href={ctaHref}
+            variant="accent"
+            size="lg"
+            className={ctaPreserveCase ? styles.ctaAsWritten : undefined}
+          >
+            {ctaLabel}
           </Button>
         </div>
       </div>

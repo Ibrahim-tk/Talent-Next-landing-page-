@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, GridModule, Highlight, Icon, Text } from "@gridline";
+import { GridModule, Icon, Text } from "@gridline";
 import { getQuizData } from "@/lib/quizStorage";
 import { builderResultsCopy } from "@/content/quizResults";
 
@@ -41,98 +41,109 @@ export function ResultsCard() {
         className={styles.root}
         aria-labelledby="results-heading"
       >
-        <div className={styles.bento}>
-          {/* ---- Identity — the headline tile ---------------------------- */}
-          <article className={`${styles.tile} ${styles.identity}`}>
-            <Text variant="display" as="h1" id="results-heading" className={styles.headline}>
-              {builderResultsCopy.headerGreeting(userName)}{" "}
-              <Highlight>{builderResultsCopy.archetype}</Highlight>
-            </Text>
-
-            <p className={styles.roleDescription}>{builderResultsCopy.roleDescription}</p>
-
-            <ul className={styles.traitChips}>
-              {builderResultsCopy.characteristics.map((item) => (
-                <li key={item} className={styles.traitChip}>
-                  <span className={styles.checkBadge}>
-                    <Icon name="check" size={12} />
-                  </span>
-                  <span className={styles.traitText}>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
-
-          {/* ---- Two stat chips ----------------------------------------- */}
-          <article className={`${styles.tile} ${styles.statInverse}`}>
-            <div className={styles.statLine}>
-              <span className={styles.statFigure}>
-                {builderResultsCopy.characteristics.length}
-              </span>
-              <p className={styles.statLabel}>{builderResultsCopy.traitStatLabel}</p>
-              <Icon name="trendUp" size={26} />
+        <div className={styles.poster}>
+          {/* ---- Left column: the verdict -------------------------------- */}
+          <aside className={styles.verdict}>
+            <div className={styles.bubble}>
+              <Text variant="display" as="h1" id="results-heading" className={styles.headline}>
+                <small className={styles.greeting}>
+                  {builderResultsCopy.headerGreeting(userName)}
+                </small>
+                <span className={styles.archetype}>{builderResultsCopy.archetype}</span>
+              </Text>
             </div>
-          </article>
 
-          <article className={`${styles.tile} ${styles.statSoft}`}>
-            <div className={styles.statLine}>
-              <span className={styles.statFigure}>{builderResultsCopy.careerIdeas.length}</span>
-              <p className={styles.statLabel}>{builderResultsCopy.careerStatLabel}</p>
-              <Icon name="shieldCheck" size={26} />
+            <div className={styles.verdictBody}>
+              <section className={styles.block}>
+                <h2 className={styles.blockTitle}>{builderResultsCopy.roleTitle}</h2>
+                <p className={styles.roleDescription}>{builderResultsCopy.roleDescription}</p>
+              </section>
+
+              <section className={styles.block}>
+                <h2 className={styles.blockTitle}>
+                  {builderResultsCopy.characteristicsTitle}
+                </h2>
+
+                <ul className={styles.traitList}>
+                  {builderResultsCopy.characteristics.map((item) => (
+                    <li key={item} className={styles.traitItem}>
+                      <span className={styles.checkBadge}>
+                        <Icon name="check" size={12} />
+                      </span>
+                      <span className={styles.traitText}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             </div>
-          </article>
 
-          {/* ---- Career ideas ------------------------------------------- */}
-          <article className={`${styles.tile} ${styles.careers}`}>
-            <Text variant="eyebrow" as="h2" className={styles.tileEyebrow}>
-              {builderResultsCopy.careerIdeasTitle}
-            </Text>
-
-            <ul className={styles.careerList}>
-              {builderResultsCopy.careerIdeas.map((idea) => (
-                <li key={idea.title} className={styles.careerItem}>
-                  <span className={styles.careerIconBadge}>
-                    <Icon name={idea.icon} size={15} />
-                  </span>
-                  <span className={styles.careerTitle}>{idea.title}</span>
+            <ul className={styles.assetButtons}>
+              {builderResultsCopy.actionTiles.slice(0, 2).map((tile) => (
+                <li key={tile.id} className={styles.assetButtonItem}>
+                  <button
+                    type="button"
+                    className={styles.assetButton}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <span className={styles.assetButtonIcon}>
+                      <Icon name={tile.icon} size={24} />
+                    </span>
+                    <span className={styles.assetButtonText}>
+                      {tile.line1} {tile.line2}
+                    </span>
+                  </button>
                 </li>
               ))}
             </ul>
-          </article>
+          </aside>
 
-          {/* ---- Next step headline ------------------------------------- */}
-          <article className={`${styles.tile} ${styles.nextStep}`}>
-            <Text variant="eyebrow" as="h2" className={styles.nextStepEyebrow}>
-              {builderResultsCopy.nextStepTitle}
-            </Text>
-            <p className={styles.nextStepLine}>{builderResultsCopy.nextStepDescription}</p>
-          </article>
+          {/* ---- Right column: where it leads ---------------------------- */}
+          <div className={styles.paths}>
+            <section className={styles.careers}>
+              <h2 className={styles.blockTitle}>{builderResultsCopy.careerIdeasTitle}</h2>
 
-          {/* ---- CTA ----------------------------------------------------- */}
-          <article className={`${styles.tile} ${styles.cta}`}>
-            <span className={styles.ctaTitle}>{builderResultsCopy.ctaEyebrow}</span>
+              <ul className={styles.careerList}>
+                {builderResultsCopy.careerIdeas.map((idea) => (
+                  <li key={idea.title} className={styles.careerItem}>
+                    <span className={styles.careerIcon}>
+                      <Icon name={idea.icon} size={18} />
+                    </span>
+                    <div className={styles.careerText}>
+                      <span className={styles.careerTitle}>{idea.title}</span>
+                      <span className={styles.careerDescription}>{idea.description}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
-            <ul className={styles.ctaAssets}>
-              {builderResultsCopy.actionTiles.map((tile) => (
-                <li key={tile.id} className={styles.ctaAsset}>
-                  <Icon name={tile.icon} size={16} />
-                  <span>
-                    {tile.line1} {tile.line2}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <section className={styles.nextStep}>
+              <h2 className={styles.blockTitle}>{builderResultsCopy.nextStepTitle}</h2>
+              <p className={styles.nextStepDescription}>
+                {builderResultsCopy.nextStepDescription}
+              </p>
 
-            <Button
-              variant="primary"
-              size="lg"
-              className={styles.ctaButton}
-              onClick={() => setIsModalOpen(true)}
-              iconAfter={<Icon name="arrowRight" size={16} />}
-            >
-              {builderResultsCopy.ctaLabel}
-            </Button>
-          </article>
+              <ul className={styles.actionTiles}>
+                {builderResultsCopy.actionTiles.slice(2).map((tile) => (
+                  <li key={tile.id} className={styles.actionTileItem}>
+                    <button
+                      type="button"
+                      className={`${styles.actionTile} ${styles.actionTilePrimary}`}
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      <Icon name={tile.icon} size={18} />
+                      <span className={styles.actionTileText}>
+                        {tile.line1} {tile.line2}
+                      </span>
+                      <span className={styles.actionTileArrow} aria-hidden="true">
+                        <Icon name="arrowRight" size={16} />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
         </div>
       </GridModule>
 

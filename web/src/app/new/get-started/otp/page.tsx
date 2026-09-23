@@ -16,7 +16,11 @@ export default function OtpPage() {
       </a>
 
       <GridCanvas>
-        <SiteHeader />
+        <SiteHeader
+          ctaHref="/new/get-started"
+          ctaLabel="Take TALENTnext Quiz"
+          homeHref="/new"
+        />
 
         <main id="main-content">
           <OtpCard />

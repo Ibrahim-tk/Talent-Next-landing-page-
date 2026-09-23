@@ -203,3 +203,10 @@
     );
   }
 }
+
+/* The wordmark keeps its own casing: "TALENTnext", not "TALENTNEXT". */
+/* Doubled so it outranks the Button's own uppercase rule regardless of the
+   order the two CSS modules land in the bundle. */
+.ctaAsWritten.ctaAsWritten {
+  text-transform: none;
+}
