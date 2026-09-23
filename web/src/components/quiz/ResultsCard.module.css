@@ -16,11 +16,11 @@
 
   /* A square lattice: the blueprint cell on both axes, with the frame height
      rounded down to a whole number of them so the grid never ends on a part
-     cell. Two cells of it frame the poster on every side. */
+     cell. Two cells frame the poster top and bottom, three each side. */
   --results-cell: var(--gl-blueprint-cell);
   height: calc(100svh - var(--gl-header-height));
   height: round(down, calc(100svh - var(--gl-header-height)), var(--results-cell));
-  padding: calc(2 * var(--results-cell));
+  padding: calc(2 * var(--results-cell)) calc(3 * var(--results-cell));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--results-cell) var(--results-cell);
   background-position: -1px -1px;
@@ -57,8 +57,11 @@
        0.5u  between siblings in a list
        0.75u from a heading to the group it labels
        1u    from a group to the next thing
-       1.5u  the panel inset  */
+       1.5u  the panel inset
+     `--tighten` comes off every vertical step, closing the poster up when it
+     has a fixed viewport to fit inside. */
   --u: clamp(0.875rem, 1.5vw, 1.5rem);
+  --tighten: 4px;
 }
 
 /* --------------------------------------------------------------------------
@@ -86,7 +89,7 @@
   background-size: 250%;
   background-position: 0% 42%;
   background-repeat: no-repeat;
-  padding: calc(1.5 * var(--u));
+  padding: calc(1.5 * var(--u) - var(--tighten)) calc(1.5 * var(--u));
 }
 
 .headline {
@@ -121,22 +124,23 @@
   overflow-y: auto;
   position: relative;
   z-index: 1;
-  padding: calc(1.5 * var(--u));
+  padding: calc(1.5 * var(--u) - var(--tighten)) calc(1.5 * var(--u));
   display: flex;
   flex-direction: column;
-  gap: calc(1.5 * var(--u));
+  gap: calc(1.5 * var(--u) - var(--tighten));
 }
 
 /* --------------------------------------------------------------------------
    Shared section heading
    -------------------------------------------------------------------------- */
 .blockTitle {
-  margin: 0 0 calc(0.75 * var(--u)) 0;
-  font-size: 25px;
-  font-weight: var(--gl-weight-regular);
-  letter-spacing: -0.005em;
-  line-height: 1.15;
-  color: var(--gl-color-text-primary);
+  margin: 0 0 calc(0.75 * var(--u) - var(--tighten)) 0;
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--gl-tracking-wide);
+  line-height: 1.2;
+  color: var(--gl-color-text-secondary);
 }
 
 .block {
@@ -145,14 +149,14 @@
 }
 
 .verdictBody .blockTitle {
-  color: var(--gl-color-text-inverse);
+  color: var(--gl-color-text-inverse-secondary);
 }
 
 .roleDescription {
   margin: 0;
   font-size: 16px;
   line-height: 1.45;
-  color: var(--gl-color-text-inverse-secondary);
+  color: var(--gl-color-text-inverse);
 }
 
 /* Characteristics */
@@ -162,7 +166,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: calc(0.5 * var(--u));
+  gap: calc(0.5 * var(--u) - var(--tighten));
 }
 
 .traitItem {
@@ -217,7 +221,7 @@
   font-family: inherit;
   font-size: 15px;
   cursor: pointer;
-  padding: var(--u);
+  padding: calc(var(--u) - var(--tighten)) var(--u);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -267,21 +271,20 @@
 
 .careers,
 .nextStep {
-  padding: calc(1.5 * var(--u));
+  padding: calc(1.5 * var(--u) - var(--tighten)) calc(1.5 * var(--u));
 }
 
 .nextStep {
-  background-color: var(--gl-color-surface-raised);
+  background-color: var(--gl-color-surface-sunken);
 }
 
 
-/* Both halves sit on the same subtle grey; the hairline is what separates
-   them. */
+/* White above, the subtle grey below; the hairline sits on the seam. */
 .careers {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  background-color: var(--gl-color-surface-sunken);
+  background-color: var(--gl-color-surface-raised);
   border-bottom: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
 }
 
@@ -291,7 +294,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--u);
+  gap: calc(var(--u) - var(--tighten));
 }
 
 .careerItem {
@@ -310,6 +313,7 @@
   flex-shrink: 0;
   height: calc(16px * 1.35);
   margin-top: -1px;
+  width: 16px;
 }
 
 /* Title over description: the same type, stacked, so the pair reads as a
@@ -346,7 +350,7 @@
 .actionTiles {
   list-style: none;
   padding: 0;
-  margin: var(--u) 0 0 0;
+  margin: calc(var(--u) - var(--tighten)) 0 0 0;
   display: flex;
   flex-direction: column;
   gap: var(--gl-space-3);
@@ -504,6 +508,10 @@
   font-size: 1.05rem;
 }
 
+.emailFollowUp {
+  margin-top: var(--gl-space-5);
+}
+
 @keyframes modalFadeIn {
   from {
     opacity: 0;
@@ -538,9 +546,13 @@
     display: none;
   }
 
+  /* Stacked on a scrolling page, the poster has room to breathe: a larger
+     unit and none of the vertical tightening the fixed frame needed. */
   .poster {
     grid-template-columns: minmax(0, 1fr);
     overflow: visible;
+    --u: 1.25rem;
+    --tighten: 0px;
   }
 
   .careers {

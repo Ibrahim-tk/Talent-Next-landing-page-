@@ -1,11 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GridModule, Icon, Text } from "@gridline";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight02Icon,
+  Book02Icon,
+  Briefcase01Icon,
+  BubbleChatIcon,
+  Cancel01Icon,
+  FlashIcon,
+  Grid02Icon,
+  Mail01Icon,
+  ShieldCheckIcon,
+  Tick02Icon,
+  TruckIcon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
+import { GridModule, Text } from "@gridline";
+import type { IconName } from "@gridline";
 import { getQuizData } from "@/lib/quizStorage";
 import { builderResultsCopy } from "@/content/quizResults";
 
 import styles from "./ResultsCard.module.css";
+
+/**
+ * The content still names icons in Gridline's vocabulary; this maps those
+ * names onto the Hugeicons free set (Stroke Rounded), so the copy does not
+ * have to know which icon library renders it.
+ */
+const hugeicon: Record<string, typeof TruckIcon> = {
+  truck: TruckIcon,
+  shieldCheck: ShieldCheckIcon,
+  user: UserIcon,
+  bolt: FlashIcon,
+  gridSquares: Grid02Icon,
+  ledger: Book02Icon,
+  briefcase: Briefcase01Icon,
+  messages: BubbleChatIcon,
+};
+
+function iconFor(name: IconName) {
+  return hugeicon[name] ?? Grid02Icon;
+}
 
 export function ResultsCard() {
   const [userName, setUserName] = useState("TEST");
@@ -68,7 +104,7 @@ export function ResultsCard() {
                   {builderResultsCopy.characteristics.map((item) => (
                     <li key={item} className={styles.traitItem}>
                       <span className={styles.checkBadge}>
-                        <Icon name="check" size={12} />
+                        <HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
                       </span>
                       <span className={styles.traitText}>{item}</span>
                     </li>
@@ -86,7 +122,7 @@ export function ResultsCard() {
                     onClick={() => setIsModalOpen(true)}
                   >
                     <span className={styles.assetButtonIcon}>
-                      <Icon name={tile.icon} size={24} />
+                      <HugeiconsIcon icon={iconFor(tile.icon)} size={20} strokeWidth={1.5} />
                     </span>
                     <span className={styles.assetButtonText}>
                       {tile.line1} {tile.line2}
@@ -106,7 +142,7 @@ export function ResultsCard() {
                 {builderResultsCopy.careerIdeas.map((idea) => (
                   <li key={idea.title} className={styles.careerItem}>
                     <span className={styles.careerIcon}>
-                      <Icon name={idea.icon} size={18} />
+                      <HugeiconsIcon icon={iconFor(idea.icon)} size={16} strokeWidth={1.5} />
                     </span>
                     <div className={styles.careerText}>
                       <span className={styles.careerTitle}>{idea.title}</span>
@@ -131,12 +167,12 @@ export function ResultsCard() {
                       className={`${styles.actionTile} ${styles.actionTilePrimary}`}
                       onClick={() => setIsModalOpen(true)}
                     >
-                      <Icon name={tile.icon} size={18} />
+                      <HugeiconsIcon icon={iconFor(tile.icon)} size={16} strokeWidth={1.5} />
                       <span className={styles.actionTileText}>
                         {tile.line1} {tile.line2}
                       </span>
                       <span className={styles.actionTileArrow} aria-hidden="true">
-                        <Icon name="arrowRight" size={16} />
+                        <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={1.5} />
                       </span>
                     </button>
                   </li>
@@ -165,11 +201,11 @@ export function ResultsCard() {
               onClick={() => setIsModalOpen(false)}
               aria-label="Close modal"
             >
-              <Icon name="close" size={18} />
+              <HugeiconsIcon icon={Cancel01Icon} size={18} strokeWidth={1.5} />
             </button>
 
             <div className={styles.emailIconBadge}>
-              <Icon name="mail" size={32} />
+              <HugeiconsIcon icon={Mail01Icon} size={26} strokeWidth={1.5} />
             </div>
 
             <Text variant="headingLg" as="h2" id="modal-email-title" className={styles.emailTitle}>
@@ -177,10 +213,11 @@ export function ResultsCard() {
             </Text>
 
             <p className={styles.emailBody}>
-              Your full diagnostic dossier and next steps have been sent to
-              <br />
+              Your full diagnostic dossier and next steps have been sent to{" "}
               <strong>{email}</strong>.
-              <br />
+            </p>
+
+            <p className={`${styles.emailBody} ${styles.emailFollowUp}`}>
               Please check your inbox to access your results.
             </p>
           </div>

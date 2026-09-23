@@ -2,7 +2,7 @@
   "name": "talentnext-web",
   "version": "1.0.0",
   "private": true,
-  "description": "TALENTnext marketing site \u2014 Next.js App Router, built on the Gridline design system.",
+  "description": "TALENTnext marketing site — Next.js App Router, built on the Gridline design system.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@hugeicons/core-free-icons": "^4.3.5",
+    "@hugeicons/react": "^1.1.10",
     "gsap": "^3.13.0",
     "next": "^15.5.0",
     "react": "^19.1.0",

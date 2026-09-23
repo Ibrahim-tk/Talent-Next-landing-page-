@@ -1,7 +1,7 @@
 /* ==========================================================================
    QuizFlow — Multi-step Get Started Quiz
    --------------------------------------------------------------------------
-   - Blueprint lattice background with 2x2 grid cell padding on all sides.
+   - Blueprint lattice background: two cells top and bottom, three each side.
    - White card has NO border-radius and NO shadow.
    - Card height is fixed across all questions (11 blueprint grid cells).
    - Options: no circle icon; selected option has accent red border, accent red
@@ -10,8 +10,9 @@
 
 .section {
   width: 100%;
-  /* 2x2 grid cells padding from all sides: locks card boundaries exactly onto gridlines */
-  padding: calc(2 * var(--gl-blueprint-cell)) calc(2 * var(--gl-blueprint-cell-x));
+  /* Two cells top and bottom, three each side: locks the card's boundaries
+     exactly onto gridlines while drawing it in from the canvas edges. */
+  padding: calc(2 * var(--gl-blueprint-cell)) calc(3 * var(--gl-blueprint-cell-x));
   background-image: var(--gl-gradient-blueprint);
   background-size: var(--gl-blueprint-cell-x) var(--gl-blueprint-cell);
   background-position: -1px -1px;
