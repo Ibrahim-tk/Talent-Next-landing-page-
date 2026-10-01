@@ -71,10 +71,12 @@
 }
 
 .logo {
-  font-size: 34px;
-  line-height: 1;
-  font-weight: 800;
-  color: var(--rose);
+  height: 56px;
+  margin: -8px 0;
+  width: auto;
+  /* The supplied PNG has a white background; multiply drops the white into
+     the grey top bar so only the mark shows. */
+  mix-blend-mode: multiply;
 }
 
 .brandTag {

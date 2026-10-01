@@ -151,8 +151,8 @@ export function Inbox() {
         <div className={styles.brandCell}>
           <IconButton icon={Menu01Icon} label="Main menu" />
           <Link href="/" className={styles.brand}>
-            <span className={styles.logo} aria-hidden="true">G</span>
-            <span className={styles.brandTag}>Mail</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/mail-logo.png" alt="Mail" className={styles.logo} />
           </Link>
         </div>
 
