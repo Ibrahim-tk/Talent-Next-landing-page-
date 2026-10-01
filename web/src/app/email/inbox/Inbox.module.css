@@ -1,0 +1,638 @@
+/* Webmail metrics: 64px top bar, 80px app rail, 256px folder list, a white
+   rounded pane on a cool grey canvas, 40px rows and a 56px side panel.
+   Highlights are a light baby blue. */
+.client {
+  --ink: #1f1f1f;
+  --muted: #444746;
+  --faint: #5e5e5e;
+  --rule: #f1f3f4;
+  --canvas: #f6f8fc;
+  --read: #f2f6fc;
+  --hover: rgba(68, 71, 70, 0.08);
+  --rose: #f9423a;
+  --blue: #c2e7ff;
+  --blue-soft: #d3e3fd;
+  display: grid;
+  grid-template-columns: 80px 256px minmax(0, 1fr) 56px;
+  grid-template-rows: 64px minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.client button {
+  font: inherit;
+  color: inherit;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  background: var(--hover);
+}
+
+/* ---- Top bar ---------------------------------------------------------- */
+.topBar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.brandCell {
+  width: 328px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 8px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--muted);
+}
+
+.logo {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--rose);
+}
+
+.brandTag {
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.search {
+  flex: 1;
+  max-width: 720px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 8px 0 16px;
+  border-radius: 24px;
+  background: #e9eef6;
+  color: var(--muted);
+}
+
+.search:focus-within {
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(65, 69, 73, 0.3), 0 1px 3px 1px rgba(65, 69, 73, 0.15);
+}
+
+.search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+}
+
+.searchFilter {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+
+.topActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 40px;
+  padding: 0 12px 0 18px;
+  margin-right: 8px;
+  border-radius: 20px;
+  background: #e9eef6;
+  color: var(--muted);
+}
+
+.statusDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1e8e3e;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  margin-left: 8px;
+  padding: 0 4px 0 16px;
+  border: 1px solid #c4c7c5;
+  border-radius: 24px;
+}
+
+.accountLogo {
+  height: 18px;
+  width: auto;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--rose);
+  color: #fff;
+  font-size: 15px;
+}
+
+/* ---- App rail --------------------------------------------------------- */
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.railItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  font-size: 12px !important;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.railIcon {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+}
+
+.railItem:hover .railIcon {
+  background: var(--hover);
+}
+
+.railActive {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.railActive .railIcon {
+  background: var(--blue-soft);
+}
+
+.railBadge {
+  position: absolute;
+  top: -6px;
+  right: 2px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 9px;
+  background: var(--rose);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ---- Folders ---------------------------------------------------------- */
+.sidebar {
+  overflow-y: auto;
+  padding: 8px 16px 0 0;
+}
+
+.compose {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  height: 56px;
+  margin: 0 0 16px 8px;
+  padding: 0 24px 0 18px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--blue);
+  font-size: 15px !important;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.compose:hover {
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+}
+
+.folder {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 12px 0 0;
+  border: 0;
+  border-radius: 0 16px 16px 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.folder:hover {
+  background: var(--hover);
+}
+
+.folderCaret {
+  width: 8px;
+  margin-left: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.folderActive,
+.folderActive:hover {
+  background: var(--blue-soft);
+  font-weight: 700;
+}
+
+.count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-left: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ---- Main pane -------------------------------------------------------- */
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.toolbar {
+  flex-shrink: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 12px;
+}
+
+.selectAll {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  margin-right: 8px;
+}
+
+.checkbox,
+.star {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: #9aa0a6;
+  cursor: pointer;
+}
+
+.checkbox:hover,
+.star:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.starOn,
+.starOn:hover {
+  color: #f4b400;
+}
+
+.toolDivider {
+  width: 1px;
+  height: 20px;
+  margin: 0 8px;
+  background: #dadce0;
+}
+
+.pager {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.pager > :first-of-type {
+  margin-left: 16px;
+}
+
+.keyboard {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 12px;
+  color: var(--muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.row {
+  height: 40px;
+  display: grid;
+  grid-template-columns: 32px 32px 200px minmax(0, 1fr) 80px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 12px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--read);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.row:hover {
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.unread {
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.rowChecked {
+  background: #c2dbff;
+}
+
+.rowSender {
+  padding-left: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rowBody {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rowSnippet {
+  font-weight: 400;
+  color: var(--faint);
+}
+
+.rowTime {
+  text-align: right;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---- Reading view ----------------------------------------------------- */
+.reader {
+  overflow-y: auto;
+  padding-bottom: 32px;
+}
+
+.subjectRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 8px 72px;
+}
+
+.subject {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.chip {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ddd;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.subjectActions {
+  margin-left: auto;
+}
+
+.meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 16px 16px 16px;
+}
+
+.senderAvatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: #fff;
+  font-size: 16px;
+}
+
+.metaText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px;
+}
+
+.address {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.metaRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.body {
+  padding: 0 16px 0 72px;
+}
+
+.plainBody {
+  margin: 0;
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.replyRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.replyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 24px 0 16px;
+  border: 1px solid #747775;
+  border-radius: 20px;
+  background: #fff;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.replyButton:hover {
+  background: var(--hover);
+}
+
+/* ---- Side panel ------------------------------------------------------- */
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+/* ---- Narrow screens --------------------------------------------------- */
+@media (max-width: 1100px) {
+  .client {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+
+  .sidebar,
+  .sidePanel,
+  .topActions > :not(.account) {
+    display: none;
+  }
+
+  .brandCell {
+    width: auto;
+    margin-right: 16px;
+  }
+
+  .pane {
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .client {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .rail,
+  .brandTag,
+  .accountLogo {
+    display: none;
+  }
+
+  .pane {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .row {
+    height: auto;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    padding: 10px 16px 10px 8px;
+  }
+
+  .row .checkbox {
+    display: none;
+  }
+
+  .rowSender {
+    padding-left: 0;
+  }
+
+  .rowBody {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .star {
+    grid-row: 1 / 3;
+  }
+
+  .pager > :first-of-type,
+  .keyboard {
+    display: none;
+  }
+
+  .subjectRow,
+  .body {
+    padding-left: 16px;
+  }
+}
+
+/* The template rendered in place. It brings its own inline styles; this only
+   gives it the width an inbox reading pane would. */
+.emailSheet {
+  max-width: 720px;
+  margin: 0 auto;
+}

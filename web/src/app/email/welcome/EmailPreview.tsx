@@ -5,7 +5,9 @@ import { createPortal } from "react-dom";
 
 import { AdminInviteEmail } from "./AdminInviteEmail";
 import { AdminOtpEmail } from "./AdminOtpEmail";
+import { CourseEnrolledEmail } from "./CourseEnrolledEmail";
 import { PasswordResetOtpEmail } from "./PasswordResetOtpEmail";
+import { TalentLevelEmail } from "./TalentLevelEmail";
 import { WelcomeEmail } from "./WelcomeEmail";
 
 /**
@@ -40,6 +42,8 @@ const TABS = [
   { id: "otp", label: "Password reset" },
   { id: "admin", label: "Super admin OTP" },
   { id: "invite", label: "Admin invite" },
+  { id: "level", label: "Talent Level" },
+  { id: "course", label: "Course enrolled" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -78,59 +82,65 @@ const ROSE = "#F9423A";
  * iframe will not size itself to its content — left alone it is 150px tall
  * with its own scrollbar, which is an inbox nobody has.
  */
-function EmailFrame({ width, children }: { width: number; children: ReactNode }) {
+/* The frame's own document: just a reset, so an email cannot inherit a single
+   style from the page hosting the preview — a template that only looks right
+   because the site's reset is in scope would look wrong in every real inbox. */
+const FRAME_DOC =
+  '<!doctype html><html><head><meta charset="utf-8" />' +
+  '<meta name="viewport" content="width=device-width, initial-scale=1" />' +
+  "<style>html,body{margin:0;padding:0;background:#F8F9FA;}" +
+  /* No scrollbar inside the frame: it is grown to its content, so an inner
+     scroller would be a second bar scrolling the same pixels. */
+  "html{overflow:hidden;}" +
+  /* Matches the site's own rendering; the sheet declares this for itself too
+     (see EmailShell), because a real inbox has no reset of ours in scope. */
+  "body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}</style>" +
+  "</head><body></body></html>";
+
+export function EmailFrame({ width, children }: { width: number; children: ReactNode }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [body, setBody] = useState<HTMLElement | null>(null);
   const [height, setHeight] = useState(600);
 
-  useEffect(() => {
-    const frame = frameRef.current;
-    const doc = frame?.contentDocument;
-    if (!frame || !doc) return;
+  /* The frame is given its whole document up front through `srcDoc` and only
+     touched once that document has loaded. Writing into the frame from an
+     effect raced the frame's own about:blank load — sometimes the email was
+     written into a document that was then thrown away, leaving a blank or
+     collapsed preview. `onLoad` fires for the srcDoc document itself, so
+     there is nothing left to race. */
+  const observerRef = useRef<ResizeObserver | null>(null);
 
-    /* A fresh document each time: the only things in it are the reset below
-       and whatever the portal puts there, so an email cannot inherit a single
-       style from the page hosting the preview. That isolation is the second
-       reason for the iframe — a template that only looks right because the
-       site's reset is in scope would look wrong in every real inbox. */
-    doc.open();
-    doc.write(
-      '<!doctype html><html><head><meta charset="utf-8" />' +
-        '<meta name="viewport" content="width=device-width, initial-scale=1" />' +
-        "<style>html,body{margin:0;padding:0;background:#F8F9FA;}" +
-        /* No scrollbar inside the frame. The frame is grown to its content by
-           the observer below, so an inner scroller would be a second bar
-           scrolling the same pixels the page already scrolls — and it would
-           steal the wheel the moment the pointer crossed into the preview. */
-        "html{overflow:hidden;}" + 
-        /* The preview frame matches the site's own rendering, so what you
-           judge the weight against here is what the site shows. The sheet
-           declares this for itself too — see EmailShell — because a real
-           inbox has no reset of ours in scope. */
-        "body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}</style>" +
-        "</head><body></body></html>",
-    );
-    doc.close();
-
-    setBody(doc.body);
+  const handleLoad = () => {
+    const doc = frameRef.current?.contentDocument;
+    if (!doc?.body) return;
+    observerRef.current?.disconnect();
 
     /* Measured off the body, not the documentElement: with `overflow: hidden`
        on the html box its scrollHeight collapses to the viewport height the
        iframe currently has, which would latch the frame at whatever size it
        was first given. The body reports the content. */
-    const measure = () => setHeight(doc.body.scrollHeight);
-
+    const measure = () => setHeight(Math.max(doc.body.scrollHeight, 1));
     const observer = new ResizeObserver(measure);
     observer.observe(doc.body);
-    measure();
+    observerRef.current = observer;
 
-    return () => observer.disconnect();
+    setBody(doc.body);
+    measure();
+  };
+
+  useEffect(() => {
+    /* If the frame finished loading before React attached onLoad, pick it up. */
+    if (frameRef.current?.contentDocument?.readyState === "complete") handleLoad();
+    return () => observerRef.current?.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <iframe
       ref={frameRef}
       title="Email preview"
+      srcDoc={FRAME_DOC}
+      onLoad={handleLoad}
       /* Belt and braces with the `overflow: hidden` inside: a couple of
          clients-of-the-preview (Safari) will still paint a bar for a frame
          that is a pixel short of its content. */
@@ -290,6 +300,8 @@ export function EmailPreview() {
           {active === "otp" && <PasswordResetOtpEmail />}
           {active === "admin" && <AdminOtpEmail />}
           {active === "invite" && <AdminInviteEmail />}
+          {active === "level" && <TalentLevelEmail />}
+          {active === "course" && <CourseEnrolledEmail />}
         </EmailFrame>
 
         <p

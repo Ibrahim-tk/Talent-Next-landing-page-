@@ -37,10 +37,10 @@ export const homeAnchors = {
 } as const;
 
 export const site = {
-  name: "Talentnext",
+  name: "TALENTnext",
   logoBlack: "/img/talentnext-logo-black.svg",
   logoWhite: "/img/talentnext-logo-white.svg",
-  title: "Talentnext — Uncover the Talent You Already Have",
+  title: "TALENTnext — Uncover the Talent You Already Have",
   description:
     "What you do next may start with what you're already good at. Through a 30-minute conversation with a Talent Agent, you'll uncover skills you may not recognize in yourself.",
   ctaLabel: "Get started",

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -124,8 +125,13 @@ export function ResultsCard() {
                     <span className={styles.assetButtonIcon}>
                       <HugeiconsIcon icon={iconFor(tile.icon)} size={20} strokeWidth={1.5} />
                     </span>
-                    <span className={styles.assetButtonText}>
-                      {tile.line1} {tile.line2}
+                    <span className={styles.assetButtonRow}>
+                      <span className={styles.assetButtonText}>
+                        {tile.line1} {tile.line2}
+                      </span>
+                      <span className={styles.assetButtonArrow} aria-hidden="true">
+                        <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={1.5} />
+                      </span>
                     </span>
                   </button>
                 </li>
@@ -220,6 +226,11 @@ export function ResultsCard() {
             <p className={`${styles.emailBody} ${styles.emailFollowUp}`}>
               Please check your inbox to access your results.
             </p>
+
+            <Link href="/email/inbox" className={styles.goToEmail}>
+              Go to email
+              <HugeiconsIcon icon={ArrowRight02Icon} size={14} strokeWidth={1.5} />
+            </Link>
           </div>
         </div>
       )}

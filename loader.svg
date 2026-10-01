@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 100 100" fill="#000000" role="status" aria-label="Loading">
+  <title>TalentNext Loader</title>
+  <!-- STANDALONE TALENTNEXT LOADER
+       Converted from loader.html. The 0–100 viewBox maps the clip-path percentages 1:1.
+       Duration 2.4s; every keyframe segment eases with cubic-bezier(0.4, 0, 0.2, 1). -->
+
+  <!-- Blade A: delay 0s -->
+  <path d="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z">
+    <animate attributeName="d" dur="2.4s" begin="0s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M62.21 35.22 L51.67 35.48 L64.52 49.87 L24.68 95.12 L35.22 95.12 L75.06 50.13 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z"/>
+    <animate attributeName="opacity" dur="2.4s" begin="0s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="1;1;1;0;0;1"/>
+  </path>
+
+  <!-- Blade B: delay 2.4s × -0.333333 -->
+  <path d="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z">
+    <animate attributeName="d" dur="2.4s" begin="-0.8s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M62.21 35.22 L51.67 35.48 L64.52 49.87 L24.68 95.12 L35.22 95.12 L75.06 50.13 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z"/>
+    <animate attributeName="opacity" dur="2.4s" begin="-0.8s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="1;1;1;0;0;1"/>
+  </path>
+
+  <!-- Blade C: delay 2.4s × -0.666667 -->
+  <path d="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z">
+    <animate attributeName="d" dur="2.4s" begin="-1.6s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M62.21 35.22 L51.67 35.48 L64.52 49.87 L24.68 95.12 L35.22 95.12 L75.06 50.13 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M57.07 4.37 L46.79 4.37 L86.38 49.87 L64.78 74.55 L75.58 74.55 L96.92 49.61 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z;
+              M29.56 22.88 L18.77 23.14 L42.67 49.87 L2.57 95.12 L13.37 95.12 L53.21 49.87 Z"/>
+    <animate attributeName="opacity" dur="2.4s" begin="-1.6s" repeatCount="indefinite"
+      calcMode="spline" keyTimes="0;0.33;0.66;0.88;0.89;1"
+      keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
+      values="1;1;1;0;0;1"/>
+  </path>
+</svg>

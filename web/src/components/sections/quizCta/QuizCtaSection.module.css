@@ -4,7 +4,7 @@
    `.bleed` breaks out to the full viewport width (100vw) so the dramatic
    textured image (/assets/form_gradient.png) runs edge-to-edge.
    The content sits dead centre: a large white display headline and the red
-   "Take Talentnext" action button.
+   "Take TALENTnext" action button.
    ========================================================================== */
 
 .bleed {

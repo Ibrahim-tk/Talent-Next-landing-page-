@@ -25,7 +25,7 @@ import {
 /* Placeholders the sending provider substitutes. */
 const recipientEmail = "dsngr.og@company.com";
 const username = "{username}";
-const setPasswordUrl = "https://app.talentnext.com/set-password?token=INVITE_TOKEN";
+const setPasswordUrl = "https://tn-orcin.vercel.app/candidate#signup/create";
 
 export function WelcomeEmail() {
   return (

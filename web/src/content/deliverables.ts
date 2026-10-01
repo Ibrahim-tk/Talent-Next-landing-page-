@@ -120,16 +120,16 @@ export const deliverableStages: readonly DeliverableStage[] = [
 export const deliverablesCopy = {
   heading: "Know Where You Stand and What to Do Next.",
   description:
-    "This is where Talentnext goes beyond a conversation. You’ll get specific results from your interview and something you can actually use afterward.",
+    "This is where TALENTnext goes beyond a conversation. You’ll get specific results from your interview and something you can actually use afterward.",
 } as const;
 
 export const seeItInActionCopy = {
   // Split for the accent, the same way `howItWorksCopy` carries its own
   // heading. The break falls mid-word — "Talent" is accented and "next"
   // is not — so `headingAfter` deliberately opens with no leading space:
-  // the two must still render as the single word "Talentnext".
+  // the two must still render as the single word "TALENTnext".
   headingBefore: "See What a ",
-  headingAccent: "Talent",
+  headingAccent: "TALENT",
   headingAfter: "next Conversation Is Really Like",
   description:
     "Wondering what you’ll be asked? Watch part of a real conversation with a Talent Agent and see for yourself.",
@@ -143,13 +143,13 @@ export const seeItInActionCopy = {
      from YouTube until someone actually presses play. */
   videoId: "WgZ570iSFbY",
   videoTitle:
-    "Excerpt from a Talentnext conversation between a candidate and a Talent Agent",
+    "Excerpt from a TALENTnext conversation between a candidate and a Talent Agent",
   /* Labels the play control, so it has to name the action and not just the
      picture — it replaces the cover's own alt text for anyone using a
      screen reader, since an accessible name on the button wins over the
      content inside it. */
   playLabel:
-    "Play the video — part of a real Talentnext conversation between a candidate and a Talent Agent",
+    "Play the video — part of a real TALENTnext conversation between a candidate and a Talent Agent",
   image: "/assets/video-cover.jpg",
 } as const;
 

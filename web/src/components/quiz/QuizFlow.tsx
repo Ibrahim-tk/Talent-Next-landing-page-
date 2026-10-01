@@ -1,10 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
 import { Button, Icon, ProgressTrack } from "@gridline";
 import { quizQuestions } from "@/content/quizQuestions";
+import { detectCountry, normalisePhone, phoneCountries } from "@/content/phoneCountries";
 import { saveQuizData, getQuizData, clearQuizData } from "@/lib/quizStorage";
+
+import {
+  validateContact,
+  validateField,
+  type ContactErrors,
+  type ContactFields,
+} from "@/lib/contactValidation";
 
 import styles from "./QuizFlow.module.css";
 
@@ -15,14 +23,24 @@ export function QuizFlow() {
      the OTP step should not retype them. The answers are not: the quiz
      always opens on question 1, and restoring them meant every question
      arrived with last attempt's choice already selected. Entering the flow
-     starts a fresh set of answers. */
+     starts a fresh set of answers — unless the OTP step sent the person
+     back one step (?step=details), which reopens the details form with the
+     answers kept, so Back keeps working one step at a time. */
   const initialData = typeof window !== "undefined" ? getQuizData() : null;
+  const resuming =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("step") === "details";
 
-  const [isFormStep, setIsFormStep] = useState(false);
-  const [questionIndex, setQuestionIndex] = useState<number>(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [isFormStep, setIsFormStep] = useState(resuming);
+  const [questionIndex, setQuestionIndex] = useState<number>(
+    resuming ? quizQuestions.length - 1 : 0,
+  );
+  const [answers, setAnswers] = useState<Record<string, string>>(
+    resuming ? initialData?.answers ?? {} : {},
+  );
 
   useEffect(() => {
+    if (resuming) return;
     clearQuizData();
     if (initialData?.contact) saveQuizData({ contact: initialData.contact });
     // Once, when the flow is entered.
@@ -37,6 +55,10 @@ export function QuizFlow() {
     postalCode: initialData?.contact.postalCode || "",
   });
 
+  /* Errors show once a field has been left, or after a submit attempt. */
+  const [errors, setErrors] = useState<ContactErrors>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof ContactFields, boolean>>>({});
+
   const totalQuestions = quizQuestions.length; // 12
   const currentQuestion = quizQuestions[questionIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
@@ -46,9 +68,19 @@ export function QuizFlow() {
     const updated = { ...answers, [currentQuestion.id]: value };
     setAnswers(updated);
     saveQuizData({ answers: updated });
+    setNeedsAnswer(false);
   };
 
+  /* Next stays clickable, but it only advances once an option is chosen;
+     without one it asks for a choice instead. */
+  const [needsAnswer, setNeedsAnswer] = useState(false);
+
   const handleNextQuestion = () => {
+    if (!currentAnswer) {
+      setNeedsAnswer(true);
+      return;
+    }
+    setNeedsAnswer(false);
     if (questionIndex < totalQuestions - 1) {
       setQuestionIndex((prev) => prev + 1);
     } else {
@@ -57,6 +89,7 @@ export function QuizFlow() {
   };
 
   const handlePrevQuestion = () => {
+    setNeedsAnswer(false);
     if (isFormStep) {
       setIsFormStep(false);
     } else if (questionIndex > 0) {
@@ -65,17 +98,57 @@ export function QuizFlow() {
   };
 
   const handleContactChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let { value } = e.target;
+    /* Phone takes digits with one leading +; postal code takes digits only. */
+    if (name === "phone") value = normalisePhone(value);
+    if (name === "postalCode") value = value.replace(/\D/g, "");
     const updated = { ...contact, [name]: value };
     setContact(updated);
     saveQuizData({ contact: updated });
+    const key = name as keyof ContactFields;
+    if (touched[key]) setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
   };
 
-  const handleContactSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!contact.firstName || !contact.email || !contact.phone) return;
+  const handleContactBlur = (e: FocusEvent<HTMLInputElement>) => {
+    const key = e.target.name as keyof ContactFields;
+    const value = key === "email" ? contact.email.trim() : contact[key];
+    setTouched((prev) => ({ ...prev, [key]: true }));
+    setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
+  };
 
-    saveQuizData({ answers, contact });
+  const country = detectCountry(contact.phone);
+
+  const handleCountrySelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    const next = phoneCountries.find((c) => c.iso === e.target.value);
+    if (!next) return;
+    const rest = country ? contact.phone.slice(country.dial.length) : contact.phone.replace(/^\+/, "");
+    const updated = { ...contact, phone: normalisePhone(next.dial + rest) };
+    setContact(updated);
+    saveQuizData({ contact: updated });
+    setTouched((prev) => ({ ...prev, phone: true }));
+    setErrors((prev) => ({ ...prev, phone: validateField("phone", updated.phone) }));
+  };
+
+  const handleContactSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const cleaned: ContactFields = {
+      ...contact,
+      firstName: contact.firstName.trim().replace(/\s+/g, " "),
+      lastName: contact.lastName.trim().replace(/\s+/g, " "),
+      email: contact.email.trim().toLowerCase(),
+    };
+    const found = validateContact(cleaned);
+    setErrors(found);
+    setTouched({ firstName: true, lastName: true, email: true, phone: true, postalCode: true });
+    const firstInvalid = (Object.keys(cleaned) as (keyof ContactFields)[]).find((k) => found[k]);
+    if (firstInvalid) {
+      e.currentTarget.querySelector<HTMLInputElement>(`#${firstInvalid}`)?.focus();
+      return;
+    }
+
+    setContact(cleaned);
+    saveQuizData({ answers, contact: cleaned });
     router.push("/new/get-started/otp");
   };
 
@@ -132,6 +205,12 @@ export function QuizFlow() {
               })}
             </div>
 
+            {needsAnswer && (
+              <p className={styles.fieldError} role="alert">
+                Select an option to continue.
+              </p>
+            )}
+
             {/* Previous and Next buttons pinned to the bottom */}
             <div className={styles.footerNav}>
               {questionIndex > 0 ? (
@@ -153,7 +232,7 @@ export function QuizFlow() {
                 onClick={handleNextQuestion}
                 iconAfter={<Icon name="arrowRight" size={14} />}
               >
-                {questionIndex === totalQuestions - 1 ? "Next: Final Info" : "Next"}
+                Next
               </Button>
             </div>
           </div>
@@ -161,7 +240,7 @@ export function QuizFlow() {
 
         {/* Step 13: Personal Info Form (No big heading, description only) */}
         {isFormStep && (
-          <form onSubmit={handleContactSubmit} className={styles.stageContainer}>
+          <form noValidate onSubmit={handleContactSubmit} className={styles.stageContainer}>
             <div className={styles.questionHeader}>
               <p className={styles.formDescription}>
                 We will match your diagnostic answers to your profile so your Talent Agent can prepare your custom strategy.
@@ -172,67 +251,131 @@ export function QuizFlow() {
               <div className={styles.formRow}>
                 <div className={styles.inputField}>
                   <label htmlFor="firstName" className={styles.inputLabel}>
-                    First Name *
+                    First Name <span className={styles.required}>*</span>
                   </label>
                   <input
                     id="firstName"
+                    maxLength={50}
+                    onBlur={handleContactBlur}
+                    aria-invalid={!!errors.firstName}
+                    aria-describedby={errors.firstName ? "firstName-error" : undefined}
                     name="firstName"
                     type="text"
                     required
                     value={contact.firstName}
                     onChange={handleContactChange}
                     placeholder="e.g. Alex"
-                    className={styles.textInput}
+                    className={`${styles.textInput} ${errors.firstName ? styles.invalid : ""}`}
                   />
+                  {errors.firstName && (
+                    <p id="firstName-error" className={styles.fieldError} role="alert">
+                      {errors.firstName}
+                    </p>
+                  )}
                 </div>
                 <div className={styles.inputField}>
                   <label htmlFor="lastName" className={styles.inputLabel}>
-                    Last Name *
+                    Last Name <span className={styles.required}>*</span>
                   </label>
                   <input
                     id="lastName"
+                    maxLength={50}
+                    onBlur={handleContactBlur}
+                    aria-invalid={!!errors.lastName}
+                    aria-describedby={errors.lastName ? "lastName-error" : undefined}
                     name="lastName"
                     type="text"
                     required
                     value={contact.lastName}
                     onChange={handleContactChange}
                     placeholder="e.g. Morgan"
-                    className={styles.textInput}
+                    className={`${styles.textInput} ${errors.lastName ? styles.invalid : ""}`}
                   />
+                  {errors.lastName && (
+                    <p id="lastName-error" className={styles.fieldError} role="alert">
+                      {errors.lastName}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className={styles.inputField}>
                 <label htmlFor="email" className={styles.inputLabel}>
-                  Email Address *
+                  Email Address <span className={styles.required}>*</span>
                 </label>
                 <input
                   id="email"
+                    maxLength={254}
+                    onBlur={handleContactBlur}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   name="email"
                   type="email"
+                  autoComplete="email"
                   required
                   value={contact.email}
                   onChange={handleContactChange}
                   placeholder="alex.morgan@company.com"
-                  className={styles.textInput}
+                  className={`${styles.textInput} ${errors.email ? styles.invalid : ""}`}
                 />
+                  {errors.email && (
+                    <p id="email-error" className={styles.fieldError} role="alert">
+                      {errors.email}
+                    </p>
+                  )}
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.inputField}>
                   <label htmlFor="phone" className={styles.inputLabel}>
-                    Phone Number (for SMS verification) *
+                    Phone Number (for SMS verification) <span className={styles.required}>*</span>
                   </label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    required
-                    value={contact.phone}
-                    onChange={handleContactChange}
-                    placeholder="+1 (555) 019-2834"
-                    className={styles.textInput}
-                  />
+                  <div className={`${styles.phoneField} ${errors.phone ? styles.invalid : ""}`}>
+                    <input
+                      id="phone"
+                    maxLength={country ? country.dial.length + country.digits[1] : 16}
+                    onBlur={handleContactBlur}
+                    aria-invalid={!!errors.phone}
+                    aria-describedby={errors.phone ? "phone-error" : undefined}
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      required
+                      value={contact.phone}
+                      onChange={handleContactChange}
+                      placeholder="+1 5550192834"
+                      className={styles.phoneInput}
+                    />
+                    <div className={styles.countrySelect}>
+                      <span className={styles.flag} aria-hidden="true">
+                        {country?.flag ?? "🌐"}
+                      </span>
+                      <span className={styles.chevron} aria-hidden="true">
+                        <Icon name="chevronRight" size={12} />
+                      </span>
+                      <select
+                        aria-label="Country code"
+                        value={country?.iso ?? ""}
+                        onChange={handleCountrySelect}
+                        className={styles.countryNative}
+                      >
+                        <option value="" disabled>
+                          Select country
+                        </option>
+                        {phoneCountries.map((c) => (
+                          <option key={c.iso} value={c.iso}>
+                            {c.flag} {c.name} ({c.dial})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  {errors.phone && (
+                    <p id="phone-error" className={styles.fieldError} role="alert">
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
                 <div className={styles.inputField}>
                   <label htmlFor="postalCode" className={styles.inputLabel}>
@@ -240,13 +383,23 @@ export function QuizFlow() {
                   </label>
                   <input
                     id="postalCode"
+                    maxLength={10}
+                    onBlur={handleContactBlur}
+                    aria-invalid={!!errors.postalCode}
+                    aria-describedby={errors.postalCode ? "postalCode-error" : undefined}
                     name="postalCode"
                     type="text"
+                    inputMode="numeric"
                     value={contact.postalCode}
                     onChange={handleContactChange}
                     placeholder="e.g. 94107"
-                    className={styles.textInput}
+                    className={`${styles.textInput} ${errors.postalCode ? styles.invalid : ""}`}
                   />
+                  {errors.postalCode && (
+                    <p id="postalCode-error" className={styles.fieldError} role="alert">
+                      {errors.postalCode}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -267,7 +420,7 @@ export function QuizFlow() {
                 size="md"
                 iconAfter={<Icon name="arrowRight" size={14} />}
               >
-                Send Verification Code
+                Get my results
               </Button>
             </div>
           </form>

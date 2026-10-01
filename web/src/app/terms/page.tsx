@@ -4,7 +4,7 @@ import { LegalPage } from "@/components/sections/legal/LegalPage";
 import { termsOfUseDoc } from "@/content/legal/terms";
 
 export const metadata: Metadata = {
-  title: `${termsOfUseDoc.title} — Talentnext`,
+  title: `${termsOfUseDoc.title} — TALENTnext`,
   description: termsOfUseDoc.description,
 };
 

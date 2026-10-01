@@ -100,7 +100,7 @@ export function OtpCard() {
             <Button
               variant="ghost"
               size="md"
-              onClick={() => router.push("/new/get-started")}
+              onClick={() => router.push("/new/get-started?step=details")}
               iconBefore={<Icon name="arrowLeft" size={14} />}
             >
               Change Details
@@ -112,7 +112,7 @@ export function OtpCard() {
               onClick={handleVerifyOtp}
               iconAfter={<Icon name="arrowRight" size={14} />}
             >
-              Verify & Unlock Results
+              Verify
             </Button>
           </div>
         </div>

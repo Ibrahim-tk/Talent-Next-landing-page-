@@ -222,11 +222,12 @@
   font-size: 15px;
   cursor: pointer;
   padding: calc(var(--u) - var(--tighten)) var(--u);
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  text-align: center;
+  text-align: left;
   gap: var(--gl-space-4);
   background-color: transparent;
   color: var(--gl-color-text-inverse);
@@ -258,6 +259,27 @@
 
 .assetButtonText {
   line-height: 1.25;
+}
+
+/* Label and arrow share one line: the arrow sits on the label's centre line,
+   pushed to the right edge, inside the button's own padding. */
+.assetButtonRow {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gl-space-4);
+}
+
+.assetButtonArrow {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--gl-color-text-inverse);
+}
+
+.assetButton:hover .assetButtonArrow,
+.assetButton:focus-visible .assetButtonArrow {
+  color: var(--gl-color-accent);
 }
 
 /* --------------------------------------------------------------------------
@@ -391,24 +413,6 @@
   margin-left: auto;
   display: flex;
   flex-shrink: 0;
-  opacity: 0;
-  transform: translateX(-6px);
-  transition:
-    opacity var(--gl-duration-fast) var(--gl-ease-standard),
-    transform var(--gl-duration-fast) var(--gl-ease-standard);
-}
-
-.actionTile:hover .actionTileArrow,
-.actionTile:focus-visible .actionTileArrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .actionTileArrow {
-    transition: none;
-    transform: none;
-  }
 }
 
 .actionTile svg {
@@ -487,7 +491,10 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: var(--gl-color-surface-sunken);
+  /* A rose tint with a hairline ring, so the badge holds its shape on the
+     white dialog instead of dissolving into it. */
+  background-color: color-mix(in srgb, var(--gl-color-accent) 10%, var(--gl-neutral-0));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gl-color-accent) 22%, transparent);
   color: var(--gl-color-accent);
   display: flex;
   align-items: center;
@@ -510,6 +517,27 @@
 
 .emailFollowUp {
   margin-top: var(--gl-space-5);
+}
+
+.goToEmail {
+  margin-top: var(--gl-space-7);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gl-color-text-inverse);
+  background-color: var(--gl-color-surface-inverse);
+  transition: background-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.goToEmail:hover,
+.goToEmail:focus-visible {
+  background-color: var(--gl-color-accent);
+  outline: none;
 }
 
 @keyframes modalFadeIn {

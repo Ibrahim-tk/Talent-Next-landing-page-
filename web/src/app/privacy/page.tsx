@@ -4,7 +4,7 @@ import { LegalPage } from "@/components/sections/legal/LegalPage";
 import { privacyNoticeDoc } from "@/content/legal/privacy";
 
 export const metadata: Metadata = {
-  title: `${privacyNoticeDoc.title} — Talentnext`,
+  title: `${privacyNoticeDoc.title} — TALENTnext`,
   description: privacyNoticeDoc.description,
 };
 

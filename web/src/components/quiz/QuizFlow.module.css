@@ -580,3 +580,84 @@
     font-size: 1.25rem;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Contact form: required mark, autofill, phone country picker
+   -------------------------------------------------------------------------- */
+.required {
+  color: var(--gl-color-accent);
+}
+
+/* Browsers paint autofilled fields blue; keep them on the white field. */
+.textInput:-webkit-autofill,
+.phoneInput:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--gl-neutral-0) inset;
+  -webkit-text-fill-color: var(--gl-color-text-primary);
+  caret-color: var(--gl-color-text-primary);
+  transition: background-color 9999s ease-out;
+}
+
+.phoneField {
+  display: flex;
+  align-items: stretch;
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  background-color: var(--gl-neutral-0);
+  transition: border-color var(--gl-duration-fast) var(--gl-ease-standard);
+}
+
+.phoneField:focus-within {
+  border-color: var(--gl-color-accent);
+  box-shadow: 0 0 0 1px var(--gl-color-accent);
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 16px;
+  font-size: 1rem;
+  font-family: var(--gl-font-sans);
+  border: 0;
+  background: transparent;
+  color: var(--gl-color-text-primary);
+  outline: none;
+}
+
+.countrySelect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-2);
+  padding: 0 16px;
+  border-left: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+}
+
+.flag {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.chevron {
+  display: inline-flex;
+  color: var(--gl-color-text-secondary);
+  transform: rotate(90deg);
+}
+
+/* The native select sits invisibly over the flag so the OS picker opens. */
+.countryNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.textInput.invalid,
+.phoneField.invalid {
+  border-color: var(--gl-color-accent);
+}
+
+.fieldError {
+  margin: 0;
+  font-size: var(--gl-size-body-sm);
+  color: var(--gl-color-accent);
+}

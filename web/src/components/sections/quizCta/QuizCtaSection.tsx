@@ -23,7 +23,7 @@ export interface QuizCtaSectionProps {
  * - Full-width bleed background image (/assets/form_gradient.png) matching the design reference.
  * - Centered layout with display heading ("Discover / What’s Next").
  * - Inspiring one-liner description.
- * - Single red CTA button ("Take Talentnext").
+ * - Single red CTA button ("Take TALENTnext").
  */
 export function QuizCtaSection({
   headingLine1 = quizCtaCopy.headingLine1,
