@@ -103,7 +103,7 @@ export function OtpCard() {
               onClick={() => router.push("/new/get-started?step=details")}
               iconBefore={<Icon name="arrowLeft" size={14} />}
             >
-              Change Details
+              Back
             </Button>
 
             <Button

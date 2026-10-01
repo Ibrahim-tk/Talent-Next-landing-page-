@@ -98,6 +98,10 @@
   color: var(--gl-color-text-primary);
   letter-spacing: -0.015em;
   margin: 0 0 var(--gl-space-2);
+  /* The reset balances every heading, which halves a question that only
+     just overflows into two short lines. Fill each line instead, keeping
+     only the guard against a lone last word. */
+  text-wrap: pretty;
 }
 
 .questionSubtitle {
@@ -622,33 +626,12 @@
   outline: none;
 }
 
-.countrySelect {
-  position: relative;
+.countryFlag {
   display: flex;
   align-items: center;
-  gap: var(--gl-space-2);
   padding: 0 16px;
-  border-left: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
-}
-
-.flag {
   font-size: 1.25rem;
   line-height: 1;
-}
-
-.chevron {
-  display: inline-flex;
-  color: var(--gl-color-text-secondary);
-  transform: rotate(90deg);
-}
-
-/* The native select sits invisibly over the flag so the OS picker opens. */
-.countryNative {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  opacity: 0;
-  cursor: pointer;
 }
 
 .textInput.invalid,

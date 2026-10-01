@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
 import { Button, Icon, ProgressTrack } from "@gridline";
 import { quizQuestions } from "@/content/quizQuestions";
-import { detectCountry, normalisePhone, phoneCountries } from "@/content/phoneCountries";
+import { detectCountry, normalisePhone } from "@/content/phoneCountries";
 import { saveQuizData, getQuizData, clearQuizData } from "@/lib/quizStorage";
 
 import {
@@ -19,13 +19,10 @@ import styles from "./QuizFlow.module.css";
 export function QuizFlow() {
   const router = useRouter();
 
-  /* Contact details are worth keeping — someone who lands back here after
-     the OTP step should not retype them. The answers are not: the quiz
-     always opens on question 1, and restoring them meant every question
-     arrived with last attempt's choice already selected. Entering the flow
-     starts a fresh set of answers — unless the OTP step sent the person
-     back one step (?step=details), which reopens the details form with the
-     answers kept, so Back keeps working one step at a time. */
+  /* Entering the flow starts clean: empty answers and an empty contact form,
+     so a previous attempt's details never show up pre-filled. The exception
+     is Back from the OTP step (?step=details), which reopens the details
+     form with the answers and contact details kept. */
   const initialData = typeof window !== "undefined" ? getQuizData() : null;
   const resuming =
     typeof window !== "undefined" &&
@@ -42,17 +39,16 @@ export function QuizFlow() {
   useEffect(() => {
     if (resuming) return;
     clearQuizData();
-    if (initialData?.contact) saveQuizData({ contact: initialData.contact });
     // Once, when the flow is entered.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [contact, setContact] = useState({
-    firstName: initialData?.contact.firstName || "",
-    lastName: initialData?.contact.lastName || "",
-    email: initialData?.contact.email || "",
-    phone: initialData?.contact.phone || "",
-    postalCode: initialData?.contact.postalCode || "",
+    firstName: (resuming && initialData?.contact?.firstName) || "",
+    lastName: (resuming && initialData?.contact?.lastName) || "",
+    email: (resuming && initialData?.contact?.email) || "",
+    phone: (resuming && initialData?.contact?.phone) || "",
+    postalCode: (resuming && initialData?.contact?.postalCode) || "",
   });
 
   /* Errors show once a field has been left, or after a submit attempt. */
@@ -119,16 +115,6 @@ export function QuizFlow() {
 
   const country = detectCountry(contact.phone);
 
-  const handleCountrySelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    const next = phoneCountries.find((c) => c.iso === e.target.value);
-    if (!next) return;
-    const rest = country ? contact.phone.slice(country.dial.length) : contact.phone.replace(/^\+/, "");
-    const updated = { ...contact, phone: normalisePhone(next.dial + rest) };
-    setContact(updated);
-    saveQuizData({ contact: updated });
-    setTouched((prev) => ({ ...prev, phone: true }));
-    setErrors((prev) => ({ ...prev, phone: validateField("phone", updated.phone) }));
-  };
 
   const handleContactSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -344,32 +330,16 @@ export function QuizFlow() {
                       required
                       value={contact.phone}
                       onChange={handleContactChange}
-                      placeholder="+1 5550192834"
+                      placeholder="+1 202 555 0143"
                       className={styles.phoneInput}
                     />
-                    <div className={styles.countrySelect}>
-                      <span className={styles.flag} aria-hidden="true">
-                        {country?.flag ?? "🌐"}
+                    {/* No picker: the flag appears only once the typed
+                        dial code is recognised. */}
+                    {country && (
+                      <span className={styles.countryFlag} aria-label={country.name}>
+                        {country.flag}
                       </span>
-                      <span className={styles.chevron} aria-hidden="true">
-                        <Icon name="chevronRight" size={12} />
-                      </span>
-                      <select
-                        aria-label="Country code"
-                        value={country?.iso ?? ""}
-                        onChange={handleCountrySelect}
-                        className={styles.countryNative}
-                      >
-                        <option value="" disabled>
-                          Select country
-                        </option>
-                        {phoneCountries.map((c) => (
-                          <option key={c.iso} value={c.iso}>
-                            {c.flag} {c.name} ({c.dial})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    )}
                   </div>
                   {errors.phone && (
                     <p id="phone-error" className={styles.fieldError} role="alert">
