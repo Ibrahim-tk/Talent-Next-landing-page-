@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type ComponentType } from "react";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
@@ -149,10 +150,10 @@ export function Inbox() {
       <header className={styles.topBar}>
         <div className={styles.brandCell}>
           <IconButton icon={Menu01Icon} label="Main menu" />
-          <a href="/" className={styles.brand}>
+          <Link href="/" className={styles.brand}>
             <span className={styles.logo} aria-hidden="true">G</span>
             <span className={styles.brandTag}>Mail</span>
-          </a>
+          </Link>
         </div>
 
         <label className={styles.search}>

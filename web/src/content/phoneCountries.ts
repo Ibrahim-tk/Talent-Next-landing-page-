@@ -26,7 +26,7 @@ export function detectCountry(phone: string): PhoneCountry | undefined {
    typed after the code is dropped (+92 0300… → +92 300…, the 11-digit local
    number 0300 1234567), and anything past that country's length is cut off. */
 export function normalisePhone(raw: string): string {
-  let phone = raw.replace(/(?!^\+)[^\d]/g, "");
+  const phone = raw.replace(/(?!^\+)[^\d]/g, "");
   const country = detectCountry(phone);
   if (!country) return phone.slice(0, 16);
   let national = phone.slice(country.dial.length).replace(/^0/, "");
