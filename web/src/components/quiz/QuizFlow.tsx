@@ -100,8 +100,15 @@ export function QuizFlow() {
     let { value } = e.target;
     /* Phone takes digits with one leading +; postal code takes digits only. */
     /* Digits typed without a + go after the picked country's code. */
-    if (name === "phone" && shown && /^\d/.test(value)) value = shown.dial + value;
-    if (name === "phone") value = normalisePhone(value);
+    /* The field holds only the national number; the picked code sits in
+       front of it as a fixed prefix. A pasted +number replaces both. */
+    if (name === "phone") {
+      const full = value.trim().startsWith("+");
+      const digits = value.replace(/\D/g, "");
+      value = !digits ? "" : normalisePhone(full ? "+" + digits : (shown?.dial ?? "+1") + digits);
+      const hit = detectCountry(value);
+      if (full && hit) setPickedIso(hit.iso);
+    }
     if (name === "postalCode") value = value.replace(/\D/g, "");
     const updated = { ...contact, [name]: value };
     setContact(updated);
@@ -120,15 +127,14 @@ export function QuizFlow() {
     setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
   };
 
-  /* No country until one is typed or picked: a globe and a neutral example
-     number. Typing a dial code switches the flag on its own; picking a
-     country swaps the dial code at the front of whatever is typed. */
+  /* US is picked by default. The dial code is shown as a fixed prefix;
+     picking a country swaps it in front of whatever is typed. */
   const [pickedIso, setPickedIso] = useState<string | null>("US");
   const country = detectCountry(contact.phone);
   const shown = country ?? phoneCountries.find((c) => c.iso === pickedIso);
-  const phonePlaceholder = shown
-    ? `${shown.dial} ${"1234567890123".slice(0, shown.digits[0])}`
-    : "+00 123 456 7890";
+  const dial = shown?.dial ?? "+1";
+  const phonePlaceholder = "1234567890123".slice(0, shown?.digits[0] ?? 10);
+  const nationalPhone = contact.phone.startsWith(dial) ? contact.phone.slice(dial.length) : contact.phone;
 
   const handleCountrySelect = (e: ChangeEvent<HTMLSelectElement>) => {
     const next = phoneCountries.find((c) => c.iso === e.target.value);
@@ -344,9 +350,12 @@ export function QuizFlow() {
                     Phone Number <span className={styles.required}>*</span>
                   </label>
                   <div className={`${styles.phoneField} ${errors.phone ? styles.invalid : ""}`}>
+                    <span className={styles.dialPrefix} aria-hidden="true">
+                      {dial}
+                    </span>
                     <input
                       id="phone"
-                    maxLength={country ? country.dial.length + country.digits[1] : 16}
+                    maxLength={16}
                     onBlur={handleContactBlur}
                     aria-invalid={!!errors.phone}
                     aria-describedby={errors.phone ? "phone-error" : undefined}
@@ -355,7 +364,7 @@ export function QuizFlow() {
                       autoComplete="tel"
                       inputMode="tel"
                       required
-                      value={contact.phone}
+                      value={nationalPhone}
                       onChange={handleContactChange}
                       placeholder={phonePlaceholder}
                       className={styles.phoneInput}

@@ -614,10 +614,19 @@
   box-shadow: 0 0 0 1px var(--gl-color-accent);
 }
 
+.dialPrefix {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  font-size: 1rem;
+  font-family: var(--gl-font-sans);
+  color: var(--gl-color-text-primary);
+}
+
 .phoneInput {
   flex: 1;
   min-width: 0;
-  padding: 13px 16px;
+  padding: 13px 16px 13px 8px;
   font-size: 1rem;
   font-family: var(--gl-font-sans);
   border: 0;
