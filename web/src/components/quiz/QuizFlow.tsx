@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowDown01Icon, GlobeIcon } from "@hugeicons/core-free-icons";
+import { ArrowDown01Icon, GlobeIcon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Button, Icon, ProgressTrack } from "@gridline";
 import { quizQuestions } from "@/content/quizQuestions";
 import { detectCountry, normalisePhone, phoneCountries } from "@/content/phoneCountries";
@@ -136,8 +136,25 @@ export function QuizFlow() {
   const phonePlaceholder = "1234567890123".slice(0, shown?.digits[0] ?? 10);
   const nationalPhone = contact.phone.startsWith(dial) ? contact.phone.slice(dial.length) : contact.phone;
 
-  const handleCountrySelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    const next = phoneCountries.find((c) => c.iso === e.target.value);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!countryOpen) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !pickerRef.current?.contains(e.target as Node))
+        setCountryOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [countryOpen]);
+
+  const handleCountrySelect = (iso: string) => {
+    setCountryOpen(false);
+    const next = phoneCountries.find((c) => c.iso === iso);
     if (!next) return;
     setPickedIso(next.iso);
     const rest = country ? contact.phone.slice(country.dial.length) : contact.phone.replace(/^\+/, "");
@@ -369,28 +386,45 @@ export function QuizFlow() {
                       placeholder={phonePlaceholder}
                       className={styles.phoneInput}
                     />
-                    <div className={styles.countryPicker}>
-                      <span className={styles.flag} aria-hidden="true">
-                        {shown ? shown.flag : <HugeiconsIcon icon={GlobeIcon} size={20} strokeWidth={1.5} />}
-                      </span>
-                      <span className={styles.chevron} aria-hidden="true">
-                        <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.5} />
-                      </span>
-                      <select
-                        aria-label="Country code"
-                        value={shown?.iso ?? ""}
-                        onChange={handleCountrySelect}
-                        className={styles.countryNative}
+                    <div className={styles.countryPicker} ref={pickerRef}>
+                      <button
+                        type="button"
+                        className={styles.countryTrigger}
+                        aria-label={`Country code: ${shown?.name ?? "none"}`}
+                        aria-haspopup="listbox"
+                        aria-expanded={countryOpen}
+                        onClick={() => setCountryOpen((o) => !o)}
                       >
-                        <option value="" disabled>
-                          Select country
-                        </option>
-                        {phoneCountries.map((c) => (
-                          <option key={c.iso} value={c.iso}>
-                            {c.flag} {c.name} ({c.dial})
-                          </option>
-                        ))}
-                      </select>
+                        <span className={styles.flag} aria-hidden="true">
+                          {shown ? shown.flag : <HugeiconsIcon icon={GlobeIcon} size={20} strokeWidth={1.5} />}
+                        </span>
+                        <span className={`${styles.chevron} ${countryOpen ? styles.chevronOpen : ""}`} aria-hidden="true">
+                          <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.5} />
+                        </span>
+                      </button>
+                      {countryOpen && (
+                        <ul className={styles.countryMenu} role="listbox" aria-label="Country code">
+                          {phoneCountries.map((c) => {
+                            const selected = c.iso === shown?.iso;
+                            return (
+                              <li key={c.iso} role="option" aria-selected={selected}>
+                                <button
+                                  type="button"
+                                  className={`${styles.countryOption} ${selected ? styles.countryOptionSelected : ""}`}
+                                  onClick={() => handleCountrySelect(c.iso)}
+                                >
+                                  <span className={styles.optionFlag} aria-hidden="true">{c.flag}</span>
+                                  <span className={styles.optionName}>{c.name}</span>
+                                  <span className={styles.optionDial}>{c.dial}</span>
+                                  <span className={styles.optionTick} aria-hidden="true">
+                                    {selected && <HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={1.75} />}
+                                  </span>
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                     </div>
                   </div>
                   {errors.phone && (

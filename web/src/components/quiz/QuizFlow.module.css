@@ -635,12 +635,27 @@
   outline: none;
 }
 
-.countryPicker {
+.phoneField {
   position: relative;
+}
+
+.countryPicker {
+  display: flex;
+}
+
+.countryTrigger {
   display: flex;
   align-items: center;
   gap: var(--gl-space-2);
   padding: 0 16px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.countryTrigger:focus-visible {
+  outline: 2px solid var(--gl-color-accent);
+  outline-offset: -2px;
 }
 
 .flag {
@@ -653,15 +668,73 @@
 .chevron {
   display: inline-flex;
   color: var(--gl-color-text-secondary);
+  transition: transform var(--gl-duration-fast) var(--gl-ease-standard);
 }
 
-/* The native select sits invisibly over flag and chevron so the OS picker opens. */
-.countryNative {
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Square, hairline-ruled panel that drops from the field's right edge. */
+.countryMenu {
   position: absolute;
-  inset: 0;
+  top: calc(100% + 4px);
+  right: -1px;
+  z-index: var(--gl-z-floating);
+  width: min(320px, calc(100vw - 32px));
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background-color: var(--gl-neutral-0);
+  border: var(--gl-border-width-hairline) solid var(--gl-color-border-rule);
+  box-shadow: var(--gl-shadow-md);
+}
+
+.countryOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
-  opacity: 0;
+  padding: 10px 16px;
+  border: 0;
+  background: none;
+  font-family: var(--gl-font-sans);
+  font-size: 1rem;
+  color: var(--gl-color-text-primary);
+  text-align: left;
   cursor: pointer;
+}
+
+.countryOption:hover,
+.countryOption:focus-visible {
+  background-color: var(--gl-color-surface-sunken);
+  outline: none;
+}
+
+.countryOptionSelected {
+  background-color: var(--gl-color-surface-accent-soft);
+}
+
+.optionFlag {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.optionName {
+  flex: 1;
+}
+
+.optionDial {
+  color: var(--gl-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.optionTick {
+  display: inline-flex;
+  width: 16px;
+  color: var(--gl-color-accent);
 }
 
 .textInput.invalid,
