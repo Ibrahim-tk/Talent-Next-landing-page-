@@ -626,12 +626,33 @@
   outline: none;
 }
 
-.countryFlag {
+.countryPicker {
+  position: relative;
   display: flex;
   align-items: center;
+  gap: var(--gl-space-2);
   padding: 0 16px;
+}
+
+.flag {
+  display: inline-flex;
   font-size: 1.25rem;
   line-height: 1;
+  color: var(--gl-color-text-secondary);
+}
+
+.chevron {
+  display: inline-flex;
+  color: var(--gl-color-text-secondary);
+}
+
+/* The native select sits invisibly over flag and chevron so the OS picker opens. */
+.countryNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .textInput.invalid,

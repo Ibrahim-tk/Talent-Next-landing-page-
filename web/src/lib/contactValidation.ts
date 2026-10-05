@@ -49,7 +49,7 @@ export function validateField(name: keyof ContactFields, value: string): string 
       return;
     }
     case "postalCode":
-      if (value && (value.length < 3 || value.length > 10)) return "Postal code must be 3\u201310 digits.";
+      if (value && (value.length < 3 || value.length > 10)) return "Zip code must be 3\u201310 digits.";
       return;
   }
 }

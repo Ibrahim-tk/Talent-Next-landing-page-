@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon, GlobeIcon } from "@hugeicons/core-free-icons";
 import { Button, Icon, ProgressTrack } from "@gridline";
 import { quizQuestions } from "@/content/quizQuestions";
-import { detectCountry, normalisePhone } from "@/content/phoneCountries";
+import { detectCountry, normalisePhone, phoneCountries } from "@/content/phoneCountries";
 import { saveQuizData, getQuizData, clearQuizData } from "@/lib/quizStorage";
 
 import {
@@ -97,23 +99,47 @@ export function QuizFlow() {
     const { name } = e.target;
     let { value } = e.target;
     /* Phone takes digits with one leading +; postal code takes digits only. */
+    /* Digits typed without a + go after the picked country's code. */
+    if (name === "phone" && shown && /^\d/.test(value)) value = shown.dial + value;
     if (name === "phone") value = normalisePhone(value);
     if (name === "postalCode") value = value.replace(/\D/g, "");
     const updated = { ...contact, [name]: value };
     setContact(updated);
     saveQuizData({ contact: updated });
     const key = name as keyof ContactFields;
-    if (touched[key]) setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
+    /* Phone is only checked on submit; editing it just clears a shown error. */
+    if (key === "phone") setErrors((prev) => ({ ...prev, phone: undefined }));
+    else if (touched[key]) setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
   };
 
   const handleContactBlur = (e: FocusEvent<HTMLInputElement>) => {
     const key = e.target.name as keyof ContactFields;
+    if (key === "phone") return;
     const value = key === "email" ? contact.email.trim() : contact[key];
     setTouched((prev) => ({ ...prev, [key]: true }));
     setErrors((prev) => ({ ...prev, [key]: validateField(key, value) }));
   };
 
+  /* No country until one is typed or picked: a globe and a neutral example
+     number. Typing a dial code switches the flag on its own; picking a
+     country swaps the dial code at the front of whatever is typed. */
+  const [pickedIso, setPickedIso] = useState<string | null>("US");
   const country = detectCountry(contact.phone);
+  const shown = country ?? phoneCountries.find((c) => c.iso === pickedIso);
+  const phonePlaceholder = shown
+    ? `${shown.dial} ${"1234567890123".slice(0, shown.digits[0])}`
+    : "+00 123 456 7890";
+
+  const handleCountrySelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    const next = phoneCountries.find((c) => c.iso === e.target.value);
+    if (!next) return;
+    setPickedIso(next.iso);
+    const rest = country ? contact.phone.slice(country.dial.length) : contact.phone.replace(/^\+/, "");
+    const updated = { ...contact, phone: rest ? normalisePhone(next.dial + rest) : "" };
+    setContact(updated);
+    saveQuizData({ contact: updated });
+    setErrors((prev) => ({ ...prev, phone: undefined }));
+  };
 
 
   const handleContactSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -153,7 +179,7 @@ export function QuizFlow() {
                 </span>
               </div>
               <ProgressTrack
-                value={((questionIndex + 1) / totalQuestions) * 100}
+                value={(questionIndex / totalQuestions) * 100}
                 tone="accent"
                 size="sm"
                 label={`Question ${questionIndex + 1} of ${totalQuestions}`}
@@ -228,8 +254,9 @@ export function QuizFlow() {
         {isFormStep && (
           <form noValidate onSubmit={handleContactSubmit} className={styles.stageContainer}>
             <div className={styles.questionHeader}>
+              <h1 className={styles.questionTitle}>Final Step</h1>
               <p className={styles.formDescription}>
-                We will match your diagnostic answers to your profile so your Talent Agent can prepare your custom strategy.
+                Where should we send your results and resources?
               </p>
             </div>
 
@@ -314,7 +341,7 @@ export function QuizFlow() {
               <div className={styles.formRow}>
                 <div className={styles.inputField}>
                   <label htmlFor="phone" className={styles.inputLabel}>
-                    Phone Number (for SMS verification) <span className={styles.required}>*</span>
+                    Phone Number <span className={styles.required}>*</span>
                   </label>
                   <div className={`${styles.phoneField} ${errors.phone ? styles.invalid : ""}`}>
                     <input
@@ -330,16 +357,32 @@ export function QuizFlow() {
                       required
                       value={contact.phone}
                       onChange={handleContactChange}
-                      placeholder="+1 202 555 0143"
+                      placeholder={phonePlaceholder}
                       className={styles.phoneInput}
                     />
-                    {/* No picker: the flag appears only once the typed
-                        dial code is recognised. */}
-                    {country && (
-                      <span className={styles.countryFlag} aria-label={country.name}>
-                        {country.flag}
+                    <div className={styles.countryPicker}>
+                      <span className={styles.flag} aria-hidden="true">
+                        {shown ? shown.flag : <HugeiconsIcon icon={GlobeIcon} size={20} strokeWidth={1.5} />}
                       </span>
-                    )}
+                      <span className={styles.chevron} aria-hidden="true">
+                        <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.5} />
+                      </span>
+                      <select
+                        aria-label="Country code"
+                        value={shown?.iso ?? ""}
+                        onChange={handleCountrySelect}
+                        className={styles.countryNative}
+                      >
+                        <option value="" disabled>
+                          Select country
+                        </option>
+                        {phoneCountries.map((c) => (
+                          <option key={c.iso} value={c.iso}>
+                            {c.flag} {c.name} ({c.dial})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   {errors.phone && (
                     <p id="phone-error" className={styles.fieldError} role="alert">
@@ -349,7 +392,7 @@ export function QuizFlow() {
                 </div>
                 <div className={styles.inputField}>
                   <label htmlFor="postalCode" className={styles.inputLabel}>
-                    Postal / Zip Code
+                    Zip Code
                   </label>
                   <input
                     id="postalCode"
@@ -390,7 +433,7 @@ export function QuizFlow() {
                 size="md"
                 iconAfter={<Icon name="arrowRight" size={14} />}
               >
-                Get my results
+                Get My Results
               </Button>
             </div>
           </form>

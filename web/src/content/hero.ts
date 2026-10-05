@@ -31,7 +31,7 @@ export const heroCopy = {
        source is needed the way the previous 12MB original required one. */
     src: "/assets/talent-next-hero-image.png",
     alt: "A young professional standing still and facing the camera, the crowd moving around them blurred",
-    width: 2172,
+    width: 2032,
     height: 724,
   },
 } as const;

@@ -78,9 +78,9 @@ const TN = { sender: "TALENTnext", address: "hello@talentnext.com" };
 /* Newest first. Ours sit at the top — the welcome mail is the one the quiz
    just sent — and the filler below makes it read as a lived-in inbox. */
 const MESSAGES: Message[] = [
+  { id: "welcome", ...TN, subject: "Welcome to TALENTnext — your results are ready", snippet: "Thanks for taking the diagnostic. Set your password to open your results and next steps.", time: "6:15 PM", unread: true, Template: WelcomeEmail },
   { id: "level", ...TN, subject: "Your Talent Level is in: Explorer E3", snippet: "Thanks for your conversation with your TALENTnext Agent. You're on the Explorer track at E3.", time: "6:02 PM", unread: true, Template: TalentLevelEmail },
   { id: "course", ...TN, subject: "You're enrolled: Leading Through Change", snippet: "You're confirmed. The course starts Monday, October 12 — here are the details.", time: "5:48 PM", unread: true, Template: CourseEnrolledEmail },
-  { id: "welcome", ...TN, subject: "Welcome to TALENTnext — your results are ready", snippet: "Thanks for taking the diagnostic. Set your password to open your results and next steps.", time: "5:20 PM", unread: true, Template: WelcomeEmail },
   { id: "reset", ...TN, subject: "Your TALENTnext password reset code", snippet: "Use this code to reset your password. It expires shortly, so use it soon.", time: "2:15 PM", unread: true, Template: PasswordResetOtpEmail },
   { id: "admin-otp", ...TN, subject: "Your TALENTnext admin sign-in code", snippet: "Here is the one-time code for your super admin sign-in.", time: "Sep 30", unread: true, Template: AdminOtpEmail },
   { id: "invite", ...TN, subject: "You've been invited to TALENTnext admin", snippet: "You have been added as an admin. Set your password within 7 days to get started.", time: "Sep 30", unread: true, Template: AdminInviteEmail },

@@ -256,3 +256,11 @@ ol {
   white-space: nowrap;
   border: 0;
 }
+
+/* Placeholders read as hints, not entries: a light grey well below the
+   typed-text ink, so an empty field never looks already filled. */
+input::placeholder,
+textarea::placeholder {
+  color: var(--gl-neutral-450);
+  opacity: 1;
+}

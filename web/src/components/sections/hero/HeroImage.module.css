@@ -13,6 +13,7 @@
   width: calc(100% + var(--gl-space-11) * 2);
   margin-inline: calc(var(--gl-space-11) * -1);
   line-height: 0;
+  overflow: hidden;
 }
 
 /* `cover` against a capped height. The plate is a 3:1 letterbox now, not the
@@ -35,6 +36,9 @@
   object-fit: cover;
   object-position: center;
   display: block;
+  /* Nudged 20px left to sit the subject under the CTA; the slight scale
+     keeps the right edge from opening a gap. */
+  transform: translateX(-20px) scale(1.03);
 }
 
 /* The photograph takes the bottom ~35% of the screen on a phone; the copy
