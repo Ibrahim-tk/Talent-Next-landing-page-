@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -8,10 +7,8 @@ import {
   Book02Icon,
   Briefcase01Icon,
   BubbleChatIcon,
-  Cancel01Icon,
   FlashIcon,
   Grid02Icon,
-  Mail01Icon,
   ShieldCheckIcon,
   Tick02Icon,
   TruckIcon,
@@ -44,31 +41,18 @@ function iconFor(name: IconName) {
   return hugeicon[name] ?? Grid02Icon;
 }
 
+/* Same link as the "Set your password" button in the welcome email. */
+const setPasswordUrl = "https://tn-orcin.vercel.app/candidate#signup/create";
+
 export function ResultsCard() {
   const [userName, setUserName] = useState("TEST");
-  const [email, setEmail] = useState("your email address");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const data = getQuizData();
     if (data.contact?.firstName && data.contact.firstName.trim().length > 0) {
       setUserName(data.contact.firstName.trim());
     }
-    if (data.contact?.email) {
-      setEmail(data.contact.email);
-    }
   }, []);
-
-  // Close modal on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") setIsModalOpen(false);
-    };
-    if (isModalOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isModalOpen]);
 
   return (
     <>
@@ -117,11 +101,7 @@ export function ResultsCard() {
             <ul className={styles.assetButtons}>
               {builderResultsCopy.actionTiles.slice(0, 2).map((tile) => (
                 <li key={tile.id} className={styles.assetButtonItem}>
-                  <button
-                    type="button"
-                    className={styles.assetButton}
-                    onClick={() => setIsModalOpen(true)}
-                  >
+                  <a href={setPasswordUrl} className={styles.assetButton}>
                     <span className={styles.assetButtonIcon}>
                       <HugeiconsIcon icon={iconFor(tile.icon)} size={20} strokeWidth={1.5} />
                     </span>
@@ -133,7 +113,7 @@ export function ResultsCard() {
                         <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={1.5} />
                       </span>
                     </span>
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -168,10 +148,9 @@ export function ResultsCard() {
               <ul className={styles.actionTiles}>
                 {builderResultsCopy.actionTiles.slice(2).map((tile) => (
                   <li key={tile.id} className={styles.actionTileItem}>
-                    <button
-                      type="button"
+                    <a
+                      href={setPasswordUrl}
                       className={`${styles.actionTile} ${styles.actionTilePrimary}`}
-                      onClick={() => setIsModalOpen(true)}
                     >
                       <HugeiconsIcon icon={iconFor(tile.icon)} size={16} strokeWidth={1.5} />
                       <span className={styles.actionTileText}>
@@ -180,7 +159,7 @@ export function ResultsCard() {
                       <span className={styles.actionTileArrow} aria-hidden="true">
                         <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={1.5} />
                       </span>
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -188,52 +167,6 @@ export function ResultsCard() {
           </div>
         </div>
       </GridModule>
-
-      {/* Check Your Email Modal */}
-      {isModalOpen && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsModalOpen(false);
-          }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-email-title"
-        >
-          <div className={styles.modalDialog}>
-            <button
-              type="button"
-              className={styles.modalCloseButton}
-              onClick={() => setIsModalOpen(false)}
-              aria-label="Close modal"
-            >
-              <HugeiconsIcon icon={Cancel01Icon} size={18} strokeWidth={1.5} />
-            </button>
-
-            <div className={styles.emailIconBadge}>
-              <HugeiconsIcon icon={Mail01Icon} size={26} strokeWidth={1.5} />
-            </div>
-
-            <Text variant="headingLg" as="h2" id="modal-email-title" className={styles.emailTitle}>
-              Check Your Email!
-            </Text>
-
-            <p className={styles.emailBody}>
-              Your full diagnostic dossier and next steps have been sent to{" "}
-              <strong>{email}</strong>.
-            </p>
-
-            <p className={`${styles.emailBody} ${styles.emailFollowUp}`}>
-              Please check your inbox to access your results.
-            </p>
-
-            <Link href="/email/inbox" className={styles.goToEmail}>
-              Go to email
-              <HugeiconsIcon icon={ArrowRight02Icon} size={14} strokeWidth={1.5} />
-            </Link>
-          </div>
-        </div>
-      )}
     </>
   );
 }

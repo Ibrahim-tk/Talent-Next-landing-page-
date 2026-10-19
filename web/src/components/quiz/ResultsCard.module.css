@@ -215,6 +215,8 @@
 }
 
 .assetButton {
+  text-decoration: none;
+  color: inherit;
   flex: 1;
   min-width: 0;
   border: none;
@@ -383,6 +385,7 @@
 }
 
 .actionTile {
+  text-decoration: none;
   flex: 1;
   border: none;
   font-family: inherit;
