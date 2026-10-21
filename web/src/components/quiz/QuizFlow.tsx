@@ -57,20 +57,9 @@ export function QuizFlow() {
   const [errors, setErrors] = useState<ContactErrors>({});
   const [touched, setTouched] = useState<Partial<Record<keyof ContactFields, boolean>>>({});
 
-  const totalQuestions = quizQuestions.length; // 17
+  const totalQuestions = quizQuestions.length; // 12
   const currentQuestion = quizQuestions[questionIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
-
-  const isOther =
-    currentQuestion?.type === "dropdown" && currentAnswer === currentQuestion.otherValue;
-  const otherText = currentQuestion ? answers[`${currentQuestion.id}-other`] ?? "" : "";
-
-  const setAnswer = (key: string, value: string) => {
-    const updated = { ...answers, [key]: value };
-    setAnswers(updated);
-    saveQuizData({ answers: updated });
-    setNeedsAnswer(false);
-  };
 
   const handleSelectOption = (value: string) => {
     if (!currentQuestion) return;
@@ -85,7 +74,7 @@ export function QuizFlow() {
   const [needsAnswer, setNeedsAnswer] = useState(false);
 
   const handleNextQuestion = () => {
-    if (!currentAnswer?.trim() || (isOther && !otherText.trim())) {
+    if (!currentAnswer) {
       setNeedsAnswer(true);
       return;
     }
@@ -163,22 +152,6 @@ export function QuizFlow() {
     };
   }, [countryOpen]);
 
-  const [selectOpen, setSelectOpen] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!selectOpen) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !selectRef.current?.contains(e.target as Node))
-        setSelectOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [selectOpen]);
-
   const handleCountrySelect = (iso: string) => {
     setCountryOpen(false);
     const next = phoneCountries.find((c) => c.iso === iso);
@@ -217,10 +190,10 @@ export function QuizFlow() {
   return (
     <div className={styles.section}>
       <div className={styles.card}>
-        {/* Steps 1 to 17: Questions */}
+        {/* Step 1 to 12: Questions */}
         {!isFormStep && currentQuestion && (
           <div className={styles.stageContainer}>
-            {/* Progress Header: Left: QUESTION, Right: X of 17 (NO percentage) */}
+            {/* Progress Header: Left: QUESTION, Right: X of 12 (NO percentage) */}
             <div className={styles.progressHeader}>
               <div className={styles.progressMeta}>
                 <span className={styles.stepLabel}>QUESTION</span>
@@ -242,76 +215,6 @@ export function QuizFlow() {
 
             {/* Options list: one radio row per choice — see QuizFlow.module.css
                 for the shared geometry across unselected/hover/focus/selected. */}
-            {currentQuestion.type === "text" && (
-              <textarea
-                maxLength={500}
-                aria-label={currentQuestion.question}
-                value={currentAnswer ?? ""}
-                onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
-                placeholder={currentQuestion.placeholder}
-                className={`${styles.textInput} ${styles.textArea}`}
-              />
-            )}
-
-            {currentQuestion.type === "dropdown" && (
-              <div className={styles.optionsStack}>
-                <div className={styles.selectWrap} ref={selectRef}>
-                  <button
-                    type="button"
-                    className={`${styles.textInput} ${styles.selectTrigger}`}
-                    aria-haspopup="listbox"
-                    aria-expanded={selectOpen}
-                    aria-label={currentQuestion.question}
-                    onClick={() => setSelectOpen((o) => !o)}
-                  >
-                    <span className={currentAnswer ? undefined : styles.selectPlaceholder}>
-                      {currentQuestion.options.find((o) => o.value === currentAnswer)?.label ??
-                        currentQuestion.placeholder}
-                    </span>
-                    <span className={`${styles.chevron} ${selectOpen ? styles.chevronOpen : ""}`} aria-hidden="true">
-                      <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.5} />
-                    </span>
-                  </button>
-                  {selectOpen && (
-                    <ul className={styles.selectMenu} role="listbox" aria-label={currentQuestion.question}>
-                      {currentQuestion.options.map((o) => {
-                        const selected = o.value === currentAnswer;
-                        return (
-                          <li key={o.value} role="option" aria-selected={selected}>
-                            <button
-                              type="button"
-                              className={`${styles.countryOption} ${selected ? styles.countryOptionSelected : ""}`}
-                              onClick={() => {
-                                setAnswer(currentQuestion.id, o.value);
-                                setSelectOpen(false);
-                              }}
-                            >
-                              <span className={styles.optionName}>{o.label}</span>
-                              <span className={styles.optionTick} aria-hidden="true">
-                                {selected && <HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={1.75} />}
-                              </span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-                {isOther && (
-                  <input
-                    type="text"
-                    maxLength={80}
-                    aria-label={currentQuestion.otherPlaceholder}
-                    value={otherText}
-                    onChange={(e) => setAnswer(`${currentQuestion.id}-other`, e.target.value)}
-                    placeholder={currentQuestion.otherPlaceholder}
-                    className={styles.textInput}
-                  />
-                )}
-              </div>
-            )}
-
-            {!currentQuestion.type || currentQuestion.type === "single" ? (
             <div
               className={styles.optionsStack}
               role="radiogroup"
@@ -336,11 +239,10 @@ export function QuizFlow() {
                 );
               })}
             </div>
-            ) : null}
 
             {needsAnswer && (
               <p className={styles.fieldError} role="alert">
-                {currentQuestion.type === "text" ? "Answer to continue." : "Select an option to continue."}
+                Select an option to continue.
               </p>
             )}
 
@@ -371,7 +273,7 @@ export function QuizFlow() {
           </div>
         )}
 
-        {/* Final step: Personal Info Form (No big heading, description only) */}
+        {/* Step 13: Personal Info Form (No big heading, description only) */}
         {isFormStep && (
           <form noValidate onSubmit={handleContactSubmit} className={styles.stageContainer}>
             <div className={styles.questionHeader}>

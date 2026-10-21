@@ -5,12 +5,6 @@ export interface QuizQuestion {
   question: string;
   subtitle?: string;
   options: PillChoice[];
-  /* Defaults to "single" (radio rows). */
-  type?: "single" | "text" | "dropdown";
-  placeholder?: string;
-  /* Dropdown only: picking the "other" option asks for free text. */
-  otherValue?: string;
-  otherPlaceholder?: string;
 }
 
 /* Supplied copy, reproduced verbatim from the What's Next quiz. */
@@ -130,68 +124,6 @@ export const quizQuestions: QuizQuestion[] = [
       { value: "helped-others", label: "You helped other people succeed." },
       { value: "accomplished", label: "You accomplished a lot." },
       { value: "discovered-self", label: "You discovered something new about yourself." },
-    ],
-  },
-  {
-    id: "where",
-    question: "Where are you right now?",
-    options: [
-      { value: "moveup", label: "In a job I want to move up in" },
-      { value: "leaving", label: "In a job I don't plan to stay in" },
-      { value: "own", label: "Running something of my own, or trying to start it" },
-      { value: "between", label: "Between things" },
-    ],
-  },
-  {
-    id: "persona",
-    question: "Which of these sounds most like you? Pick one.",
-    options: [
-      { value: "top", label: "Top Performer" },
-      { value: "athlete", label: "Athlete" },
-      { value: "leader", label: "Leader" },
-      { value: "entrepreneur", label: "Entrepreneur" },
-      { value: "notsure", label: "Not Sure" },
-      { value: "team", label: "Team Player" },
-    ],
-  },
-  {
-    id: "role",
-    type: "text",
-    question: "What do you do now?",
-    placeholder: "Operations coordinator, student, own a detailing business",
-    options: [],
-  },
-  {
-    id: "industry",
-    type: "dropdown",
-    question: "What industry is that in?",
-    placeholder: "Select an industry",
-    otherValue: "other",
-    otherPlaceholder: "Tell me your industry",
-    options: [
-      { value: "security", label: "Security" },
-      { value: "franchise", label: "Franchise ownership" },
-      { value: "retail", label: "Retail" },
-      { value: "food", label: "Food and hospitality" },
-      { value: "trades", label: "Trades and construction" },
-      { value: "healthcare", label: "Healthcare" },
-      { value: "logistics", label: "Transportation and logistics" },
-      { value: "sales", label: "Sales" },
-      { value: "education", label: "Education" },
-      { value: "technology", label: "Technology" },
-      { value: "student", label: "Student" },
-      { value: "other", label: "Other" },
-    ],
-  },
-  {
-    id: "years",
-    question: "How many years have you been working?",
-    options: [
-      { value: "0", label: "Under 1" },
-      { value: "1", label: "1 to 3" },
-      { value: "3", label: "3 to 7" },
-      { value: "7", label: "7 to 15" },
-      { value: "15", label: "15 or more" },
     ],
   },
 ];
