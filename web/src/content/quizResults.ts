@@ -58,7 +58,7 @@ export const builderResultsCopy = {
   ],
   nextStepTitle: "Your next step",
   nextStepDescription:
-    "Download the Builder Playbook, access the Builder Toolkit, or connect with a TALENTnext Agent.",
+    "Download the Builder Playbook, access the Builder Toolkit, or continue to TALENTnext.",
   ctaEyebrow: "What you'll get",
   ctaLabel: "Send my playbook",
   actionTiles: [
@@ -76,8 +76,8 @@ export const builderResultsCopy = {
     },
     {
       id: "agent",
-      line1: "Connect with",
-      line2: "TALENTnext Agent",
+      line1: "Continue to",
+      line2: "TALENTnext",
       icon: "messages" as IconName,
     },
   ],
